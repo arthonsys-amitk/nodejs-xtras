@@ -940,7 +940,16 @@ api.update_profile = (req, res) => {
 api.user_logout = (req, res)=>{
 
   if(Object.keys(req.body).length == 3) {
-
+	  if(req.body.user_id=='' || req.body.device_token=='' || req.body.device_type==''){
+		res.json({
+            "status": 400,
+            "api_name": "user_logout",
+            "message": "Some fields are empty.",
+            "data": {}
+          });
+		return;
+	  }
+  
       user.check_device_token_exist(req.body.user_id, req.body.device_token, req.body.device_type)
       .then(function(token_data) {
 
@@ -1162,18 +1171,24 @@ api.social_login = (req, res) => {
 
             if(emailresult != null) 
             {
-                res.json({
-                  "status": 400,
-                  "api_name": "social_login",
-                  "message": "Email already exists.",
-                  "data": {}
-                });
-                return;
-
+				user.getUserByEmail(req.body.email).then(function(result){
+					
+				 console.log(result);
+				 res.json({
+					  "status": 200,
+					  "api_name": "social_login",
+					  "message": "Social Login is successful",
+					  "data": genToken(result)
+					});
+					return;
+				})				
+			
             } else {
 				 if(req.body.login_type == "facebook") {
+					 var user_img_url = (req.body.url == null? '': req.body.url);
+					 var user_full_name = (req.body.name == null? '': req.body.name);
 					var userdata = {
-									fullname : req.body.name,
+									fullname : user_full_name,
 									user_role: 2,
 									email: req.body.email,
 									alternate_email:'',
@@ -1190,7 +1205,7 @@ api.social_login = (req, res) => {
 									latitude: '',
 									longitude: '',
 									password: crypto.encrypt('user123'),
-									user_image: req.body.url,
+									user_image: user_img_url,
 									facebook_login_id: req.body.login_id,
 									google_login_id: "",
 									social_login_data_status: 1,
@@ -1216,8 +1231,10 @@ api.social_login = (req, res) => {
 									}
 								});
 				 } else if(req.body.login_type == "google") {
+					var user_img_url = (req.body.url == null? '': req.body.url);
+					var user_full_name = (req.body.name == null? '': req.body.name);
 					var userdata = {
-									fullname : req.body.name,
+									fullname : user_full_name,
 									user_role: 2,
 									email: req.body.email,
 									alternate_email:'',
@@ -1234,7 +1251,7 @@ api.social_login = (req, res) => {
 									latitude: '',
 									longitude: '',
 									password: crypto.encrypt('user123'),
-									user_image: req.body.url,
+									user_image: user_img_url,
 									facebook_login_id: '',
 									google_login_id: req.body.login_id,
 									social_login_data_status: 1,
