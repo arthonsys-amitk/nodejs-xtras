@@ -1093,6 +1093,189 @@ api.get_category = (req, res)=>{
   
 };
 
+/**
+ * @api {post} /social_login Social Login
+ * @apiGroup User
+ * @apiparam {String} email	Email ID of User
+ * @apiparam {String} login_id	Facebook/Google ID
+ * @apiparam {String} login_type	"facebook" or "google"
+ * @apiparam {String} image_url	URL of profile image by Google/Facebook
+ * @apiparam {String} device_token Device Token
+ * @apiparam {String} device_type Device Type : android / ios
+ * @apiparam {String} name Full Name of User
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 200 OK
+ *    {
+		"status": 200,
+		"api_name": "social_login",
+		"message": "Facebook Login is successful",
+		"data": {
+			"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHBpcmVzIjoxNTIyNzU4ODc5NTMxLCJ1c2VySUQiOiI1YWMyMjM1ZmVhYjRkNzE3MTBhMDUyMWMifQ.n2B7E5pWwG0tu3F82bQ7LBkqB74YtGrdydItEhqgXIc",
+			"expires": 1522758879531,
+			"user": {
+				"fullname": "Mike Adams",
+				"user_role": 2,
+				"email": "mike.adams@mailinator.com",
+				"alternate_email": "",
+				"phone": "",
+				"phone_1": "",
+				"phone_2": "",
+				"address": "",
+				"address_1": "",
+				"address_2": "",
+				"city": "",
+				"state": "",
+				"zip_code": "",
+				"country": "",
+				"latitude": "",
+				"longitude": "",
+				"password": "333f44ba2976b0",
+				"user_image": "http://35.168.99.29:3001/image/automobile-svc.png",
+				"facebook_login_id": "348574680756857680",
+				"google_login_id": "",
+				"social_login_data_status": 1,
+				"otp_status": 0,
+				"is_active": 0,
+				"is_deleted": 0,
+				"created_time": "2018-04-02T12:34:39.500Z",
+				"modified_time": "2018-04-02T12:34:39.501Z",
+				"_id": "5ac2235feab4d71710a0521c"
+			}
+		}
+	}
+ * @apiErrorExample {json} Failed
+ *    HTTP/1.1 400 Failed
+      {
+          "status": 400,
+          "api_name": "social_login",
+          "message": "Email already exists",
+          "data": {}
+      }
+*/
+
+api.social_login = (req, res) => {
+    if(Object.keys(req.body).length <= 7) {
+
+        let check_email = user.check_email_exist(req.body.email);
+
+        check_email.then(function(emailresult) {
+
+            if(emailresult != null) 
+            {
+                res.json({
+                  "status": 400,
+                  "api_name": "social_login",
+                  "message": "Email already exists.",
+                  "data": {}
+                });
+                return;
+
+            } else {
+				 if(req.body.login_type == "facebook") {
+					var userdata = {
+									fullname : req.body.name,
+									user_role: 2,
+									email: req.body.email,
+									alternate_email:'',
+									phone: '',
+									phone_1: '',
+									phone_2: '',
+									address: '',
+									address_1:'',
+									address_2:'',
+									city   : '',
+									state  : '',
+									zip_code: '',
+									country : '',
+									latitude: '',
+									longitude: '',
+									password: crypto.encrypt('user123'),
+									user_image: req.body.url,
+									facebook_login_id: req.body.login_id,
+									google_login_id: "",
+									social_login_data_status: 1,
+									otp_status: 0,
+									is_active: 0,
+									is_deleted: 0,
+									created_time: new Date(),
+									modified_time: new Date()
+								  };
+								// create user
+								user.createUser(userdata)
+								.then(function(response) {
+									if (response != null) {
+										user.save_device_token(userdata._id, req.body.device_token, req.body.device_type);
+
+										res.json({
+										  "status": 200,
+										  "api_name": "social_login",
+										  "message": "Facebook Login is successful",
+										  "data": genToken(userdata)
+										});
+										return;
+									}
+								});
+				 } else if(req.body.login_type == "google") {
+					var userdata = {
+									fullname : req.body.name,
+									user_role: 2,
+									email: req.body.email,
+									alternate_email:'',
+									phone: '',
+									phone_1: '',
+									phone_2: '',
+									address: '',
+									address_1:'',
+									address_2:'',
+									city   : '',
+									state  : '',
+									zip_code: '',
+									country : '',
+									latitude: '',
+									longitude: '',
+									password: crypto.encrypt('user123'),
+									user_image: req.body.url,
+									facebook_login_id: '',
+									google_login_id: req.body.login_id,
+									social_login_data_status: 1,
+									otp_status: 0,
+									is_active: 0,
+									is_deleted: 0,
+									created_time: new Date(),
+									modified_time: new Date()
+								  };
+								// create user
+								user.createUser(userdata)
+								.then(function(response) {
+									if (response != null) {
+										user.save_device_token(userdata._id, req.body.device_token, req.body.device_type);
+
+										res.json({
+										  "status": 200,
+										  "api_name": "social_login",
+										  "message": "Google Login is successful",
+										  "data": genToken(userdata)
+										});
+										return;
+									}
+								});
+				 }
+			
+			
+                
+                    
+            }
+        })
+    } else {
+        res.json({
+          "status": 400,
+          "api_name": "social_login",
+          "message": "Some request parameters are missing.",
+          "data": {}
+        });
+        return;
+    }
+};
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
