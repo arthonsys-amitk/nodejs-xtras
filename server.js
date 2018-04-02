@@ -8,13 +8,14 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     multer = require('multer'),
     routes = require('./api/routes'),
-    {fixLicenses} = require('./api/controllers/purchase'),
     router = express.Router(),
     middleware = require('./middleware'),
     cron = require('node-cron');
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '500mb' }));
 app.use(bodyParser.json());
+
+app.use(express.static('public'));
 
 app.all('/*', (req, res, next)=>{
   // CORS header support
@@ -29,21 +30,18 @@ app.all('/*', (req, res, next)=>{
   }
 });
 
-// routes accessible by anyone
-app.use('/', routes.auth);
-app.use('^.*/user/passwordReset$', routes.user);
-app.use('^.*/user/updateForgotPassword$', routes.user);
-app.use('^.*/contact/postContact$', routes.contact);
-
+// routes handaling module wise
+app.use('/api', routes.user);
+app.use('/api', routes.content);
 // secure API endpoints
+/* NOTE - moved into the routes files
 if (config.secureAPI){
   app.all('/API/*', [middleware.validateRequest]);
 }
+*/
 
-app.use('/API/purchase', routes.purchase);
 app.use('/API/user', routes.user);
-app.use('/API/product', routes.product);
-app.use('/API/contact', routes.contact);
+
 
 // If no route is matched by now, it must be a 404
 app.use(function(req, res, next) {
@@ -55,9 +53,7 @@ app.use(function(req, res, next) {
 
 var server = app.listen(port, function(){
   var portInUse = server.address().port;
-  console.log('X-traS Server listening on port %s', portInUse); 
+  console.log('Xtras server listening on port %s', portInUse);
 });
-
-//let task = cron.schedule('* 12 * * *', fixLicenses());
 
 module.exports = server;

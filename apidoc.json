@@ -1,0 +1,8 @@
+{
+    "name": "Xtras Apidoc",
+    "version": "1.0.0",
+    "description": "Xtras API documentation",
+    "template": {
+        "forceLanguage": "en"
+    }
+}

@@ -1,14 +1,7 @@
-"use strict";
-
-var user = require('./user'),
-    purchase = require('./purchase'),
-    product = require('./product'),
-    mail = require('./mail');
-
+var user      = require('./user');
+var content      = require('./content');
 
 module.exports = {
-  user : user,
-  purchase : purchase,
-  product : product,
-  mailHelper : mail
+  user      : user,
+  content      : content
 };

@@ -16,6 +16,9 @@ $ npm install
 $ npm run build
 $ npm start
 ```
+## To update apidoc, run command:
+$ npm run update-apidoc
+
 Default local http port for dev is 3010.  If security is turned on in your config file, you must include an access token in all requests.
 You'll find the list of URLs in the [/api/routes](./api/routes/) files.  Those URLs are mapped to base URLs in [server.js](./server.js).
 Default configuration values for server port, secret key, timeouts, etc. are defined in the [/config](./config/) module.

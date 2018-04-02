@@ -1,14 +1,16 @@
 "use strict";
 
 var express = require('express'),
-    web = require('../controllers').user.web,
+    {auth} = require('../controllers'),
+    {user} = require('../controllers'),
     router = module.exports = express.Router();
 
-router.post('/', web.createUser);
-router.get('/:userID', web.getUser);
-router.post('/search', web.search);
-router.put('/', web.updateUser);
-router.delete('/', web.deleteUser);
-router.put('/updatePassword', web.updatePassword);
-router.put('/updateForgotPassword', web.updateForgotPassword);
-router.post('/passwordReset', web.generatePasswordReset);
+router.post('/user_login', user.api.user_login);
+router.post('/user_register', user.api.user_register);
+router.post('/update_profile', user.api.update_profile);
+router.post('/change_password', user.api.change_password);
+router.post('/resend_otp', user.api.resend_otp);
+router.post('/verify_otp', user.api.verify_otp);
+router.post('/update_forgot_password', user.api.update_forgot_password);
+router.post('/user_logout', user.api.user_logout);
+router.post('/get_coupon', user.api.get_coupon);

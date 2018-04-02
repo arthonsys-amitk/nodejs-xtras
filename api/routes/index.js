@@ -1,15 +1,9 @@
 "use strict";
 
-var auth = require('./auth'),
-    purchase = require('./purchase'),
-    product = require('./product'),
-    contact = require('./contact'),
-    user = require('./user');
+var user 	  = require('./user');
+var content 	  = require('./content');
 
 module.exports = {
-  auth  : auth,
-  purchase : purchase,
-  product : product,
-  user : user,
-  contact: contact
+	user 	  : user,
+	content 	  : content
 };

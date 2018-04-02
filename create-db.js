@@ -5,39 +5,30 @@ ANNOYING - Mongo doesn't persist any of this unless you touch data
 var config = require('./config'),
     Mongo  = require('./mongo'),
     _      = require('lodash'),
-    {user, product} = require('./api/controllers'),
-    resetCollections = ['contact_queries','faq_queries','users', 'appointments', 'coupons', 'service_categories', 'services', 'service_options', 'service_addons', 'service_uploads', 'payments'];
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
+    {user} = require('./api/controllers'),
+    resetCollections = ['users','user_device_tokens', 'user_otp_verification'];
 
 var db = new Mongo;
+
 db.connect(config.mongoURI)
   .then(function(){return db.db.admin().listDatabases()})
   .then(function(dbArray){
-	 console.log(dbArray)
+   console.log(dbArray)
     var loc = _.findIndex(dbArray, function(o){return o.name == 'xtras';});
 
     if (loc == -1){
       // database doesn't exist yet so create it
       //var {Server, Db} = require('mongodb');
 
-      console.log('CREATED xtras database');
+      console.log('xtras database has been created successfully.');
     } else {
-      console.log('xtras database exists');	 
+      console.log('xtras database is already exist.');
     }
   })
-
   .then(function(){
       // drop collections
       for (var i = 0; i < resetCollections.length; i++){
-		//console.log(resetCollections[i] + ' -- dropping indexes .....');
-		//db.db.collection(resetCollections[i]).dropIndexes();
-		//console.log(resetCollections[i] + ' -- dropped indexes');
-        //db.db.dropCollection(resetCollections[i], function(){});
-        db.db.collection(resetCollections[i]).drop(); //also drops indexes
+        db.db.dropCollection(resetCollections[i], function(){});
         console.log(resetCollections[i] + ' collection dropped');
       }
   })
@@ -49,21 +40,33 @@ db.connect(config.mongoURI)
       }
   })
   .then(function(){
-    let god = {
-      email : 'admin_as@mailinator.com',
-      password : 'Admin@123',
-      user_role : 'admin',
-      is_active : 1,
-	  is_deleted: 0
-    };
-
+    
+    let admin_data = {
+                        
+                        fullname : 'Admin Kumar',
+                        user_role : 1,
+                        email : 'admin@gmail.com',
+                        phone: "7877949375",
+                        address: "Sector 21, Mansarovar, Jaipur, Rajasthan",
+                        latitude: "26.876467",
+                        longitude: "75.7459744",
+                        password: "123456",
+                        user_image: config.base_url,
+                        facebook_login_id: "",
+                        google_login_id: "",
+                        social_login_data_status: 0,
+                        otp_status: 1,
+                        is_active: 1,
+                        is_deleted: 0,
+                        created_time: new Date(),
+                        modified_time: new Date()
+                      };
       // put one record in users
-      return user.createUser(god);
+      return user.createAdmin(admin_data);
   })
-
   .then(function(){
     db.close();
     console.log('Finished');
   })
 
- sleep(5000).then(function(){console.log("collections Done");})
+                      

@@ -3,7 +3,7 @@ this module provides helper methods to allow the application to interact with a 
 */
 
 var mongo = require('mongodb'),
-		MongoClient = mongo.MongoClient;
+MongoClient = mongo.MongoClient;
 
 function DB() {
 	this.db = null;			// the MongoDB database connection
@@ -169,6 +169,38 @@ DB.prototype.update = function(coll, pattern, update) {
 	})
 };
 
+DB.prototype.update_with_push = function(coll, pattern, update) {
+
+	// return a promise that either resolves (passing the number of documents that have been updated)
+	// or rejected with the error received from the database.
+	// the "pattern" is used to match the required documents from the collection – to which the "update" is applied.
+
+	var _this=this;
+
+	return new Promise(function (resolve, reject) {
+		_this.db.collection(coll, {strict:true}, function(error, collection){
+			if (error) {
+				console.log("Could not access collection: " + error.message);
+				reject(error.message);
+			} else {
+				// setting the write concern to 1 ({w:1}) means that we don't wait for the changes to be replicated
+				// to any of the secondaries –  OK for a tool like this as it speeds things up at the expense of
+				// resiliency but most applications would use a "majority" write concern.
+				collection.updateMany(pattern, {$push: update}, {w:1})
+				.then(
+					function(result) {
+						resolve(result.result.nModified);
+					},
+					function(err) {
+						console.log("updateMany failed: " + err.message);
+						reject(err.message);
+					}
+				)
+			}
+		})
+	})
+};
+
 DB.prototype.findOne = function(coll, pattern) {
 
 	// return a promise that either resolves with the result
@@ -185,6 +217,38 @@ DB.prototype.findOne = function(coll, pattern) {
 			} else {
 				// find one
 				return collection.findOne(pattern)
+				.then(
+					function(result) {
+						resolve(result);
+					},
+					function(err) {
+						console.log("findOne failed: " + err.message);
+						reject(err.message);
+					}
+				)
+			}
+		})
+	})
+};
+
+DB.prototype.find = function(coll, findPattern, sortPattern={_id:1}, limit=0 ) {
+
+	// return a promise that either resolves with the result
+	// or rejected with the error received from the database.
+	// the "findPattern" is used to match the required document from the collection and,
+	// the 'findPattern' is used to sorting the resultant data. 1 for ascending and -1 for descending
+	// the 'limit' is used to get limited number of documents: 0 for all.
+
+	var _this=this;
+
+	return new Promise(function (resolve, reject) {
+		_this.db.collection(coll, {strict:true}, function(error, collection){
+			if (error) {
+				console.log("Could not access collection: " + error.message);
+				reject(error.message);
+			} else {
+				// find one
+				return collection.find(findPattern).sort(sortPattern).limit(limit).toArray()
 				.then(
 					function(result) {
 						resolve(result);
