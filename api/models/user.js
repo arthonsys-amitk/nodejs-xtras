@@ -400,4 +400,22 @@ exportFuns.check_coupon = () => {
         return coupon;
     });
 };
+
+
+// get all category detail
+exportFuns.get_category = () => {
+    
+    let db = new Mongo;
+    /*let searchPattern = {
+        expiry_date: { $gte: String(new Date()) }, 
+    };*/
+    return db.connect(config.mongoURI)
+    .then(function() {
+        return db.find('category');
+    })
+    .then(function(category) {
+        db.close();
+        return category;
+    });
+};
 module.exports = exportFuns;

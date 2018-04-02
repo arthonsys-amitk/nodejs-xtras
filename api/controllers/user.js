@@ -1029,6 +1029,71 @@ api.get_coupon = (req, res)=>{
 
   
 };
+
+
+
+/**
+ * @api {post} /get_category Get Category
+ * @apiGroup Home Page
+
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 200 OK
+ *    {
+      "status": 200,
+      "api_name": "get_category",
+      "message": "All Category.",
+      "data": [
+        {
+          "_id": "5abe2b9058c77712747b3cfa",
+          "category_name": "Automobile Services",
+          "category_image": "http:\\localhost:3001\image\abcd.jpg",
+          "created_at": "Fri Mar 30 2018 17:47:06 GMT+0530 (India Standard Time)"
+          "updated_at": "Fri Mar 30 2018 17:47:06 GMT+0530 (India Standard Time)"
+        },
+        {
+          "_id": "5abe455d58c77712747b3d06",
+          "category_name": "Automobile Services",
+          "category_image": "http:\\localhost:3001\image\abc.jpg",
+          "created_at": "Fri Mar 30 2018 17:47:06 GMT+0530 (India Standard Time)",
+          "updated_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
+          
+        }
+      ]
+    }
+ * @apiErrorExample {json} Failed
+ *    HTTP/1.1 400 Failed
+      {
+          "status": 400,
+          "api_name": "get_category",
+          "message": "No Category found."
+      }
+*/
+api.get_category = (req, res)=>{
+
+          user.get_category()
+          .then(function(category) {
+            if(category!=null){
+                res.json({
+                  "status": 200,
+                  "api_name": "get_category",
+                  "message": "All Category.",
+                  "data": category
+                });
+                return;
+            }else{
+                res.json({
+                  "status": 400,
+                  "api_name": "get_category",
+                  "message": "No Category found."
+                });
+                return;
+            }
+          });
+
+  
+};
+
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 

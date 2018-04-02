@@ -14,3 +14,4 @@ router.post('/verify_otp', user.api.verify_otp);
 router.post('/update_forgot_password', user.api.update_forgot_password);
 router.post('/user_logout', user.api.user_logout);
 router.post('/get_coupon', user.api.get_coupon);
+router.post('/get_category', user.api.get_category);
