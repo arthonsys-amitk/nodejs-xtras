@@ -1185,7 +1185,7 @@ api.social_login = (req, res) => {
 			
             } else {
 				 if(req.body.login_type == "facebook") {
-					 var user_img_url = (req.body.url == null? '': req.body.url);
+					 var user_img_url = ((req.body.url == null || !req.body.url)? ('http://' + req.headers.host + '/uploads/default/default_user.jpg'): req.body.url);
 					 var user_full_name = (req.body.name == null? '': req.body.name);
 					var userdata = {
 									fullname : user_full_name,
@@ -1231,7 +1231,7 @@ api.social_login = (req, res) => {
 									}
 								});
 				 } else if(req.body.login_type == "google") {
-					var user_img_url = (req.body.url == null? '': req.body.url);
+					var user_img_url = ((req.body.url == null || !req.body.url)? ('http://' + req.headers.host + '/uploads/default/default_user.jpg'): req.body.url);
 					var user_full_name = (req.body.name == null? '': req.body.name);
 					var userdata = {
 									fullname : user_full_name,
