@@ -4,6 +4,7 @@ var _      = require('lodash'),
     fs     = require('fs'),
     config = require('../../config'),
     {services} = require('../models'),
+    {user} = require('../models'),
     {crypto} = require('../helpers'),
     {sendmail} = require('../helpers');
 
@@ -47,6 +48,7 @@ var expiresIn = (numDays)=>{
 /**
  * @api {post} /post_service Post Service
  * @apiGroup Post
+ * @apiparam {String} user_id ID of the User submitting the post
  * @apiparam {String} service_category_id ID of the referred category
  * @apiparam {String} service_name Service name
  * @apiparam {String} service_type Service Type(individual/ business)
@@ -86,8 +88,8 @@ var expiresIn = (numDays)=>{
     "api_name": "post_service",
     "message": "You have posted Service successfully.",
     "data": {
-        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHBpcmVzIjoxNTIyODUyOTQzNjI0LCJzZXJ2aWNlc0lEIjoiNWFjMzkyY2YzODY4OGMxMjFjMDM2YmFiIn0.7jfEHnUfj4Df5-F5KduUztM4AK3_pn4_F-cfMD6K5qM",
-        "expires": 1522852943624,
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHBpcmVzIjoxNTIyOTE5OTU4OTk5LCJzZXJ2aWNlc0lEIjoiNWFjNDk4OTZkMmM2NGQxNjNjZGIzNzFhIn0.KkGpceTPSMb0kiAIrgZTQQDwrTLIfv1mHh4pgAf4YwI",
+        "expires": 1522919958999,
         "services": {
             "service_category_id": "ObjectId('5ac1e4fcd74b0f03981a5e70')",
             "service_name": "Lawn Cleaning",
@@ -118,7 +120,38 @@ var expiresIn = (numDays)=>{
             "province": "Rajasthan",
             "zipcode": "302017",
             "country": "India",
-            "_id": "5ac392cf38688c121c036bab"
+            "rating": "0",
+            "_id": "5ac49896d2c64d163cdb371a",
+            "userdata": {
+                "_id": "5ac2235feab4d71710a0521c",
+                "fullname": "Mike Adams",
+                "user_role": 2,
+                "email": "mike.adams@mailinator.com",
+                "alternate_email": "",
+                "phone": "",
+                "phone_1": "",
+                "phone_2": "",
+                "address": "",
+                "address_1": "",
+                "address_2": "",
+                "city": "",
+                "state": "",
+                "zip_code": "",
+                "country": "",
+                "latitude": "",
+                "longitude": "",
+                "password": "333f44ba2976b0",
+                "user_image": "http://35.168.99.29:3001/image/automobile-svc.png",
+                "facebook_login_id": "348574680756857680",
+                "google_login_id": "",
+                "social_login_data_status": 1,
+                "otp_status": 0,
+                "is_active": 0,
+                "is_deleted": 0,
+                "created_time": "2018-04-02T12:34:39.500Z",
+                "modified_time": "2018-04-02T12:34:39.501Z",
+                "profile_complete": 0
+            }
         }
     }
 }
@@ -132,8 +165,10 @@ var expiresIn = (numDays)=>{
       }
 */
 
-api.post_service = (req, res)=>{
+api.post_service = (req, res)=> {
 	
+	
+  let user_id = _.trim(req.body.user_id) || '';
   let service_category_id = _.trim(req.body.service_category_id) || '';
   let service_name = _.trim(req.body.service_name) || '';
   let service_type = _.trim(req.body.service_type) || ''; //individual/business
@@ -165,8 +200,7 @@ api.post_service = (req, res)=>{
   let country = _.trim(req.body.country) || '';
   
   
-  if(Object.keys(req.body).length >= 1) {
-	
+  if(Object.keys(req.body).length >= 1 ) {
 	var servicedata = {
 						service_category_id : service_category_id,
 						service_name : service_name,
@@ -200,7 +234,7 @@ api.post_service = (req, res)=>{
 						rating: '0'
 					 };
 	
-	if(req.body.cancel_rsh_policy != ''){
+	if(req.body.cancel_rsh_policy != '' && req.body.cancel_rsh_policy != undefined){
 		var fs     = require('fs')
 		var image = req.body.cancel_rsh_policy;
 		var policy_path = "cancelpolicy_" + Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
@@ -208,7 +242,7 @@ api.post_service = (req, res)=>{
 		fs.writeFileSync("public/uploads/policies/" + policy_path, bitmap);
 		servicedata.cancel_rsh_policy = config.base_url + '/uploads/policies/' + policy_path;
 	}
-	if(req.body.legal_policy != ''){
+	if(req.body.legal_policy != '' && req.body.legal_policy != undefined){
 		var fs     = require('fs')
 		var image = req.body.legal_policy;
 		var policy_path = "legalpolicy_" + Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
@@ -216,85 +250,103 @@ api.post_service = (req, res)=>{
 		fs.writeFileSync("public/uploads/policies/" + policy_path, bitmap);
 		servicedata.legal_policy = config.base_url + '/uploads/policies/' + policy_path;
 	}
-	services.postService(servicedata)
-	.then(function(result) {
-		if(result != null) {
-			var service_id = servicedata._id;
-			console.log("service_id:" + service_id);
-			
-			var util = require('util');
-			
-			//service area & pricing
-			//format: { area: [ { area_from_sqft: 11,       area_to_sqft: 11,       price: 11 } ] }
-			
-			if(req.body.service_area != null && req.body.service_area != '') {
-				var svc_area_obj = JSON.parse(req.body.service_area);
-				var svc_area = svc_area_obj.area;
-				if(util.isArray(svc_area)) {
-					svc_area.forEach(function(item) {
-						services.save_service_area_and_pricing(service_id, item.area_from_sqft, item.area_to_sqft, item.price);
-					});
+	if(req.body.user_id) {
+		user.getUser(req.body.user_id).then(function(userresult){
+			services.postService(servicedata)
+			.then(function(result) {
+				if(result != null) {
+					
+					if(userresult != null) {
+						if(userresult.email != "" && userresult.phone != "") {
+							userresult.profile_complete = 1;
+						} else {
+							userresult.profile_complete = 0;
+						}
+					} 
+					servicedata.userdata = userresult;
+					
+					var service_id = servicedata._id;
+								
+					var util = require('util');
+					
+					//service area & pricing
+					//format: { area: [ { area_from_sqft: 11,       area_to_sqft: 11,       price: 11 } ] }
+					
+					if(req.body.service_area != null && req.body.service_area != '') {
+						var svc_area_obj = JSON.parse(req.body.service_area);
+						var svc_area = svc_area_obj.area;
+						if(util.isArray(svc_area)) {
+							svc_area.forEach(function(item) {
+								services.save_service_area_and_pricing(service_id, item.area_from_sqft, item.area_to_sqft, item.price);
+							});
+						}
+					}
+					
+					//service grass/snow height
+					//format: { grasssnowheight: [ { area_from_sqft: 11,       area_to_sqft: 11,       price: 11 } ] }
+					if(req.body.grass_snow_height != null && req.body.grass_snow_height != '') {
+						var svc_grass_ht_obj = JSON.parse(req.body.grass_snow_height);
+						var svc_grass_ht = svc_grass_ht_obj.grasssnowheight;
+						if(util.isArray(svc_grass_ht)) {
+							svc_grass_ht.forEach(function(item) {
+							  services.save_service_grass_snow_height(service_id, item.area_from_sqft, item.area_to_sqft, item.price);
+							});
+						}
+					}
+					
+					//service addons
+					//format: { addon: [ { name: 'abc',    price: 11 } ] }
+					if(req.body.service_addons != null && req.body.service_addons != '') {
+						var svc_addons_obj = JSON.parse(req.body.service_addons);
+						var svc_addons = svc_addons_obj.addon;
+						if(util.isArray(svc_addons)) {
+							svc_addons.forEach(function(item) {
+							  services.save_service_addons(service_id, item.name, item.price);
+							});
+						}
+					}
+					
+					//service options
+					//format: { option: [ { name: 'abc',    price: 11 } ] }
+					if(req.body.service_options != null && req.body.service_options != '') {
+						var svc_options_obj = JSON.parse(req.body.service_options);
+						var svc_options = svc_options_obj.option;
+						if(util.isArray(svc_options)) {
+							svc_options.forEach(function(item) {
+							  services.save_service_options(service_id, item.name, item.price);
+							});
+						}
+					}
+					
+					//multiple image uploads with service
+					if(req.body.uploads != null && req.body.uploads != '') {
+						var iuploads = JSON.parse(req.body.uploads);
+						if(util.isArray(iuploads)){
+							iuploads.forEach(function(upload) {
+								services.save_image_uploads(service_id, upload);
+							});
+						}
+					}
+					
+					res.json({
+						  "status": 200,
+						  "api_name": "post_service",
+						  "message": "You have posted Service successfully.",
+						  "data": genToken(servicedata)
+						});
+						return;
 				}
-			}
-			
-			//service grass/snow height
-			//format: { grasssnowheight: [ { area_from_sqft: 11,       area_to_sqft: 11,       price: 11 } ] }
-			if(req.body.grass_snow_height != null && req.body.grass_snow_height != '') {
-				var svc_grass_ht_obj = JSON.parse(req.body.grass_snow_height);
-				var svc_grass_ht = svc_grass_ht_obj.grasssnowheight;
-				if(util.isArray(svc_grass_ht)) {
-					svc_grass_ht.forEach(function(item) {
-					  console.log(item.area_from_sqft);
-					  services.save_service_grass_snow_height(service_id, item.area_from_sqft, item.area_to_sqft, item.price);
-					});
-				}
-			}
-			
-			//service addons
-			//format: { addon: [ { name: 'abc',    price: 11 } ] }
-			if(req.body.service_addons != null && req.body.service_addons != '') {
-				var svc_addons_obj = JSON.parse(req.body.service_addons);
-				var svc_addons = svc_addons_obj.addon;
-				if(util.isArray(svc_addons)) {
-					svc_addons.forEach(function(item) {
-					  console.log(item.name);
-					  services.save_service_addons(service_id, item.name, item.price);
-					});
-				}
-			}
-			
-			//service options
-			//format: { option: [ { name: 'abc',    price: 11 } ] }
-			if(req.body.service_options != null && req.body.service_options != '') {
-				var svc_options_obj = JSON.parse(req.body.service_options);
-				var svc_options = svc_options_obj.option;
-				if(util.isArray(svc_options)) {
-					svc_options.forEach(function(item) {
-					  console.log(item.name);
-					  services.save_service_options(service_id, item.name, item.price);
-					});
-				}
-			}
-			
-			//multiple image uploads with service
-			if(req.body.uploads != null && req.body.uploads != '') {
-				var iuploads = JSON.parse(req.body.uploads);
-				if(util.isArray(iuploads)){
-					iuploads.forEach(function(upload) {
-						services.save_image_uploads(service_id, upload);
-					});
-				}
-			}
-			
-			res.json({
-				  "status": 200,
-				  "api_name": "post_service",
-				  "message": "You have posted Service successfully.",
-				  "data": genToken(servicedata)
-				});
-				return;
-		}
-	});
+			});
+		});
+	} else {
+		res.json({
+          "status": 400,
+          "api_name": "post_service",
+          "message": "User ID not provided in request.",
+          "data": {}
+        });
+        return;
+	}	
   } else {
         res.json({
           "status": 400,
