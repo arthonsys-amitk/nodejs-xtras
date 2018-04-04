@@ -2,6 +2,7 @@
 var _      = require('lodash'),
     jwt    = require('jwt-simple'),
     fs     = require('fs'),
+	nodemailer = require("nodemailer"),
     config = require('../../config'),
     {user} = require('../models'),
     {crypto} = require('../helpers'),
@@ -1162,6 +1163,7 @@ api.get_category = (req, res)=>{
       }
 */
 
+
 api.social_login = (req, res) => {
     if(Object.keys(req.body).length <= 7) {
 
@@ -1185,7 +1187,7 @@ api.social_login = (req, res) => {
 			
             } else {
 				 if(req.body.login_type == "facebook") {
-					 var user_img_url = ((req.body.url == null || !req.body.url)? ('http://' + req.headers.host + '/uploads/default/default_user.jpg'): req.body.url);
+					 var user_img_url = ((req.body.image_url == null || !req.body.image_url)? ('http://' + req.headers.host + '/uploads/default/default_user.jpg'): req.body.image_url);
 					 var user_full_name = (req.body.name == null? '': req.body.name);
 					var userdata = {
 									fullname : user_full_name,
@@ -1231,7 +1233,7 @@ api.social_login = (req, res) => {
 									}
 								});
 				 } else if(req.body.login_type == "google") {
-					var user_img_url = ((req.body.url == null || !req.body.url)? ('http://' + req.headers.host + '/uploads/default/default_user.jpg'): req.body.url);
+					var user_img_url = ((req.body.image_url == null || !req.body.image_url)? ('http://' + req.headers.host + '/uploads/default/default_user.jpg'): req.body.image_url);
 					var user_full_name = (req.body.name == null? '': req.body.name);
 					var userdata = {
 									fullname : user_full_name,
@@ -1293,7 +1295,86 @@ api.social_login = (req, res) => {
         return;
     }
 };
+/**
+ * @api {post} /add_faq Add user query
+ * @apiGroup User
+ * @apiparam {String} email	Email ID of User
+ * @apiparam {String} query	Query by user
 
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 200 OK
+ *    {
+    "status": 200,
+    "api_name": "add_faq",
+    "message": "Query Added successfully.",
+    "data": {}
+}
+ * @apiErrorExample {json} Failed
+ *    HTTP/1.1 400 Failed
+      {
+         "status": 400,
+         "api_name": "add_faq",
+         "message": "Query not Added.",
+         "data": {}
+      }
+*/
+api.add_faq = (req, res)=>{
+if(Object.keys(req.body).length == 2) {
+    user.add_faq(req.body.email,req.body.query)
+    .then(function(result) {
+      if(result!=null){
+          res.json({
+            "status": 200,
+            "api_name": "add_faq",
+            "message": "Query Added successfully.",
+            "data": {}
+          });
+          return;
+      }else{
+          res.json({
+            "status": 400,
+            "api_name": "add_faq",
+            "message": "Query not added."
+          });
+          return;
+      }
+    });
+}else{
+    res.json({
+        "status": 400,
+        "api_name": "add_faq",
+        "message": "Some request parameters are missing.",
+        "data": {}
+      });
+      return;
+} 
+
+
+};
+api.send = (req, res)=>{
+   var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'rahul.soni@arthonsys.com',
+    pass: 'Rahulsoni@120245'
+  }
+});
+
+var mailOptions = {
+  from: 'rahul.soni@arthonsys.com',
+  to: 'rahulsonikadel@gmail.com',
+  subject: 'Sending Email using Node.js',
+  text: 'That was easy!'
+};
+
+transporter.sendMail(mailOptions, function(error, info){
+  if (error) {
+    res.send(error);
+  } else {
+     res.send(info.response);
+  }
+});
+}
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 

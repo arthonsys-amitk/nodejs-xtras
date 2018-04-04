@@ -418,4 +418,24 @@ exportFuns.get_category = () => {
         return category;
     });
 };
+// Insert user query
+exportFuns.add_faq = (email,query) => {
+    
+    let db = new Mongo;
+    /*let searchPattern = {
+        expiry_date: { $gte: String(new Date()) }, 
+    };*/
+    return db.connect(config.mongoURI)
+    .then(function() {
+        var insertPattern = { email: email, query: query,created_at:new Date(),is_deleted:0 };
+
+            
+
+                return db.insert('user_query', insertPattern)
+    })
+    .then(function(category) {
+        db.close();
+        return category;
+    });
+};
 module.exports = exportFuns;
