@@ -1214,6 +1214,7 @@ api.social_login = (req, res) => {
 									otp_status: 0,
 									is_active: 0,
 									is_deleted: 0,
+									profile_complete: 0,
 									created_time: new Date(),
 									modified_time: new Date()
 								  };
@@ -1260,6 +1261,7 @@ api.social_login = (req, res) => {
 									otp_status: 0,
 									is_active: 0,
 									is_deleted: 0,
+									profile_complete: 0,
 									created_time: new Date(),
 									modified_time: new Date()
 								  };
