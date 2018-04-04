@@ -12,8 +12,8 @@ var express = require('express'),
     middleware = require('./middleware'),
     cron = require('node-cron');
 
-app.use(bodyParser.urlencoded({ extended: true, limit: '500mb' }));
-app.use(bodyParser.json());
+	app.use(bodyParser.json({limit: '500mb'}));
+	app.use(bodyParser.urlencoded({ extended: true, limit: '500mb', parameterLimit:50000 }));
 
 app.use(express.static('public'));
 
@@ -33,6 +33,7 @@ app.all('/*', (req, res, next)=>{
 // routes handaling module wise
 app.use('/api', routes.user);
 app.use('/api', routes.content);
+app.use('/api', routes.services);
 // secure API endpoints
 /* NOTE - moved into the routes files
 if (config.secureAPI){
