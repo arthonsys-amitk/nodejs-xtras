@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "authorizenet": "^1.0.4",
+    "bluebird": "^3.5.1",
     "body-parser": "^1.17.2",
     "credit-card-type": "^6.0.0",
     "emailjs": "^1.0.12",
