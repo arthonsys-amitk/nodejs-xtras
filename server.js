@@ -34,6 +34,7 @@ app.all('/*', (req, res, next)=>{
 app.use('/api', routes.user);
 app.use('/api', routes.content);
 app.use('/api', routes.services);
+app.use('/api', routes.search);
 // secure API endpoints
 /* NOTE - moved into the routes files
 if (config.secureAPI){
