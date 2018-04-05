@@ -3,7 +3,10 @@
 var exportFuns = {},
     config     = require('../../config'),
     {sendmail} = require('../helpers'),
+	{services} = require('../models'),
     Mongo      = require('../../mongo');
+
+	const Promise = require("bluebird");
 
 // get user object from database using email
 exportFuns.getUserByEmail = (email)=>{
@@ -410,7 +413,35 @@ exportFuns.get_category = () => {
         expiry_date: { $gte: String(new Date()) }, 
     };*/
     return db.connect(config.mongoURI)
-    .then(function() {
+    .then(function() {      
+		let searchPattern = {
+			parent_id : "0"
+	    };
+		return db.find('category', searchPattern);
+    })
+    .then(function(categories) {
+		var services = require('./services.js');
+		return Promise.map(categories, rowcategory => {
+						return services.get_subcategories(rowcategory._id)
+						.then(function(result){ 
+							rowcategory.subcategories = result;
+		                    return rowcategory;
+		                })
+		}).then(finalList => {		            
+					db.close();
+					return finalList;
+		});
+    });
+};
+
+exportFuns.get_category_old = () => {
+    
+    let db = new Mongo;
+    /*let searchPattern = {
+        expiry_date: { $gte: String(new Date()) }, 
+    };*/
+    return db.connect(config.mongoURI)
+    .then(function() {		
         return db.find('category');
     })
     .then(function(category) {
@@ -418,6 +449,7 @@ exportFuns.get_category = () => {
         return category;
     });
 };
+
 // Insert user query
 exportFuns.add_faq = (email,query) => {
     

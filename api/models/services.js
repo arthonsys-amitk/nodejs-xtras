@@ -102,6 +102,20 @@ exportFuns.save_service_grass_snow_height = (service_id, area_from_sqft, area_to
 	});	
 }
 
+//get all subcategories of given category id
+exportFuns.get_subcategories = (parent_category_id) => {
+    
+    let db = new Mongo;
+        return db.connect(config.mongoURI)
+    .then(function() {
+		let searchPattern = {
+			parent_id : "" + parent_category_id
+	    };
+		return db.find('category', searchPattern)
+		
+    });
+}
+
 // save service addons
 exportFuns.save_service_addons = (service_id, name, price) => {
 
@@ -149,5 +163,36 @@ exportFuns.save_service_options = (service_id, name, price) => {
 	});	
 }
 
-
+// Insert Appointment
+exportFuns.insert_appointment = (data) => {
+    
+    let db = new Mongo;
+    /*let searchPattern = {
+        expiry_date: { $gte: String(new Date()) }, 
+    };*/
+    return db.connect(config.mongoURI)
+    .then(function() {
+        return db.insert('appointments', data)
+    })
+    .then(function(userdata) {
+        db.close();
+        return userdata;
+    });
+};
+// Get appointments by user_id
+exportFuns.get_appointments = (user_id) => {
+    
+    let db = new Mongo;
+    let searchPattern = {
+        consumer_id: user_id, 
+    };
+    return db.connect(config.mongoURI)
+    .then(function() {
+        return db.find('appointments', searchPattern);
+    })
+    .then(function(result) {
+        db.close();
+        return result;
+    });
+};
 module.exports = exportFuns;

@@ -1049,27 +1049,107 @@ api.get_coupon = (req, res)=>{
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 200 OK
  *    {
-      "status": 200,
-      "api_name": "get_category",
-      "message": "All Category.",
-      "data": [
-        {
-          "_id": "5abe2b9058c77712747b3cfa",
-          "category_name": "Automobile Services",
-          "category_image": "http:\\localhost:3001\image\abcd.jpg",
-          "created_at": "Fri Mar 30 2018 17:47:06 GMT+0530 (India Standard Time)"
-          "updated_at": "Fri Mar 30 2018 17:47:06 GMT+0530 (India Standard Time)"
-        },
-        {
-          "_id": "5abe455d58c77712747b3d06",
-          "category_name": "Automobile Services",
-          "category_image": "http:\\localhost:3001\image\abc.jpg",
-          "created_at": "Fri Mar 30 2018 17:47:06 GMT+0530 (India Standard Time)",
-          "updated_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
-          
-        }
-      ]
-    }
+		"status": 200,
+		"api_name": "get_category",
+		"message": "All Category.",
+		"data": [
+			{
+				"_id": "5ac1e0a2d74b0f03981a5e6d",
+				"category_name": "Automobile Services",
+				"parent_id": "0",
+				"category_image": "http://35.168.99.29:3001/image/automobile-svc.png",
+				"created_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
+				"updated_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
+				"subcategories": [
+					{
+						"_id": "5ac4e5cd5f7b5e0f1101ec3d",
+						"category_name": "Oil Change",
+						"parent_id": "5ac1e0a2d74b0f03981a5e6d",
+						"category_image": "http://35.168.99.29:3001/image/automobile-svc.png",
+						"created_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
+						"updated_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)"
+					},
+					{
+						"_id": "5ac4e5df5f7b5e0f1101eca4",
+						"category_name": "Tyre Rotation",
+						"parent_id": "5ac1e0a2d74b0f03981a5e6d",
+						"category_image": "http://35.168.99.29:3001/image/automobile-svc.png",
+						"created_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
+						"updated_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)"
+					},
+					{
+						"_id": "5ac4e5f45f7b5e0f1101ed33",
+						"category_name": "Wiper Blade",
+						"parent_id": "5ac1e0a2d74b0f03981a5e6d",
+						"category_image": "http://35.168.99.29:3001/image/automobile-svc.png",
+						"created_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
+						"updated_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)"
+					},
+					{
+						"_id": "5ac4e6065f7b5e0f1101edb7",
+						"category_name": "Battery Boost",
+						"parent_id": "5ac1e0a2d74b0f03981a5e6d",
+						"category_image": "http://35.168.99.29:3001/image/automobile-svc.png",
+						"created_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
+						"updated_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)"
+					},
+					{
+						"_id": "5ac4e6155f7b5e0f1101ee1c",
+						"category_name": "Others",
+						"parent_id": "5ac1e0a2d74b0f03981a5e6d",
+						"category_image": "http://35.168.99.29:3001/image/automobile-svc.png",
+						"created_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
+						"updated_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)"
+					}
+				]
+			},
+			{
+				"_id": "5ac1e3f6d74b0f03981a5e6e",
+				"category_name": "Computer Service",
+				"parent_id": "0",
+				"category_image": "http://35.168.99.29:3001/image/computer-svc.png",
+				"created_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
+				"updated_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
+				"subcategories": []
+			},
+			{
+				"_id": "5ac1e48fd74b0f03981a5e6f",
+				"category_name": "Food Catering Service",
+				"parent_id": "0",
+				"category_image": "http://35.168.99.29:3001/image/food-svc.png",
+				"created_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
+				"updated_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
+				"subcategories": []
+			},
+			{
+				"_id": "5ac1e4fcd74b0f03981a5e70",
+				"category_name": "Lawn Mowing Service",
+				"parent_id": "0",
+				"category_image": "http://35.168.99.29:3001/image/lawn-svc.png",
+				"created_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
+				"updated_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
+				"subcategories": []
+			},
+			{
+				"_id": "5ac1e55cd74b0f03981a5e71",
+				"category_name": "Movers & Delivery Service",
+				"parent_id": "0",
+				"category_image": "http://35.168.99.29:3001/image/movers-svc.png",
+				"created_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
+				"updated_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
+				"subcategories": []
+			},
+			{
+				"_id": "5ac1e5a1d74b0f03981a5e72",
+				"category_name": "Snow Cleaning Service",
+				"parent_id": "0",
+				"category_image": "http://35.168.99.29:3001/image/snow-svc.png",
+				"created_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
+				"updated_at": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
+				"subcategories": []
+			}
+		]
+	}
  * @apiErrorExample {json} Failed
  *    HTTP/1.1 400 Failed
       {
