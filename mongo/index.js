@@ -426,5 +426,54 @@ DB.prototype.mostRecent = function(coll) {
 	})
 };
 
+
+DB.prototype.findPage = function(coll, findPattern, sortPattern={_id:1}, limit=0, page=0 ) {
+
+	// return a promise that either resolves with the result
+	// or rejected with the error received from the database.
+	// the "findPattern" is used to match the required document from the collection and,
+	// the 'findPattern' is used to sorting the resultant data. 1 for ascending and -1 for descending
+	// the 'limit' is used to get limited number of documents: 0 for all.
+	// the 'page' is used for pagination
+
+	var _this=this;
+
+	return new Promise(function (resolve, reject) {
+		_this.db.collection(coll, {strict:true}, function(error, collection){
+			if (error) {
+				console.log("Could not access collection: " + error.message);
+				reject(error.message);
+			} else {
+				if(page) {
+					var page_size = limit? limit : 20;
+					var skips = page_size * (page - 1);
+					return collection.find(findPattern).sort(sortPattern).skip(parseInt(skips)).limit(parseInt(limit)).toArray()
+					.then(
+						function(result) {
+							resolve(result);
+						},
+						function(err) {
+							console.log("findOne failed: " + err.message);
+							reject(err.message);
+						}
+					)
+				} else { 
+					return collection.find(findPattern).sort(sortPattern).limit(limit).toArray()
+					.then(
+						function(result) {
+							resolve(result);
+						},
+						function(err) {
+							console.log("findOne failed: " + err.message);
+							reject(err.message);
+						}
+					)
+				}
+			}
+		})
+	})
+};
+
+
 // export the module
 module.exports = DB;

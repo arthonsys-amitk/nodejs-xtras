@@ -20,6 +20,25 @@ exportFuns.postService = (services)=>{
   });
 };
 
+// getPosts
+exportFuns.getPosts = (service_category_id, type, limit, page)=>{
+  let db = new Mongo;
+
+  return db.connect(config.mongoURI)
+  .then(function(){
+    var searchPattern = {};
+	if(type == "individual" || type == "business") {
+		searchPattern = {
+			service_type: "" + type, 
+		};
+	}
+	if(page) {
+		return db.findPage('services', searchPattern, {'_id': -1}, limit, page);
+	} else {
+		return db.find('services', searchPattern, {'_id': -1});
+	}
+  });
+};
 
 // save a single service image upload
 exportFuns.save_image_uploads = (service_id, uploadedimage) => {

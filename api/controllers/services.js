@@ -739,7 +739,150 @@ api.add_review = (req, res)=>{
          return;
      }    
  }
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+/**
+ * @api {post} /get_posts Get Posts
+ * @apiGroup Post
+ * @apiparam {String} service_category_id ID of the Service Category for which posts need to be fetched
+ * @apiparam {String} type Service Type(individual/ business), or, Price (price)
+ * @apiparam {Integer} [limit] Number of records to be fetched at a time (e.g 20)
+ * @apiparam {Integer} [page] Page number (e.g 1)
+ * @apiSuccessExample {json} Success
+ *    {
+		"status": 200,
+		"api_name": "get_posts",
+		"message": "Posts records retrieved successfully",
+		"data": [
+			{
+				"_id": "5ac70a6144b1f41aa0ee455d",
+				"service_category_id": "5ac1e4fcd74b0f03981a5e70",
+				"service_name": "Lawn Mowing Service",
+				"service_type": "individual",
+				"additional_details": "",
+				"service_radius": "552",
+				"service_radius_units": "Km",
+				"weekday_start_time": "",
+				"weekday_stop_time": "",
+				"weekend_start_time": "",
+				"weekend_stop_time": "",
+				"available_monday": "1",
+				"available_tuesday": "1",
+				"available_wednesday": "1",
+				"available_thursday": "1",
+				"available_friday": "1",
+				"available_saturday": "0",
+				"available_sunday": "0",
+				"is_active": "0",
+				"cancel_hours": "24",
+				"cancel_fee": "50",
+				"reschedule_hours": "24",
+				"reschedule_fee": "50",
+				"cancel_rsh_policy": "",
+				"legal_policy": "",
+				"address": "21/30 Kaveri Path",
+				"city": "Jaipur",
+				"province": "Rajasthan",
+				"zipcode": "302017",
+				"country": "India",
+				"rating": "0",
+				"userdata": {
+					"_id": "5ac2235feab4d71710a0521c",
+					"fullname": "Mike Adams",
+					"user_role": 2,
+					"email": "mike.adams@mailinator.com",
+					"alternate_email": "",
+					"phone": "",
+					"phone_1": "",
+					"phone_2": "",
+					"address": "",
+					"address_1": "",
+					"address_2": "",
+					"city": "",
+					"state": "",
+					"zip_code": "",
+					"country": "",
+					"latitude": "",
+					"longitude": "",
+					"password": "333f44ba2976b0",
+					"user_image": "http://35.168.99.29:3001/image/automobile-svc.png",
+					"facebook_login_id": "348574680756857680",
+					"google_login_id": "",
+					"social_login_data_status": 1,
+					"otp_status": 0,
+					"is_active": 0,
+					"is_deleted": 0,
+					"created_time": "2018-04-02T12:34:39.500Z",
+					"modified_time": "2018-04-02T12:34:39.501Z",
+					"profile_complete": 0
+				},
+				"service_area_and_pricing": [
+					{
+						"_id": "5ac70a6144b1f41aa0ee4558",
+						"area_from_sqft": "11",
+						"area_to_sqft": "11",
+						"price": "11"
+					}
+				],
+				"service_grass_snow_height": [
+					{
+						"_id": "5ac70a6144b1f41aa0ee4559",
+						"area_from_sqft": "11",
+						"area_to_sqft": "11",
+						"price": "11"
+					}
+				],
+				"service_addons": "",
+				"service_options": [
+					{
+						"_id": "5ac70a6144b1f41aa0ee455a",
+						"name": "sdd",
+						"price": "21"
+					}
+				],
+				"service_uploads": [
+					"http://127.0.0.1:3001/uploads/services/service_1522993761935488.jpg",
+					"http://127.0.0.1:3001/uploads/services/service_1522993761940246.jpg"
+				]
+			}
+		]
+	}
+ * @apiErrorExample {json} Failed
+ *    HTTP/1.1 400 Failed
+      {
+          "status": 400,
+          "api_name": "get_posts",
+          "message": "Invalid request parameters.",
+          "data": {}
+      }
+*/
+
+api.get_posts = (req, res)=> {
+	let service_category_id = _.trim(req.body.service_category_id) || '';  
+	let type = _.trim(req.body.type) || ''; //individual/business/price
+	let limit = req.body.limit || 0; //number of records
+	let page = req.body.page || 0; //page
+	if(Object.keys(req.body).length >= 2 ) {
+		services.getPosts(service_category_id, type, limit, page)
+		.then(function(posts){
+			res.json({
+				  "status": 200,
+				  "api_name": "get_posts",
+				  "message": "Posts records retrieved successfully",
+				  "data": posts
+				});
+			return;
+		});
+	} else {
+		res.json({
+             "status": 400,
+             "api_name": "get_posts",
+             "message": "Some request parameters are missing.",
+             "data": {}
+         });
+         return;
+	}
+}
+ //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 exportFuns.api = api;
