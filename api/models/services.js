@@ -24,6 +24,21 @@ exportFuns.postService = (services)=>{
 // save a single service image upload
 exportFuns.save_image_uploads = (service_id, uploadedimage) => {
 
+    //let db = new Mongo;
+	uploaded_img_url = "";
+	if(uploadedimage != null) {
+		var fs     = require('fs')
+		var image = uploadedimage;
+		var upload_path = "service_" + Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
+		var bitmap = new Buffer(image, 'base64');
+		fs.writeFileSync("public/uploads/services/" + upload_path, bitmap);
+		var uploaded_img_url = config.base_url + '/uploads/services/' + upload_path;		
+	}
+    return uploaded_img_url;
+}
+
+exportFuns.save_image_uploads_old = (service_id, uploadedimage) => {
+
     let db = new Mongo;
 
 	if(uploadedimage != null) {

@@ -12,6 +12,7 @@ var exportFuns = {},
     api = {},
     web = {};
 
+const mongo = require('mongodb');
 // nodejs geocoder for latitude, longitude
 var NodeGeocoder = require('node-geocoder');
 var options = {
@@ -84,77 +85,104 @@ var expiresIn = (numDays)=>{
  * @apiparam {String} uploads Images in JS array 
  * @apiSuccessExample {json} Success
  *    {
-    "status": 200,
-    "api_name": "post_service",
-    "message": "You have posted Service successfully.",
-    "data": {
-        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHBpcmVzIjoxNTIyOTE5OTU4OTk5LCJzZXJ2aWNlc0lEIjoiNWFjNDk4OTZkMmM2NGQxNjNjZGIzNzFhIn0.KkGpceTPSMb0kiAIrgZTQQDwrTLIfv1mHh4pgAf4YwI",
-        "expires": 1522919958999,
-        "services": {
-            "service_category_id": "ObjectId('5ac1e4fcd74b0f03981a5e70')",
-            "service_name": "Lawn Cleaning",
-            "service_type": "individual",
-            "additional_details": "dtls...",
-            "service_radius": "5.0",
-            "service_radius_units": "Km",
-            "weekday_start_time": "10:00",
-            "weekday_stop_time": "18:00",
-            "weekend_start_time": "10.00",
-            "weekend_stop_time": "17:00",
-            "available_monday": "1",
-            "available_tuesday": "1",
-            "available_wednesday": "1",
-            "available_thursday": "1",
-            "available_friday": "1",
-            "available_saturday": "0",
-            "available_sunday": "0",
-            "is_active": "0",
-            "cancel_hours": "24",
-            "cancel_fee": "50",
-            "reschedule_hours": "24",
-            "reschedule_fee": "50",
-            "cancel_rsh_policy": "",
-            "legal_policy": "",
-            "address": "21/30 Kaveri Path",
-            "city": "Jaipur",
-            "province": "Rajasthan",
-            "zipcode": "302017",
-            "country": "India",
-            "rating": "0",
-            "_id": "5ac49896d2c64d163cdb371a",
-            "userdata": {
-                "_id": "5ac2235feab4d71710a0521c",
-                "fullname": "Mike Adams",
-                "user_role": 2,
-                "email": "mike.adams@mailinator.com",
-                "alternate_email": "",
-                "phone": "",
-                "phone_1": "",
-                "phone_2": "",
-                "address": "",
-                "address_1": "",
-                "address_2": "",
-                "city": "",
-                "state": "",
-                "zip_code": "",
-                "country": "",
-                "latitude": "",
-                "longitude": "",
-                "password": "333f44ba2976b0",
-                "user_image": "http://35.168.99.29:3001/image/automobile-svc.png",
-                "facebook_login_id": "348574680756857680",
-                "google_login_id": "",
-                "social_login_data_status": 1,
-                "otp_status": 0,
-                "is_active": 0,
-                "is_deleted": 0,
-                "created_time": "2018-04-02T12:34:39.500Z",
-                "modified_time": "2018-04-02T12:34:39.501Z",
-                "profile_complete": 0
-            }
-        }
-    }
-}
+		"status": 200,
+		"api_name": "post_service",
+		"message": "You have posted Service successfully.",
+		"data": {
+			"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHBpcmVzIjoxNTIzMDgwMTYxOTQzfQ.313bmWMZnm2blSOK1TqN9xGbw9JOqO8TxJhvCdQBQwk",
+			"expires": 1523080161943,
+			"services": {
+				"service_category_id": "5ac1e4fcd74b0f03981a5e70",
+				"service_name": "Lawn Mowing Service",
+				"service_type": "individual",
+				"additional_details": "",
+				"service_radius": "552",
+				"service_radius_units": "Km",
+				"weekday_start_time": "",
+				"weekday_stop_time": "",
+				"weekend_start_time": "",
+				"weekend_stop_time": "",
+				"available_monday": "1",
+				"available_tuesday": "1",
+				"available_wednesday": "1",
+				"available_thursday": "1",
+				"available_friday": "1",
+				"available_saturday": "0",
+				"available_sunday": "0",
+				"is_active": "0",
+				"cancel_hours": "24",
+				"cancel_fee": "50",
+				"reschedule_hours": "24",
+				"reschedule_fee": "50",
+				"cancel_rsh_policy": "",
+				"legal_policy": "",
+				"address": "21/30 Kaveri Path",
+				"city": "Jaipur",
+				"province": "Rajasthan",
+				"zipcode": "302017",
+				"country": "India",
+				"rating": "0",
+				"userdata": {
+					"_id": "5ac2235feab4d71710a0521c",
+					"fullname": "Mike Adams",
+					"user_role": 2,
+					"email": "mike.adams@mailinator.com",
+					"alternate_email": "",
+					"phone": "",
+					"phone_1": "",
+					"phone_2": "",
+					"address": "",
+					"address_1": "",
+					"address_2": "",
+					"city": "",
+					"state": "",
+					"zip_code": "",
+					"country": "",
+					"latitude": "",
+					"longitude": "",
+					"password": "333f44ba2976b0",
+					"user_image": "http://35.168.99.29:3001/image/automobile-svc.png",
+					"facebook_login_id": "348574680756857680",
+					"google_login_id": "",
+					"social_login_data_status": 1,
+					"otp_status": 0,
+					"is_active": 0,
+					"is_deleted": 0,
+					"created_time": "2018-04-02T12:34:39.500Z",
+					"modified_time": "2018-04-02T12:34:39.501Z",
+					"profile_complete": 0
+				},
+				"service_area_and_pricing": [
+					{
+						"_id": "5ac70a6144b1f41aa0ee4558",
+						"area_from_sqft": "11",
+						"area_to_sqft": "11",
+						"price": "11"
+					}
+				],
+				"service_grass_snow_height": [
+					{
+						"_id": "5ac70a6144b1f41aa0ee4559",
+						"area_from_sqft": "11",
+						"area_to_sqft": "11",
+						"price": "11"
+					}
+				],
+				"service_addons": "",
+				"service_options": [
+					{
+						"_id": "5ac70a6144b1f41aa0ee455a",
+						"name": "sdd",
+						"price": "21"
+					}
+				],
+				"service_uploads": [
+					"http://127.0.0.1:3001/uploads/services/service_1522993761935488.jpg",
+					"http://127.0.0.1:3001/uploads/services/service_1522993761940246.jpg"
+				]
+			}
+		}
+	}
  * @apiErrorExample {json} Failed
  *    HTTP/1.1 400 Failed
       {
@@ -252,91 +280,163 @@ api.post_service = (req, res)=> {
 	}
 	if(req.body.user_id) {
 		user.getUser(req.body.user_id).then(function(userresult){
-			services.postService(servicedata)
-			.then(function(result) {
-				if(result != null) {
-					
-					if(userresult != null) {
-						if(userresult.email != "" && userresult.phone != "") {
-							userresult.profile_complete = 1;
-						} else {
-							userresult.profile_complete = 0;
-						}
-					} 
-					servicedata.userdata = userresult;
-					
-					var service_id = servicedata._id;
-								
-					var util = require('util');
-					
-					//service area & pricing
-					//format: { area: [ { area_from_sqft: 11,       area_to_sqft: 11,       price: 11 } ] }
-					
-					if(req.body.service_area != null && req.body.service_area != '') {
-						var svc_area_obj = JSON.parse(req.body.service_area);
-						var svc_area = svc_area_obj.area;
-						if(util.isArray(svc_area)) {
-							svc_area.forEach(function(item) {
-								services.save_service_area_and_pricing(service_id, item.area_from_sqft, item.area_to_sqft, item.price);
-							});
-						}
+				if(userresult != null) {
+					if(userresult.email != "" && userresult.phone != "") {
+						userresult.profile_complete = 1;
+					} else {
+						userresult.profile_complete = 0;
 					}
-					
-					//service grass/snow height
-					//format: { grasssnowheight: [ { area_from_sqft: 11,       area_to_sqft: 11,       price: 11 } ] }
-					if(req.body.grass_snow_height != null && req.body.grass_snow_height != '') {
-						var svc_grass_ht_obj = JSON.parse(req.body.grass_snow_height);
-						var svc_grass_ht = svc_grass_ht_obj.grasssnowheight;
-						if(util.isArray(svc_grass_ht)) {
-							svc_grass_ht.forEach(function(item) {
-							  services.save_service_grass_snow_height(service_id, item.area_from_sqft, item.area_to_sqft, item.price);
-							});
-						}
-					}
-					
-					//service addons
-					//format: { addon: [ { name: 'abc',    price: 11 } ] }
-					if(req.body.service_addons != null && req.body.service_addons != '') {
-						var svc_addons_obj = JSON.parse(req.body.service_addons);
-						var svc_addons = svc_addons_obj.addon;
-						if(util.isArray(svc_addons)) {
-							svc_addons.forEach(function(item) {
-							  services.save_service_addons(service_id, item.name, item.price);
-							});
-						}
-					}
-					
-					//service options
-					//format: { option: [ { name: 'abc',    price: 11 } ] }
-					if(req.body.service_options != null && req.body.service_options != '') {
-						var svc_options_obj = JSON.parse(req.body.service_options);
-						var svc_options = svc_options_obj.option;
-						if(util.isArray(svc_options)) {
-							svc_options.forEach(function(item) {
-							  services.save_service_options(service_id, item.name, item.price);
-							});
-						}
-					}
-					
-					//multiple image uploads with service
-					if(req.body.uploads != null && req.body.uploads != '') {
-						var iuploads = JSON.parse(req.body.uploads);
-						if(util.isArray(iuploads)){
-							iuploads.forEach(function(upload) {
-								services.save_image_uploads(service_id, upload);
-							});
-						}
-					}
-					
-					res.json({
-						  "status": 200,
-						  "api_name": "post_service",
-						  "message": "You have posted Service successfully.",
-						  "data": genToken(servicedata)
+				} 
+				servicedata.userdata = userresult;
+				
+				var service_id = servicedata._id;
+							
+				var util = require('util');
+				
+				if(req.body.service_area != null && req.body.service_area != '') {
+					var arr_svc_area = [];
+					var svc_area_obj = JSON.parse(req.body.service_area);
+					var svc_area = svc_area_obj.area;
+					if(util.isArray(svc_area)) {
+						svc_area.forEach(function(item) {
+							var svc_area_id = new mongo.ObjectID();
+							arr_svc_area.push({_id: svc_area_id, area_from_sqft : item.area_from_sqft, area_to_sqft : item.area_to_sqft, price: item.price });
 						});
-						return;
+					}						
+					servicedata.service_area_and_pricing = arr_svc_area;
+				} else {
+					servicedata.service_area_and_pricing = "";
 				}
-			});
+				//service area & pricing
+				//format: { area: [ { area_from_sqft: 11,       area_to_sqft: 11,       price: 11 } ] }
+				/*
+				//parse and store service_area_and_pricing data
+				if(req.body.service_area != null && req.body.service_area != '') {
+					var svc_area_obj = JSON.parse(req.body.service_area);
+					var svc_area = svc_area_obj.area;
+					if(util.isArray(svc_area)) {
+						svc_area.forEach(function(item) {
+							services.save_service_area_and_pricing(service_id, item.area_from_sqft, item.area_to_sqft, item.price);
+						});
+					}
+				}
+				*/
+				if(req.body.grass_snow_height != null && req.body.grass_snow_height != '') {
+					var arr_grass_area = [];
+					var svc_grass_ht_obj = JSON.parse(req.body.grass_snow_height);
+					var svc_grass_ht = svc_grass_ht_obj.grasssnowheight;
+					if(util.isArray(svc_grass_ht)) {							
+						svc_grass_ht.forEach(function(item) {
+							var svc_grass_id = new mongo.ObjectID();
+							arr_grass_area.push({_id: svc_grass_id, area_from_sqft : item.area_from_sqft, area_to_sqft : item.area_to_sqft, price: item.price });
+						});
+					}
+					servicedata.service_grass_snow_height = arr_grass_area;
+				} else {
+					servicedata.service_grass_snow_height = "";
+				}
+				//service grass/snow height
+				//format: { grasssnowheight: [ { area_from_sqft: 11,       area_to_sqft: 11,       price: 11 } ] }
+				/*
+				if(req.body.grass_snow_height != null && req.body.grass_snow_height != '') {
+					var svc_grass_ht_obj = JSON.parse(req.body.grass_snow_height);
+					var svc_grass_ht = svc_grass_ht_obj.grasssnowheight;
+					if(util.isArray(svc_grass_ht)) {
+						svc_grass_ht.forEach(function(item) {
+						  services.save_service_grass_snow_height(service_id, item.area_from_sqft, item.area_to_sqft, item.price);
+						});
+					}
+				}
+				*/
+				if(req.body.service_addons != null && req.body.service_addons != '') {
+					var arr_addons = [];
+					var svc_grass_ht_obj = JSON.parse(req.body.grass_snow_height);
+					var svc_grass_ht = svc_grass_ht_obj.grasssnowheight;
+					if(util.isArray(svc_grass_ht)) {							
+						svc_grass_ht.forEach(function(item) {
+							var svc_addon_id = new mongo.ObjectID();
+							arr_addons.push({_id: svc_addon_id, name : item.name, price: item.price });
+						});
+					}
+					servicedata.service_addons = arr_addons;
+				} else {
+					servicedata.service_addons = "";
+				}
+				//service addons
+				//format: { addon: [ { name: 'abc',    price: 11 } ] }
+				/*
+				if(req.body.service_addons != null && req.body.service_addons != '') {
+					var svc_addons_obj = JSON.parse(req.body.service_addons);
+					var svc_addons = svc_addons_obj.addon;
+					if(util.isArray(svc_addons)) {
+						svc_addons.forEach(function(item) {
+						  services.save_service_addons(service_id, item.name, item.price);
+						});
+					}
+				}
+				*/
+				
+				if(req.body.service_options != null && req.body.service_options != '') {
+					var arr_svc_options = [];
+					var svc_options_obj = JSON.parse(req.body.service_options);
+					var svc_options = svc_options_obj.option;
+					if(util.isArray(svc_options)) {
+						svc_options.forEach(function(item) {
+							var svc_option_id = new mongo.ObjectID();
+							arr_svc_options.push({_id: svc_option_id, name : item.name, price: item.price });
+						});
+					}
+					servicedata.service_options = arr_svc_options;
+				} else {
+					servicedata.service_options = "";
+				}
+				//service options
+				//format: { option: [ { name: 'abc',    price: 11 } ] }
+				/*
+				if(req.body.service_options != null && req.body.service_options != '') {
+					var svc_options_obj = JSON.parse(req.body.service_options);
+					var svc_options = svc_options_obj.option;
+					if(util.isArray(svc_options)) {
+						svc_options.forEach(function(item) {
+						  services.save_service_options(service_id, item.name, item.price);
+						});
+					}
+				}
+				*/
+				
+				if(req.body.uploads != null && req.body.uploads != '') {
+					var arr_svc_uploads = [];
+					var iuploads = JSON.parse(req.body.uploads);
+					if(util.isArray(iuploads)){
+						iuploads.forEach(function(upload) {
+							var svc_upload_id = new mongo.ObjectID();
+							var imgupload = services.save_image_uploads(service_id, upload);
+							arr_svc_uploads.push(imgupload);
+						});
+					}
+					servicedata.service_uploads = arr_svc_uploads;
+				} else {
+					servicedata.service_uploads = "";
+				}
+				//multiple image uploads with service
+				/*
+				if(req.body.uploads != null && req.body.uploads != '') {
+					var iuploads = JSON.parse(req.body.uploads);
+					if(util.isArray(iuploads)){
+						iuploads.forEach(function(upload) {
+							services.save_image_uploads(service_id, upload);
+						});
+					}
+				}
+				*/	
+				services.postService(servicedata);
+				res.json({
+					  "status": 200,
+					  "api_name": "post_service",
+					  "message": "You have posted Service successfully.",
+					  "data": genToken(servicedata)
+					});
+				return;
 		});
 	} else {
 		res.json({
