@@ -41,6 +41,47 @@ exportFuns.getPosts = (service_category_id, type, limit, page)=>{
   });
 };
 
+// gets ParentId of given category
+exportFuns.getParentId = (service_category_id)=>{
+  let db = new Mongo;
+
+  return db.connect(config.mongoURI)
+  .then(function(){
+	 var searchPattern = {
+		'_id' : db.makeID(service_category_id)
+	  };
+	 return db.findOne('category', searchPattern);
+  })
+  .then(function(result){
+    db.close();
+	if(result != null || result != undefined)
+		return result.parent_id;
+	else
+		return "";
+  });  
+};
+
+// gets name of given category
+exportFuns.getCategoryName = (service_category_id)=>{
+  let db = new Mongo;
+
+  return db.connect(config.mongoURI)
+  .then(function(){
+	 var searchPattern = {
+		'_id' : db.makeID(service_category_id)
+	  };
+	 return db.findOne('category', searchPattern);
+  })
+  .then(function(result){
+	db.close();
+	if(result != null || result != undefined)
+		return result.category_name;
+	else
+		return "";
+  });
+  ;
+};
+
 // save a single service image upload
 exportFuns.save_image_uploads = (service_id, uploadedimage) => {
 

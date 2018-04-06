@@ -227,6 +227,14 @@ api.post_service = (req, res)=> {
   let zipcode = _.trim(req.body.zipcode) || '';
   let country = _.trim(req.body.country) || '';
   
+  var currency = "$";
+  if(country != null && country != "undefined" && country == "Canada") {
+	 currency = "C$";
+  }
+  if(weekday_start_time) { weekday_start_time = sendmail.convertToSmallTime(weekday_start_time); }
+  if(weekday_stop_time) { weekday_stop_time = sendmail.convertToSmallTime(weekday_stop_time); }
+  if(weekend_start_time) { weekend_start_time = sendmail.convertToSmallTime(weekend_start_time); }
+  if(weekend_stop_time) { weekend_stop_time = sendmail.convertToSmallTime(weekend_stop_time); }
   
   if(Object.keys(req.body).length >= 1 ) {
 	var servicedata = {
@@ -259,7 +267,8 @@ api.post_service = (req, res)=> {
 						province : province,
 						zipcode : zipcode,
 						country : country,
-						rating: '0'
+						rating: '0',
+						currency: currency
 					 };
 	
 	if(req.body.cancel_rsh_policy != '' && req.body.cancel_rsh_policy != undefined){
@@ -305,7 +314,7 @@ api.post_service = (req, res)=> {
 					}						
 					servicedata.service_area_and_pricing = arr_svc_area;
 				} else {
-					servicedata.service_area_and_pricing = "";
+					servicedata.service_area_and_pricing = [];
 				}
 				//service area & pricing
 				//format: { area: [ { area_from_sqft: 11,       area_to_sqft: 11,       price: 11 } ] }
@@ -333,7 +342,7 @@ api.post_service = (req, res)=> {
 					}
 					servicedata.service_grass_snow_height = arr_grass_area;
 				} else {
-					servicedata.service_grass_snow_height = "";
+					servicedata.service_grass_snow_height = [];
 				}
 				//service grass/snow height
 				//format: { grasssnowheight: [ { area_from_sqft: 11,       area_to_sqft: 11,       price: 11 } ] }
@@ -360,7 +369,7 @@ api.post_service = (req, res)=> {
 					}
 					servicedata.service_addons = arr_addons;
 				} else {
-					servicedata.service_addons = "";
+					servicedata.service_addons = [];
 				}
 				//service addons
 				//format: { addon: [ { name: 'abc',    price: 11 } ] }
@@ -388,7 +397,7 @@ api.post_service = (req, res)=> {
 					}
 					servicedata.service_options = arr_svc_options;
 				} else {
-					servicedata.service_options = "";
+					servicedata.service_options = [];
 				}
 				//service options
 				//format: { option: [ { name: 'abc',    price: 11 } ] }
@@ -416,7 +425,7 @@ api.post_service = (req, res)=> {
 					}
 					servicedata.service_uploads = arr_svc_uploads;
 				} else {
-					servicedata.service_uploads = "";
+					servicedata.service_uploads = [];
 				}
 				//multiple image uploads with service
 				/*
@@ -428,7 +437,48 @@ api.post_service = (req, res)=> {
 						});
 					}
 				}
-				*/	
+				*/
+
+				//////////////////////////////////////////////
+				  var parent_category_id = "";
+				  var parent_category_name = "";
+				  if(service_category_id != null && service_category_id != undefined) {
+					  services.getParentId(service_category_id)
+					  .then(function(result){
+						  if(result != null && result) {
+							parent_category_id = result;
+							servicedata.parent_category_id = result;
+							if(parent_category_id != null && parent_category_id != undefined && parent_category_id) {
+								services.getCategoryName(parent_category_id)
+								.then(function(categname){
+									servicedata.parent_category_name = categname;
+									services.postService(servicedata);
+									res.json({
+										  "status": 200,
+										  "api_name": "post_service",
+										  "message": "You have posted Service successfully.",
+										  "data": genToken(servicedata)
+										});
+									return;
+								});
+							}			
+						 } else {
+							servicedata.parent_category_id = "";
+							servicedata.parent_category_name = "";
+							services.postService(servicedata);
+							res.json({
+								  "status": 200,
+								  "api_name": "post_service",
+								  "message": "You have posted Service successfully.",
+								  "data": genToken(servicedata)
+								});
+							return;
+						 }
+					  });
+				  }
+
+				//////////////////////////////////////////////
+				/*
 				services.postService(servicedata);
 				res.json({
 					  "status": 200,
@@ -437,6 +487,7 @@ api.post_service = (req, res)=> {
 					  "data": genToken(servicedata)
 					});
 				return;
+				*/
 		});
 	} else {
 		res.json({
@@ -670,7 +721,7 @@ api.get_appointments = (req, res)=>{
  * @apiGroup Post
  * @apiparam {String} user_id User Id
  * @apiparam {String} service_id Service Id
- * @apiparam {String} rate Rate
+ * @apiparam {Integer} rate Rate
  * @apiparam {String} comment Comment
 
 
@@ -733,6 +784,67 @@ api.add_review = (req, res)=>{
          res.json({
              "status": 400,
              "api_name": "add_review",
+             "message": "Some request parameters are missing.",
+             "data": {}
+         });
+         return;
+     }    
+ }
+ 
+/**
+ * @api {post} /average_review Get average review
+ * @apiGroup Post
+ * @apiparam {String} service_id Service Id
+
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 200 OK
+ *    {
+        "status": 200,
+        "api_name": "average_review",
+        "message": "Review successfully found.",
+        "data": 2.5
+      }
+ * @apiErrorExample {json} Failed
+ *    HTTP/1.1 400 Failed
+        {
+        "status": 400,
+        "api_name": "average_review",
+        "message": "Review not found.",
+        "data": {}
+      }
+*/
+ api.average_review = (req, res)=>{
+    if(Object.keys(req.body).length == 1) {
+        services.get_average_review(req.body.service_id).then(function(average_review){
+            if(average_review!=null)
+            {
+                  var avg_value=average_review[0].avg;
+                    avg_value = Math.round( avg_value * 10 ) / 10;
+                     res.json({
+                        "status": 200,
+                        "api_name": "average_review",
+                        "message": "Review successfully found.",
+                        "data": avg_value
+                    });
+                    return; 
+               
+            }else
+            {
+                 res.json({
+                    "status": 400,
+                    "api_name": "average_review",
+                    "message": "Average review not found.",
+                    "data": {}
+                });
+                return; 
+            }
+        })
+ 
+     }else
+     {
+         res.json({
+             "status": 400,
+             "api_name": "average_review",
              "message": "Some request parameters are missing.",
              "data": {}
          });
