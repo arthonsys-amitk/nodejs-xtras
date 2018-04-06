@@ -195,4 +195,41 @@ exportFuns.get_appointments = (user_id) => {
         return result;
     });
 };
+// Check review is exist or not
+exportFuns.check_review_exist = (data) => {
+    
+    let db = new Mongo;
+    let searchPattern = {
+		user_id: data.user_id, 
+		service_id:data.service_id
+    };
+    return db.connect(config.mongoURI)
+    .then(function() {
+        return db.find('service_review', searchPattern);
+    })
+    .then(function(result) {
+        db.close();
+        return result;
+    });
+};
+// Add new review
+exportFuns.add_review = (data)=>{
+	let db = new Mongo;
+    let insertPattern = {
+		service_id: data.service_id,
+		user_id: data.user_id,
+		rate:data.rate,
+		comment:data.comment,
+		created_at: new Date(),
+		updated_at: new Date()
+	};
+	return db.connect(config.mongoURI)
+	.then(function(){
+	  return db.insert('service_review', insertPattern);
+	})
+	.then(function(data){
+	  db.close();
+	  return data.ops[0];
+	});
+  };
 module.exports = exportFuns;

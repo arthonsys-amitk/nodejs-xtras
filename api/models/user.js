@@ -392,7 +392,7 @@ exportFuns.check_coupon = () => {
     
     let db = new Mongo;
     let searchPattern = {
-        expiry_date: { $gte: String(new Date()) }, 
+        expiry_date: { $gte: new Date() }, 
     };
     return db.connect(config.mongoURI)
     .then(function() {
@@ -469,5 +469,20 @@ exportFuns.add_faq = (email,query) => {
         db.close();
         return category;
     });
+};
+// Get coupon by service id
+exportFuns.get_coupon_by_service_id = (service_id) => {
+    console.log(service_id);
+    let db = new Mongo;
+    let searchPattern = {
+        service_ids:service_id,
+        expiry_date: { $gte: new Date() }         
+    };
+    console.log(searchPattern);
+    return db.connect(config.mongoURI)
+    .then(function() {
+         return db.find('coupon', searchPattern);
+    });
+
 };
 module.exports = exportFuns;

@@ -978,46 +978,10 @@ api.user_logout = (req, res)=>{
         return;
     }
 };
-/**
- * @api {post} /get_coupon Get coupon
- * @apiGroup Coupon
 
- * @apiSuccessExample {json} Success
- *    HTTP/1.1 200 OK
- *    {
-			"status": 200,
-			"api_name": "get_coupon",
-			"message": "All coupons.",
-			"data": [
-				{
-					"_id": "5abe2b9058c77712747b3cfa",
-					"percent": "10",
-					"multiple_use": 1,
-					"coupon_code": "ajju",
-					"expiry_date": "Fri Mar 30 2018 19:47:06 GMT+0530 (India Standard Time)",
-					"created_at": "Fri Mar 30 2018 17:47:06 GMT+0530 (India Standard Time)"
-				},
-				{
-					"_id": "5abe455d58c77712747b3d06",
-					"coupon_code": "mapha",
-					"expiry_date": "Mon Apr 30 2018 17:53:19 GMT+0530 (India Standard Time)",
-					"created_at": "Fri Mar 30 2018 17:47:06 GMT+0530 (India Standard Time)",
-					"multiple_use": 1,
-					"persent": "50"
-				}
-			]
-		}
- * @apiErrorExample {json} Failed
- *    HTTP/1.1 400 Failed
-      {
-          "status": 400,
-          "api_name": "get_coupon",
-          "message": "coupon invalid or expired."
-      }
-*/
 api.get_coupon = (req, res)=>{
 
-          user.check_coupon(req.body.coupon_code)
+          user.check_coupon()
           .then(function(coupon) {
             if(coupon!=null){
                 res.json({
@@ -1457,6 +1421,128 @@ transporter.sendMail(mailOptions, function(error, info){
   }
 });
 }
+/**
+ * @api {post} /get_coupon_by_service_id Get Coupon by service_id
+ * @apiGroup Coupon
+ * @apiparam {String} service_id	Service Id 
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 200 OK
+ *    {
+    "status": 200,
+    "api_name": "get_coupon_by_service_id",
+    "message": "Coupon found.",
+    "data": [
+        {
+            "_id": "5ac6091ce10da115207753a2",
+            "coupon_code": "killer",
+            "expiry_date": "2018-04-08T16:00:00.000Z",
+            "created_at": "2018-04-05T11:31:40.089Z",
+            "multiple_use": 1,
+            "percent": 50,
+            "service_ids": [
+                "5ac46a660d4b66316d0ee73a",
+                "5ac47e52f3f11e3a458e74d7",
+                "5ac47e9af3f11e3a458e74db",
+                "5ac60678225aca1d6064420b",
+                "5ac6067d225aca1d6064420c"
+            ],
+            "is_deleted": 0
+        },
+        {
+            "_id": "5ac60edd255db317306f7047",
+            "coupon_code": "indian",
+            "expiry_date": "2018-04-08T16:00:00.000Z",
+            "created_at": "2018-04-05T11:56:13.614Z",
+            "multiple_use": 1,
+            "percent": 50,
+            "service_ids": [
+                "5ac46a660d4b66316d0ee73a",
+                "5ac47e52f3f11e3a458e74d7",
+                "5ac47e9af3f11e3a458e74db",
+                "5ac60678225aca1d6064420b",
+                "5ac6067d225aca1d6064420c"
+            ],
+            "is_deleted": 0
+        },
+        {
+            "_id": "5ac60ee2255db317306f7048",
+            "coupon_code": "must",
+            "expiry_date": "2018-04-08T16:00:00.000Z",
+            "created_at": "2018-04-05T11:56:18.806Z",
+            "multiple_use": 1,
+            "percent": 50,
+            "service_ids": [
+                "5ac46a660d4b66316d0ee73a",
+                "5ac47e52f3f11e3a458e74d7",
+                "5ac47e9af3f11e3a458e74db",
+                "5ac60678225aca1d6064420b",
+                "5ac6067d225aca1d6064420c"
+            ],
+            "is_deleted": 0
+        }
+    ]
+}
+ * @apiErrorExample {json} Failed
+ *    HTTP/1.1 400 Failed
+      {
+         "status": 400,
+         "api_name": "get_coupon_by_service_id",
+         "message": "Result not found.",
+         "data": {}
+      }
+*/
+api.get_coupon_by_service_id = (req, res)=>{
+    //console.log([req.body.service_id]);
+    if(Object.keys(req.body).length == 1) {
+
+        if(req.body.service_id!='')
+        {
+            user.get_coupon_by_service_id(req.body.service_id)
+            .then(function(result) {
+            if(result!=null){
+                res.json({
+                    "status": 200,
+                    "api_name": "get_coupon_by_service_id",
+                    "message": "Coupon found.",
+                    "data":result
+                });
+                return;
+            }else{
+                res.json({
+                    "status": 400,
+                    "api_name": "get_coupon_by_service_id",
+                    "message": "Coupon not found",
+                    "data": {}
+                });
+                return;
+            }
+            });
+        }else
+        {
+            user.check_coupon()
+            .then(function(coupon) {
+              if(coupon!=null){
+                  res.json({
+                    "status": 200,
+                    "api_name": "get_coupon",
+                    "message": "All coupons.",
+                    "data": coupon
+                  });
+                  return;
+              }
+            });
+        }
+    }else
+    {
+        res.json({
+            "status": 400,
+            "api_name": "get_coupon_by_service_id",
+            "message": "Some request parameters are missing.",
+            "data": {}
+        });
+        return;
+    }  
+};
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 

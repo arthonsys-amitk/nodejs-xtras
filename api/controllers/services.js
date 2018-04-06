@@ -357,8 +357,288 @@ api.post_service = (req, res)=> {
         return;
     }
 };
+/**
+ * @api {post} /add_appointments Add appointments
+ * @apiGroup Post
+ * @apiparam {String} parent_appointment_id Parent appointment Id
+ * @apiparam {String} consumer_id Cousumer ID
+ * @apiparam {String} provider_id Provider ID
+ * @apiparam {String} service_id  Service Id
+ * @apiparam {Array} service_addons  Service Addons
+ * @apiparam {Array} service_options  Service options
+ * @apiparam {Array} service_area_and_pricing  Service Area And Pricing
+ * @apiparam {Array} service_grass_snow_height  Service Grass Snow Height
+ * @apiparam {String} appointment_date Appointment Date
+ * @apiparam {String} appointment_time Appointment Time
+ * @apiparam {String} provider_firstname Provider Firstname
+ * @apiparam {String} provider_lastname Provider Lastname
+ * @apiparam {String} provider_company Provider Company
+ * @apiparam {String} notes Notes
+ * @apiparam {String} coupon_id ID Coupon Id
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 200 OK
+ *    {
+		"status": 200,
+		"api_name": "add_appointments",
+		"message": "Appointment added successfully.",
+		"data": {
+			"parent_appointment_id": "1",
+			"consumer_id": "5ac36f3bfa85e0150c53cf34",
+			"provider_id": "5ac36f3bfa85e0150c53cf34",
+            "service_id": "3",
+            "service_addons":["5ac36f3bfa8sdfsd0150c53cf34","5ac36f3bfa8sdfsd0150c53cf34"],
+            "service_options":["5ac36f3bfids9sdnsd50c53cf34","5ac36f3bfids9sdnsd50c53cf34"],
+            "service_area_and_pricing": "",
+            "service_grass_snow_height": "",
+			"appointment_date": "04-04-2018",
+			"appointment_time": "09:50 PM",
+			"provider_firstname": "Rahul",
+			"provider_lastname": "soni",
+			"provider_company": "sale news",
+			"notes": "testing",
+			"svc_option_ids": "",
+			"svc_addon_ids": "",
+			"coupon_id": "120245",
+			"is_confirmed": 1,
+			"created_at": "2018-04-04T07:47:04.763Z",
+			"updated_at": "2018-04-04T07:47:04.763Z",
+			"is_active": 1,
+			"is_deleted": 0,
+			"_id": "5ac482f80683cb0dc4f5d796"
+		}
+}
+ * @apiErrorExample {json} Failed
+ *    HTTP/1.1 400 Failed
+      {
+			"status": 400,
+			"api_name": "add_appointments",
+			"message": "Some request parameters are missing.",
+			"data": {}
+	  }
+*/
+api.add_appointments = (req, res)=>{
+    
+    if(Object.keys(req.body).length == 15) {
+
+        var appointment_data = {
+                            parent_appointment_id : req.body.parent_appointment_id,
+                            consumer_id : req.body.consumer_id,
+                            provider_id: req.body.provider_id,
+                            service_id: req.body.service_id,
+                            appointment_date: req.body.appointment_date,
+                            appointment_time:req.body.appointment_time,
+                            provider_firstname:req.body.provider_firstname,
+                            provider_lastname:req.body.provider_lastname,
+                            provider_company:req.body.provider_company,
+                            service_addons:req.body.service_addons,
+                            service_options:req.body.service_options,
+                            service_area_and_pricing:req.body.service_area_and_pricing,
+                            service_grass_snow_height:req.body.service_grass_snow_height,
+                            notes:req.body.notes,
+                            svc_option_ids:"",
+                            svc_addon_ids:"",
+                            coupon_id:req.body.coupon_id,
+                            is_confirmed:1,
+                            created_at:new Date(),
+                            updated_at:new Date(),
+                            is_active:1,
+                            is_deleted:0
+                        };
+					
+		services.insert_appointment(appointment_data)
+        .then(function(response) {
+            if(response!=null){
+                res.json({
+                    "status": 200,
+                    "api_name": "add_appointments",
+                    "message": "Appointment added successfully.",
+                    "data": appointment_data
+                });
+            }else{
+                res.json({
+                    "status": 200,
+                    "api_name": "add_appointments",
+                    "message": "Appointment not added.",
+                    "data": {}
+                });
+            }
+        });
+    }else
+    {
+        res.json({
+            "status": 400,
+            "api_name": "add_appointments",
+            "message": "Some request parameters are missing.",
+            "data": {}
+          });
+        return;
+    }    
+
+}
+/**
+ * @api {post} /get_appointments Get appointments
+ * @apiGroup Post
+ * @apiparam {String} user_id User Id
+
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 200 OK
+ *    {
+    "status": 400,
+    "api_name": "get_appointments",
+    "message": "All appointments found.",
+    "data": [
+        {
+            "_id": "5ac48215c4af2b14a047ad5d",
+            "parent_appointment_id": "1",
+            "consumer_id": "5ac36f3bfa85e0150c53cf34",
+            "provider_id": "5ac36f3bfa85e0150c53cf34",
+            "service_id": "3",
+            "appointment_date": "04-04-2018",
+            "appointment_time": "09:50 PM",
+            "provider_firstname": "Rahul",
+            "provider_lastname": "soni",
+            "provider_company": "sale news",
+            "notes": "testing",
+            "svc_option_ids": "",
+            "svc_addon_ids": "",
+            "coupon_id": "120245",
+            "is_confirmed": 1,
+            "created_at": "2018-04-04T07:43:17.700Z",
+            "updated_at": "2018-04-04T07:43:17.700Z",
+            "is_active": 1,
+            "is_deleted": 0
+        },
+        {
+            "_id": "5ac4afa639118d061ce596ad",
+            "parent_appointment_id": "1",
+            "consumer_id": "5ac36f3bfa85e0150c53cf34",
+            "provider_id": "5ac36f3bfa85e0150c53cf34",
+            "service_id": "3",
+            "appointment_date": "04-04-2018",
+            "appointment_time": "09:50 PM",
+            "provider_firstname": "Rahul",
+            "provider_lastname": "soni",
+            "provider_company": "sale news",
+            "notes": "testing",
+            "svc_option_ids": "",
+            "svc_addon_ids": "",
+            "coupon_id": "120245",
+            "is_confirmed": 1,
+            "created_at": "2018-04-04T07:43:17.700Z",
+            "updated_at": "2018-04-04T07:43:17.700Z",
+            "is_active": 1,
+            "is_deleted": 0
+        }
+    ]
+}
+ * @apiErrorExample {json} Failed
+ *    HTTP/1.1 400 Failed
+      {
+			"status": 400,
+			"api_name": "get_appointments",
+			"message": "Some request parameters are missing.",
+			"data": {}
+	  }
+*/
+api.get_appointments = (req, res)=>{
+   if(Object.keys(req.body).length == 1) {
+
+		services.get_appointments(req.body.user_id)
+		.then(function(result){
+				res.json({
+					"status": 400,
+					"api_name": "get_appointments",
+					"message": "All appointments found.",
+					"data": result
+				});
+				return;
+		})
+
+	}else
+	{
+		res.json({
+			"status": 400,
+			"api_name": "get_appointments",
+			"message": "Some request parameters are missing.",
+			"data": {}
+		});
+		return;
+	}    
+}
+/**
+ * @api {post} /add_review Add review for service
+ * @apiGroup Post
+ * @apiparam {String} user_id User Id
+ * @apiparam {String} service_id Service Id
+ * @apiparam {String} rate Rate
+ * @apiparam {String} comment Comment
 
 
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 200 OK
+ *    {
+    "status": 400,
+    "api_name": "add_review",
+    "message": "Review add successfully.",
+    "data": {
+        "service_id": "5ac46a660d4b66316d0ee73a",
+        "user_id": "5ac32682bc4d0f29ad7a7a7f",
+        "rate": "5",
+        "comment": "good service",
+        "created_at": "2018-04-05T14:35:38.125Z",
+        "updated_at": "2018-04-05T14:35:38.125Z",
+        "_id": "5ac6343aaeb11a1494adbe2e"
+    }
+}
+ * @apiErrorExample {json} Failed
+ *    HTTP/1.1 400 Failed
+     {
+        "status": 400,
+        "api_name": "add_review",
+        "message": "Review already exist.",
+        "data": {}
+    }
+*/
+api.add_review = (req, res)=>{
+    if(Object.keys(req.body).length == 4) {
+        services.check_review_exist(req.body).then(function(review_data){
+            console.log(review_data);
+            if(review_data==null || review_data=='')
+            {
+                services.add_review(req.body)
+                .then(function(result){
+                    
+                    res.json({
+                        "status": 400,
+                        "api_name": "add_review",
+                        "message": "Review add successfully.",
+                        "data": result
+                    });
+                    return;
+                })
+            }else
+            {
+                res.json({
+                    "status": 400,
+                    "api_name": "add_review",
+                    "message": "Review already exist.",
+                    "data": {}
+                });
+                return;
+            }
+        })
+ 
+     }else
+     {
+         res.json({
+             "status": 400,
+             "api_name": "add_review",
+             "message": "Some request parameters are missing.",
+             "data": {}
+         });
+         return;
+     }    
+ }
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
