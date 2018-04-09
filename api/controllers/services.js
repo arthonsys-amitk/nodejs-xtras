@@ -80,7 +80,7 @@ var expiresIn = (numDays)=>{
  * @apiparam {String} country Country 
  * @apiparam {String} service_area Service Area Details ("{ \"area\": [ { \"area_from_sqft\": \"11\" , \"area_to_sqft\": \"11\",  \"price\": \"11\" } ] }") 
  * @apiparam {String} grass_snow_height Grass/Snow Height Details ("{ \"grasssnowheight\": [ { \"area_from_sqft\": \"11\",      \"area_to_sqft\": \"11\",      \"price\": \"11\" } ] }") 
- * @apiparam {String} service_adons Service Addon Details ("{ \"addon\": [ { \"name\": \"abc\",    \"price\": \"11\" } ] }") 
+ * @apiparam {String} service_addons Service Addon Details ("{ \"addon\": [ { \"name\": \"abc\",    \"price\": \"11\" } ] }") 
  * @apiparam {String} service_options Service Options Details ("{ \"option\": [ { \"name\": \"abc\",    \"price\": \"11\" } ] }") 
  * @apiparam {String} uploads Images in JS array 
  * @apiSuccessExample {json} Success
@@ -359,10 +359,11 @@ api.post_service = (req, res)=> {
 				*/
 				if(req.body.service_addons != null && req.body.service_addons != '') {
 					var arr_addons = [];
-					var svc_grass_ht_obj = JSON.parse(req.body.grass_snow_height);
-					var svc_grass_ht = svc_grass_ht_obj.grasssnowheight;
-					if(util.isArray(svc_grass_ht)) {							
-						svc_grass_ht.forEach(function(item) {
+					var svc_addons_obj = JSON.parse(req.body.service_addons);
+					var svc_addon = svc_addons_obj.addon;
+					if(util.isArray(svc_addon)) {							
+						svc_addon.forEach(function(item) {
+							console.log("name:"  + item.name);							
 							var svc_addon_id = new mongo.ObjectID();
 							arr_addons.push({_id: svc_addon_id, name : item.name, price: item.price });
 						});
@@ -418,9 +419,11 @@ api.post_service = (req, res)=> {
 					var iuploads = JSON.parse(req.body.uploads);
 					if(util.isArray(iuploads)){
 						iuploads.forEach(function(upload) {
-							var svc_upload_id = new mongo.ObjectID();
-							var imgupload = services.save_image_uploads(service_id, upload);
-							arr_svc_uploads.push(imgupload);
+							if(upload != null && upload != "" && upload != undefined && _.trim(upload) != "") {
+								var svc_upload_id = new mongo.ObjectID();
+								var imgupload = services.save_image_uploads(service_id, upload);
+								arr_svc_uploads.push(imgupload);
+							}
 						});
 					}
 					servicedata.service_uploads = arr_svc_uploads;

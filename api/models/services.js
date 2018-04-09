@@ -29,8 +29,10 @@ exportFuns.getPosts = (service_category_id, type, limit, page)=>{
     var searchPattern = {};
 	if(type == "individual" || type == "business") {
 		searchPattern = {
-			service_category_id: service_category_id,
-			service_type: "" + type, 
+			$and : [
+				{ $or : [ {"service_category_id" : "" + service_category_id},{"parent_category_id" : "" + service_category_id} ] },
+				{ "service_type": "" + type }
+			]
 		};
 	}
 	if(page) {
