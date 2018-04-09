@@ -54,7 +54,7 @@ exportFuns.getParentId = (service_category_id)=>{
   })
   .then(function(result){
     db.close();
-	if(result != null || result != undefined)
+	if(result != null && result != undefined && result.parent_id != '0')
 		return result.parent_id;
 	else
 		return "";
