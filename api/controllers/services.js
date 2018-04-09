@@ -925,6 +925,9 @@ api.get_posts = (req, res)=> {
 	if(Object.keys(req.body).length >= 2 ) {
 		services.getPosts(service_category_id, type, limit, page)
 		.then(function(posts){
+			posts.forEach(function(item) {
+				item.rating = parseFloat(item.rating).toFixed(2);
+			});
 			res.json({
 				  "status": 200,
 				  "api_name": "get_posts",
