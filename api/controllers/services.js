@@ -697,7 +697,7 @@ api.get_appointments = (req, res)=>{
 		services.get_appointments(req.body.user_id)
 		.then(function(result){
 				res.json({
-					"status": 400,
+					"status": 200,
 					"api_name": "get_appointments",
 					"message": "All appointments found.",
 					"data": result
@@ -728,7 +728,7 @@ api.get_appointments = (req, res)=>{
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 200 OK
  *    {
-    "status": 400,
+    "status": 200,
     "api_name": "add_review",
     "message": "Review add successfully.",
     "data": {
@@ -758,24 +758,33 @@ api.add_review = (req, res)=>{
             {
                 services.add_review(req.body)
                 .then(function(result){
+                services.get_average_review(req.body.service_id).then(function(average_review){
+            if(average_review!=null)
+            {
+                  var avg_value=average_review[0].avg;
+                    avg_value = Math.round( avg_value * 10 ) / 10;
+					services.update_review(req.body.service_id,avg_value);
+                                 
+                        }
+                    });
                     
-                    res.json({
-                        "status": 400,
+                     res.json({
+                        "status": 200,
                         "api_name": "add_review",
                         "message": "Review add successfully.",
                         "data": result
                     });
-                    return;
-                })
+                    return; 
+				})
             }else
             {
-                res.json({
+                 res.json({
                     "status": 400,
                     "api_name": "add_review",
                     "message": "Review already exist.",
                     "data": {}
                 });
-                return;
+                return; 
             }
         })
  
@@ -791,66 +800,6 @@ api.add_review = (req, res)=>{
      }    
  }
  
-/**
- * @api {post} /average_review Get average review
- * @apiGroup Post
- * @apiparam {String} service_id Service Id
-
- * @apiSuccessExample {json} Success
- *    HTTP/1.1 200 OK
- *    {
-        "status": 200,
-        "api_name": "average_review",
-        "message": "Review successfully found.",
-        "data": 2.5
-      }
- * @apiErrorExample {json} Failed
- *    HTTP/1.1 400 Failed
-        {
-        "status": 400,
-        "api_name": "average_review",
-        "message": "Review not found.",
-        "data": {}
-      }
-*/
- api.average_review = (req, res)=>{
-    if(Object.keys(req.body).length == 1) {
-        services.get_average_review(req.body.service_id).then(function(average_review){
-            if(average_review!=null)
-            {
-                  var avg_value=average_review[0].avg;
-                    avg_value = Math.round( avg_value * 10 ) / 10;
-                     res.json({
-                        "status": 200,
-                        "api_name": "average_review",
-                        "message": "Review successfully found.",
-                        "data": avg_value
-                    });
-                    return; 
-               
-            }else
-            {
-                 res.json({
-                    "status": 400,
-                    "api_name": "average_review",
-                    "message": "Average review not found.",
-                    "data": {}
-                });
-                return; 
-            }
-        })
- 
-     }else
-     {
-         res.json({
-             "status": 400,
-             "api_name": "average_review",
-             "message": "Some request parameters are missing.",
-             "data": {}
-         });
-         return;
-     }    
- }
 
 /**
  * @api {post} /get_posts Get Posts

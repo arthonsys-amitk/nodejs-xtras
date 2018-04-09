@@ -294,7 +294,7 @@ exportFuns.add_review = (data)=>{
     let insertPattern = {
 		service_id: data.service_id,
 		user_id: data.user_id,
-		rate:data.rate,
+		rate:Number(data.rate),
 		comment:data.comment,
 		created_at: new Date(),
 		updated_at: new Date()
@@ -306,6 +306,41 @@ exportFuns.add_review = (data)=>{
 	.then(function(data){
 	  db.close();
 	  return data.ops[0];
+	});
+  };
+// Get Review average
+exportFuns.get_average_review = (service_id)=>{
+    
+	let db = new Mongo;
+	return db.connect(config.mongoURI)
+	.then(function(){
+	return db.get_average('service_review',service_id);
+	})
+	.then(function(data){
+	  db.close();
+	  return data;
+	});
+};
+// Update review
+exportFuns.update_review = (service_id,avg_value)=>{
+    
+	let db = new Mongo;
+	return db.connect(config.mongoURI)
+	.then(function(){
+		
+		let searchUserPattern = {
+			_id: db.makeID(service_id)
+		};
+
+		var updatedData = {
+			rating: String(avg_value)
+		};
+
+	  return db.update('services', searchUserPattern, updatedData);
+	})
+	.then(function(data){
+	  db.close();
+	  return data;
 	});
   };
 module.exports = exportFuns;

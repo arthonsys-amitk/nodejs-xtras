@@ -474,6 +474,28 @@ DB.prototype.findPage = function(coll, findPattern, sortPattern={_id:1}, limit=0
 	})
 };
 
+DB.prototype.get_average = function(coll,service_id ) {
+
+	var _this=this;
+	return new Promise(function (resolve, reject) {
+		_this.db.collection(coll, {strict:false}, function(error, collection){
+			if (error) {
+				console.log("Could not access collection: " + error.message);
+				reject(error.message);
+			} else {
+				var cursor = collection.aggregate([  
+					{ $match: { service_id: service_id } },
+   					{ $unwind: '$rate' },
+					{ $group: { _id: null, avg: { $avg: '$rate' } } }
+						], function(err, result) {
+							resolve(result);
+							
+						});
+					
+			}
+		})
+	})
+};
 
 // export the module
 module.exports = DB;
