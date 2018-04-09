@@ -309,7 +309,9 @@ api.post_service = (req, res)=> {
 					if(util.isArray(svc_area)) {
 						svc_area.forEach(function(item) {
 							var svc_area_id = new mongo.ObjectID();
-							arr_svc_area.push({_id: svc_area_id, area_from_sqft : item.area_from_sqft, area_to_sqft : item.area_to_sqft, price: item.price });
+							var str_area_from_sqft = item.area_from_sqft + " sqft";
+							var str_area_to_sqft = item.area_to_sqft + " sqft";
+							arr_svc_area.push({_id: svc_area_id, area_from_sqft : str_area_from_sqft, area_to_sqft : str_area_to_sqft, price: item.price });
 						});
 					}						
 					servicedata.service_area_and_pricing = arr_svc_area;
@@ -337,7 +339,9 @@ api.post_service = (req, res)=> {
 					if(util.isArray(svc_grass_ht)) {							
 						svc_grass_ht.forEach(function(item) {
 							var svc_grass_id = new mongo.ObjectID();
-							arr_grass_area.push({_id: svc_grass_id, area_from_sqft : item.area_from_sqft, area_to_sqft : item.area_to_sqft, price: item.price });
+							var str_area_from_sqft = item.area_from_sqft + " inches";
+							var str_area_to_sqft = item.area_to_sqft + " inches";
+							arr_grass_area.push({_id: svc_grass_id, area_from_sqft : str_area_from_sqft, area_to_sqft : str_area_to_sqft, price: item.price });
 						});
 					}
 					servicedata.service_grass_snow_height = arr_grass_area;
@@ -515,7 +519,7 @@ api.post_service = (req, res)=> {
  * @api {post} /add_appointments Add appointments
  * @apiGroup Post
  * @apiparam {String} parent_appointment_id Parent appointment Id
- * @apiparam {String} consumer_id Cousumer ID
+ * @apiparam {String} consumer_id Consumer ID
  * @apiparam {String} provider_id Provider ID
  * @apiparam {String} service_id  Service Id
  * @apiparam {Array} service_addons  Service Addons
@@ -524,9 +528,6 @@ api.post_service = (req, res)=> {
  * @apiparam {Array} service_grass_snow_height  Service Grass Snow Height
  * @apiparam {String} appointment_date Appointment Date
  * @apiparam {String} appointment_time Appointment Time
- * @apiparam {String} provider_firstname Provider Firstname
- * @apiparam {String} provider_lastname Provider Lastname
- * @apiparam {String} provider_company Provider Company
  * @apiparam {String} notes Notes
  * @apiparam {String} coupon_id ID Coupon Id
  * @apiSuccessExample {json} Success
@@ -536,31 +537,31 @@ api.post_service = (req, res)=> {
 		"api_name": "add_appointments",
 		"message": "Appointment added successfully.",
 		"data": {
-			"parent_appointment_id": "1",
-			"consumer_id": "5ac36f3bfa85e0150c53cf34",
-			"provider_id": "5ac36f3bfa85e0150c53cf34",
-            "service_id": "3",
-            "service_addons":["5ac36f3bfa8sdfsd0150c53cf34","5ac36f3bfa8sdfsd0150c53cf34"],
-            "service_options":["5ac36f3bfids9sdnsd50c53cf34","5ac36f3bfids9sdnsd50c53cf34"],
-            "service_area_and_pricing": "",
-            "service_grass_snow_height": "",
+			"parent_appointment_id": "",
+			"consumer_id": "5ac2287986ecbf5d545fe89a",
+			"provider_id": "5ac2249386ecbf5d545fe898",
+			"service_id": "5acb0e11675eac18ec972467",
 			"appointment_date": "04-04-2018",
-			"appointment_time": "09:50 PM",
-			"provider_firstname": "Rahul",
-			"provider_lastname": "soni",
-			"provider_company": "sale news",
-			"notes": "testing",
+			"appointment_time": "09:50PM",
+			"service_addons": "[\"_id\": \"5acb0e11675eac18ec972464\", \"price\": \"11\"]",
+			"service_options": "",
+			"service_area_and_pricing": "",
+			"service_grass_snow_height": "",
+			"notes": "",
 			"svc_option_ids": "",
 			"svc_addon_ids": "",
-			"coupon_id": "120245",
-			"is_confirmed": 1,
-			"created_at": "2018-04-04T07:47:04.763Z",
-			"updated_at": "2018-04-04T07:47:04.763Z",
+			"coupon_id": "",
+			"is_confirmed": 0,
+			"created_at": "2018-04-09T13:09:34.226Z",
+			"updated_at": "2018-04-09T13:09:34.226Z",
 			"is_active": 1,
 			"is_deleted": 0,
-			"_id": "5ac482f80683cb0dc4f5d796"
+			"provider_firstname": "Mike",
+			"provider_lastname": "Adams",
+			"provider_company": "",
+			"_id": "5acb660e94841914c49fa689"
 		}
-}
+	}
  * @apiErrorExample {json} Failed
  *    HTTP/1.1 400 Failed
       {
@@ -572,7 +573,7 @@ api.post_service = (req, res)=> {
 */
 api.add_appointments = (req, res)=>{
     
-    if(Object.keys(req.body).length == 15) {
+    if(Object.keys(req.body).length == 12) {
 
         var appointment_data = {
                             parent_appointment_id : req.body.parent_appointment_id,
@@ -581,9 +582,9 @@ api.add_appointments = (req, res)=>{
                             service_id: req.body.service_id,
                             appointment_date: req.body.appointment_date,
                             appointment_time:req.body.appointment_time,
-                            provider_firstname:req.body.provider_firstname,
-                            provider_lastname:req.body.provider_lastname,
-                            provider_company:req.body.provider_company,
+                            //provider_firstname:req.body.provider_firstname,
+                            //provider_lastname:req.body.provider_lastname,
+                            //provider_company:req.body.provider_company,
                             service_addons:req.body.service_addons,
                             service_options:req.body.service_options,
                             service_area_and_pricing:req.body.service_area_and_pricing,
@@ -592,7 +593,7 @@ api.add_appointments = (req, res)=>{
                             svc_option_ids:"",
                             svc_addon_ids:"",
                             coupon_id:req.body.coupon_id,
-                            is_confirmed:1,
+                            is_confirmed:0, //keeping appointment unconfirmed till payment is made
                             created_at:new Date(),
                             updated_at:new Date(),
                             is_active:1,
