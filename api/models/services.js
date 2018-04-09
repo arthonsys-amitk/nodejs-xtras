@@ -3,6 +3,8 @@
 var exportFuns = {},
     config     = require('../../config'),
     {sendmail} = require('../helpers'),
+	{user} = require('../models'),
+	user_model = require('./user'),
     Mongo      = require('../../mongo');
 
 
@@ -250,7 +252,21 @@ exportFuns.insert_appointment = (data) => {
     };*/
     return db.connect(config.mongoURI)
     .then(function() {
-        return db.insert('appointments', data)
+		if(data.provider_id != null) {
+			return user_model.getUser(data.provider_id)
+			.then(function(userresult){
+				if(userresult != null) {
+					var firstName = userresult.fullname.split(' ').slice(0, -1).join(' ');
+					var lastName = userresult.fullname.split(' ').slice(-1).join(' ');
+					data.provider_firstname = firstName;
+					data.provider_lastname = lastName;
+					data.provider_company = "";
+				}
+				return db.insert('appointments', data);
+			});		
+        } else {
+			return db.insert('appointments', data);
+		}
     })
     .then(function(userdata) {
         db.close();
