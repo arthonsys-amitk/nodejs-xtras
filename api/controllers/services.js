@@ -543,7 +543,7 @@ api.post_service = (req, res)=> {
 			"service_id": "5acb0e11675eac18ec972467",
 			"appointment_date": "04-04-2018",
 			"appointment_time": "09:50PM",
-			"service_addons": "[\"_id\": \"5acb0e11675eac18ec972464\", \"price\": \"11\"]",
+			"service_addons": "[{\"_id\": \"5acb0e11675eac18ec972464\", \"price\": \"11\"}]",
 			"service_options": "",
 			"service_area_and_pricing": "",
 			"service_grass_snow_height": "",
@@ -552,14 +552,14 @@ api.post_service = (req, res)=> {
 			"svc_addon_ids": "",
 			"coupon_id": "",
 			"is_confirmed": 0,
-			"created_at": "2018-04-09T13:09:34.226Z",
-			"updated_at": "2018-04-09T13:09:34.226Z",
+			"created_at": "2018-04-11T05:03:26.135Z",
+			"updated_at": "2018-04-11T05:03:26.135Z",
 			"is_active": 1,
 			"is_deleted": 0,
 			"provider_firstname": "Mike",
 			"provider_lastname": "Adams",
 			"provider_company": "",
-			"_id": "5acb660e94841914c49fa689"
+			"_id": "5acd971ea67b8c0564a9d627"
 		}
 	}
  * @apiErrorExample {json} Failed
