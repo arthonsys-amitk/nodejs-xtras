@@ -907,7 +907,10 @@ api.add_review = (req, res)=>{
 				"service_uploads": [
 					"http://127.0.0.1:3001/uploads/services/service_1522993761935488.jpg",
 					"http://127.0.0.1:3001/uploads/services/service_1522993761940246.jpg"
-				]
+				],
+				"parent_category_id" : "",
+				"parent_category_name": "",
+				"min_price": "0.00"
 			}
 		]
 	}
@@ -931,6 +934,7 @@ api.get_posts = (req, res)=> {
 		.then(function(posts){
 			posts.forEach(function(item) {
 				item.rating = parseFloat(item.rating).toFixed(2);
+				item.min_price = parseFloat(services.getMinServicePrice(item)).toFixed(2);
 			});
 			res.json({
 				  "status": 200,

@@ -361,4 +361,50 @@ exportFuns.update_review = (service_id,avg_value)=>{
 	  return data;
 	});
   };
+  
+exportFuns.getMinServicePrice = (recpost)=>{
+	var min_price = 999999999;
+	if(recpost.service_area_and_pricing != null && recpost.service_area_and_pricing != undefined && recpost.service_area_and_pricing != "") {
+		var svc_area = recpost.service_area_and_pricing;
+		svc_area.forEach(function (rec_svc_area){
+			if(rec_svc_area.price != null && rec_svc_area.price != undefined && rec_svc_area.price != "" && rec_svc_area.price < min_price) {
+				min_price = rec_svc_area.price;
+			}
+		});
+	}
+	
+	if(recpost.service_grass_snow_height != null && recpost.service_grass_snow_height != undefined && recpost.service_grass_snow_height != "") {
+		var svc_grass = recpost.service_grass_snow_height;
+		svc_grass.forEach(function (rec_svc_grass){
+			if(rec_svc_grass.price != null && rec_svc_grass.price != undefined && rec_svc_grass.price != "" && rec_svc_grass.price < min_price) {
+				min_price = rec_svc_grass.price;
+			}
+		});
+	}
+	
+	if(recpost.service_addons != null && recpost.service_addons != undefined && recpost.service_addons != "") {
+		var svc_addon = recpost.service_addons;
+		svc_addon.forEach(function (rec_svc_addon){
+			if(rec_svc_addon.price != null && rec_svc_addon.price != undefined && rec_svc_addon.price != "" && rec_svc_addon.price < min_price) {
+				min_price = rec_svc_addon.price;
+			}
+		});
+	}
+	
+	if(recpost.service_options != null && recpost.service_options != undefined && recpost.service_options != "") {
+		var svc_option = recpost.service_options;
+		svc_option.forEach(function (rec_svc_option){
+			if(rec_svc_option.price != null && rec_svc_option.price != undefined && rec_svc_option.price != "" && rec_svc_option.price < min_price) {
+				min_price = rec_svc_option.price;
+			}
+		});
+	}
+	
+	if(min_price == 999999999) {
+		min_price = 0;
+	}
+	
+	return min_price;
+};
+  
 module.exports = exportFuns;
