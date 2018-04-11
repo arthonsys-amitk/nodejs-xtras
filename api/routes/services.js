@@ -11,6 +11,7 @@ router.post('/add_appointments', services.api.add_appointments);
 router.post('/get_appointments', services.api.get_appointments);
 router.post('/cancel_appointment', services.api.cancel_appointment);
 router.post('/confirm_appointment', services.api.confirm_appointment);
+router.post('/reschedule_appointment', services.api.reschedule_appointment);
 router.post('/add_review', services.api.add_review);
 router.post('/get_posts', services.api.get_posts);
 

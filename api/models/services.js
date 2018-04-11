@@ -274,6 +274,62 @@ exportFuns.insert_appointment = (data) => {
     });
 };
 
+// Reschedule Appointment
+exportFuns.reschedule_appointment = (appointment_id, appointment_date, appointment_time) => {
+    
+    let db = new Mongo;
+    return db.connect(config.mongoURI)
+    .then(function() {
+		var searchPattern = {
+			"_id" : "" + appointment_id
+		};
+		console.log(searchPattern);
+		return db.findOne('appointments', searchPattern)
+		.then(function(resrecord){
+			if(resrecord != null && resrecord != "" && resrecord != []) {
+				var appointment_data = {
+								parent_appointment_id : appointment_id, //associating with old appointment
+								consumer_id : resrecord.consumer_id,
+								provider_id: resrecord.provider_id,
+								service_id: resrecord.service_id,
+								appointment_date: appointment_date,
+								appointment_time:appointment_time,
+								service_addons:resrecord.service_addons,
+								service_options:resrecord.service_options,
+								service_area_and_pricing:resrecord.service_area_and_pricing,
+								service_grass_snow_height:resrecord.service_grass_snow_height,
+								notes:resrecord.notes,
+								svc_option_ids: resrecord.svc_option_ids,
+								svc_addon_ids: resrecord.svc_addon_ids,
+								coupon_id:resrecord.coupon_id,
+								is_confirmed:0, //keeping appointment unconfirmed till payment is made
+								created_at:new Date(),
+								updated_at:new Date(),
+								is_active:1,
+								is_deleted:0
+							};
+				return user_model.getUser(resrecord.provider_id)
+				.then(function(userresult){
+					if(userresult != null) {
+						var firstName = userresult.fullname.split(' ').slice(0, -1).join(' ');
+						var lastName = userresult.fullname.split(' ').slice(-1).join(' ');
+						appointment_data.provider_firstname = firstName;
+						appointment_data.provider_lastname = lastName;
+						appointment_data.provider_company = "";
+					}
+					return db.insert('appointments', appointment_data);
+				});
+			} else {
+				return "";
+			}
+		});
+    })
+    .then(function(userdata) {
+        db.close();
+        return userdata;
+    });
+};
+
 // Get appointments by user_id
 exportFuns.get_appointments = (user_id) => {
     

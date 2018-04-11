@@ -631,6 +631,42 @@ api.add_appointments = (req, res)=>{
 
 }
 
+api.reschedule_appointment = (req, res)=>{
+    
+	let appointment_id = _.trim(req.body.appointment_id) || '';
+	let appointment_date = _.trim(req.body.appointment_date) || '';
+	let appointment_time = _.trim(req.body.appointment_time) || '';
+	
+    if(Object.keys(req.body).length == 3) {
+		services.reschedule_appointment(appointment_id, appointment_date, appointment_time)
+		.then(function(response) {
+            if(response!=null && response){
+                res.json({
+                    "status": 200,
+                    "api_name": "reschedule_appointment",
+                    "message": "Appointment rescheduled successfully.",
+                    "data": response.ops[0]
+                });
+            } else {
+                res.json({
+                    "status": 200,
+                    "api_name": "reschedule_appointment",
+                    "message": "Appointment not added.",
+                    "data": {}
+                });
+            }
+        });
+    } else {
+        res.json({
+            "status": 400,
+            "api_name": "reschedule_appointments",
+            "message": "Some request parameters are missing.",
+            "data": {}
+          });
+        return;
+    }
+}
+
 /**
  * @api {post} /get_appointments Get appointments
  * @apiGroup Post
