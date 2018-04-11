@@ -763,6 +763,64 @@ api.get_appointments = (req, res)=>{
 		return;
 	}    
 }
+
+/**
+ * @api {post} /cancel_appointment Cancel Appointment
+ * @apiGroup Post
+ * @apiparam {String} appointment_id Appointment Id
+
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 200 OK
+ *  {
+		"status": 200,
+		"api_name": "cancel_appointment",
+		"message": "Appointment cancelled successfully.",
+		"data": "1"
+	}
+ * @apiErrorExample {json} Failed
+ *    HTTP/1.1 400 Failed
+      {
+			"status": 400,
+			"api_name": "cancel_appointment",
+			"message": "Some request parameters are missing.",
+			"data": {}
+	  }
+*/
+api.cancel_appointment = (req, res)=>{
+   if(Object.keys(req.body).length == 1) {
+
+		services.cancel_appointment(req.body.appointment_id)
+		.then(function(result){
+				if(!result || result == null) {
+					res.json({
+						"status": 400,
+						"api_name": "cancel_appointment",
+						"message": "Appointment could not be updated",
+						"data": "" + result
+					});
+				} else {					
+					res.json({
+						"status": 200,
+						"api_name": "cancel_appointment",
+						"message": "Appointment cancelled successfully.",
+						"data": "" + result
+					});
+				}
+				return;
+		})
+
+	}else
+	{
+		res.json({
+			"status": 400,
+			"api_name": "cancel_appointment",
+			"message": "Some request parameters are missing.",
+			"data": {}
+		});
+		return;
+	}    
+}
+
 /**
  * @api {post} /add_review Add review for service
  * @apiGroup Post

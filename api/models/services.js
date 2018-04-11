@@ -318,6 +318,32 @@ exportFuns.get_appointments = (user_id) => {
         return resultset;
     });
 };
+
+//cancel given appointment
+exportFuns.cancel_appointment = (appointment_id) => {
+	
+    let db = new Mongo;
+    let searchPattern = {
+		_id: "" + appointment_id,
+    };
+	return db.connect(config.mongoURI)
+    .then(function() {
+        let searchUserPattern = {
+			_id: db.makeID(appointment_id)
+		};
+
+		var updatedData = {
+			is_active: String(0)
+		};
+
+	  return db.update('appointments', searchUserPattern, updatedData);
+    })
+    .then(function(result) {
+		db.close();
+		return result;
+    });
+};
+
 // Check review is exist or not
 exportFuns.check_review_exist = (data) => {
     
