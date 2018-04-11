@@ -575,6 +575,16 @@ api.add_appointments = (req, res)=>{
     
     if(Object.keys(req.body).length == 12) {
 
+		if(req.body.consumer_id == req.body.provider_id) {
+			res.json({
+				"status": 400,
+				"api_name": "add_appointments",
+				"message": "User cannot add appointment for own service.",
+				"data": {}
+			  });
+			return;
+		}
+	
         var appointment_data = {
                             parent_appointment_id : req.body.parent_appointment_id,
                             consumer_id : req.body.consumer_id,
