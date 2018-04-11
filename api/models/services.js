@@ -278,15 +278,44 @@ exportFuns.get_appointments = (user_id) => {
     
     let db = new Mongo;
     let searchPattern = {
-        consumer_id: user_id, 
+		$or : [ {"consumer_id" : "" + user_id},{"provider_id" : "" + user_id} ] 
     };
-    return db.connect(config.mongoURI)
+	return db.connect(config.mongoURI)
     .then(function() {
         return db.find('appointments', searchPattern);
     })
     .then(function(result) {
         db.close();
-        return result;
+		var arr_providers = {};
+		var arr_consumers = {};
+		
+		var arr_providers_current = [];
+		var arr_providers_previous = [];
+		var arr_consumers_current = [];
+		var arr_consumers_previous = [];
+		
+		var today = new Date();
+		var resultset = {};
+		result.forEach(function(record){
+			var apptmt_date = record.appointment_date.split("-").reverse().join("-");
+			if(record.consumer_id == user_id) { //providers	
+				if(new Date(apptmt_date) >= today) {
+					arr_providers_current.push(record);
+				} else {
+					arr_providers_previous.push(record);
+				}
+			} else { //consumers
+				if(new Date(apptmt_date) >= today) {
+					arr_consumers_current.push(record);
+				} else {
+					arr_consumers_previous.push(record);
+				}
+			}
+		});
+		arr_providers = {"previous" : arr_providers_previous, "current" : arr_providers_current};
+		arr_consumers = {"previous" : arr_consumers_previous, "current" : arr_consumers_current};
+		resultset = {"providers" : arr_providers, "customers" : arr_consumers};
+        return resultset;
     });
 };
 // Check review is exist or not

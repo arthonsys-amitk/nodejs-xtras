@@ -638,54 +638,97 @@ api.add_appointments = (req, res)=>{
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 200 OK
  *    {
-    "status": 400,
-    "api_name": "get_appointments",
-    "message": "All appointments found.",
-    "data": [
-        {
-            "_id": "5ac48215c4af2b14a047ad5d",
-            "parent_appointment_id": "1",
-            "consumer_id": "5ac36f3bfa85e0150c53cf34",
-            "provider_id": "5ac36f3bfa85e0150c53cf34",
-            "service_id": "3",
-            "appointment_date": "04-04-2018",
-            "appointment_time": "09:50 PM",
-            "provider_firstname": "Rahul",
-            "provider_lastname": "soni",
-            "provider_company": "sale news",
-            "notes": "testing",
-            "svc_option_ids": "",
-            "svc_addon_ids": "",
-            "coupon_id": "120245",
-            "is_confirmed": 1,
-            "created_at": "2018-04-04T07:43:17.700Z",
-            "updated_at": "2018-04-04T07:43:17.700Z",
-            "is_active": 1,
-            "is_deleted": 0
-        },
-        {
-            "_id": "5ac4afa639118d061ce596ad",
-            "parent_appointment_id": "1",
-            "consumer_id": "5ac36f3bfa85e0150c53cf34",
-            "provider_id": "5ac36f3bfa85e0150c53cf34",
-            "service_id": "3",
-            "appointment_date": "04-04-2018",
-            "appointment_time": "09:50 PM",
-            "provider_firstname": "Rahul",
-            "provider_lastname": "soni",
-            "provider_company": "sale news",
-            "notes": "testing",
-            "svc_option_ids": "",
-            "svc_addon_ids": "",
-            "coupon_id": "120245",
-            "is_confirmed": 1,
-            "created_at": "2018-04-04T07:43:17.700Z",
-            "updated_at": "2018-04-04T07:43:17.700Z",
-            "is_active": 1,
-            "is_deleted": 0
-        }
-    ]
-}
+		"status": 200,
+		"api_name": "get_appointments",
+		"message": "All appointments found.",
+		"data": {
+			"providers": {
+				"previous": [
+					{
+						"_id": "5acb660e94841914c49fa689",
+						"parent_appointment_id": "",
+						"consumer_id": "5ac2287986ecbf5d545fe89a",
+						"provider_id": "5ac2249386ecbf5d545fe898",
+						"service_id": "5acb0e11675eac18ec972467",
+						"appointment_date": "04-04-2018",
+						"appointment_time": "09:50PM",
+						"service_addons": "[\"_id\": \"5acb0e11675eac18ec972464\", \"price\": \"11\"]",
+						"service_options": "",
+						"service_area_and_pricing": "",
+						"service_grass_snow_height": "",
+						"notes": "",
+						"svc_option_ids": "",
+						"svc_addon_ids": "",
+						"coupon_id": "",
+						"is_confirmed": 1,
+						"created_at": "2018-04-09T13:09:34.226Z",
+						"updated_at": "2018-04-09T13:09:34.226Z",
+						"is_active": 1,
+						"is_deleted": 0,
+						"provider_firstname": "Mike",
+						"provider_lastname": "Adams",
+						"provider_company": ""
+					},
+					{
+						"_id": "5acb669182938a19a8872a9b",
+						"parent_appointment_id": "",
+						"consumer_id": "5ac2287986ecbf5d545fe89a",
+						"provider_id": "5ac2249386ecbf5d545fe898",
+						"service_id": "5acb0e11675eac18ec972467",
+						"appointment_date": "04-04-2018",
+						"appointment_time": "09:50PM",
+						"service_addons": "[\"_id\": \"5acb0e11675eac18ec972464\", \"price\": \"11\"]",
+						"service_options": "",
+						"service_area_and_pricing": "",
+						"service_grass_snow_height": "",
+						"notes": "",
+						"svc_option_ids": "",
+						"svc_addon_ids": "",
+						"coupon_id": "",
+						"is_confirmed": 1,
+						"created_at": "2018-04-09T13:11:45.002Z",
+						"updated_at": "2018-04-09T13:11:45.002Z",
+						"is_active": 1,
+						"is_deleted": 0,
+						"provider_firstname": "Mike",
+						"provider_lastname": "Adams",
+						"provider_company": ""
+					}
+				],
+				"current": [
+					{
+						"_id": "5acd970ed14236022c748577",
+						"parent_appointment_id": "",
+						"consumer_id": "5ac2287986ecbf5d545fe89a",
+						"provider_id": "5ac2249386ecbf5d545fe898",
+						"service_id": "5acb0e11675eac18ec972467",
+						"appointment_date": "14-04-2018",
+						"appointment_time": "09:50PM",
+						"service_addons": "[{\"_id\": \"5acb0e11675eac18ec972464\", \"price\": \"11\"}]",
+						"service_options": "",
+						"service_area_and_pricing": "",
+						"service_grass_snow_height": "",
+						"notes": "",
+						"svc_option_ids": "",
+						"svc_addon_ids": "",
+						"coupon_id": "",
+						"is_confirmed": 0,
+						"created_at": "2018-04-11T05:03:08.131Z",
+						"updated_at": "2018-04-11T05:03:08.131Z",
+						"is_active": 1,
+						"is_deleted": 0,
+						"provider_firstname": "Mike",
+						"provider_lastname": "Adams",
+						"provider_company": ""
+					}
+				]
+			},
+			"customers": {
+				"previous": [],
+				"current": []
+			}
+		}
+	}
  * @apiErrorExample {json} Failed
  *    HTTP/1.1 400 Failed
       {
