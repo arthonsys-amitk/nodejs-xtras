@@ -522,6 +522,8 @@ api.post_service = (req, res)=> {
  * @apiparam {String} consumer_id Consumer ID
  * @apiparam {String} provider_id Provider ID
  * @apiparam {String} service_id  Service Id
+ * @apiparam {String} service_name  Service Name
+ * @apiparam {String} user_name  User Name
  * @apiparam {Array} service_addons  Service Addons
  * @apiparam {Array} service_options  Service options
  * @apiparam {Array} service_area_and_pricing  Service Area And Pricing
@@ -573,7 +575,7 @@ api.post_service = (req, res)=> {
 */
 api.add_appointments = (req, res)=>{
     
-    if(Object.keys(req.body).length == 12) {
+    if(Object.keys(req.body).length >= 12) {
 
 		if(req.body.consumer_id == req.body.provider_id) {
 			res.json({
@@ -607,7 +609,9 @@ api.add_appointments = (req, res)=>{
                             created_at:new Date(),
                             updated_at:new Date(),
                             is_active:1,
-                            is_deleted:0
+                            is_deleted:0,
+							service_name: req.body.service_name,
+							user_name: req.body.user_name
                         };
 					
 		services.insert_appointment(appointment_data)

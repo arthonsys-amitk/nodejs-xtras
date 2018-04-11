@@ -362,6 +362,11 @@ exportFuns.get_appointments = (user_id) => {
 					arr_providers_previous.push(record);
 				}
 			} else { //consumers
+				if(record.user_name)
+				var firstName = record.user_name.split(' ').slice(0, -1).join(' ');
+				var lastName = record.user_name.split(' ').slice(-1).join(' ');
+				record.provider_firstname = firstName;
+				record.provider_lastname = lastName;
 				if(new Date(apptmt_date) >= today) {
 					arr_consumers_current.push(record);
 				} else {
