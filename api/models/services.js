@@ -273,6 +273,7 @@ exportFuns.insert_appointment = (data) => {
         return userdata;
     });
 };
+
 // Get appointments by user_id
 exportFuns.get_appointments = (user_id) => {
     
@@ -334,6 +335,31 @@ exportFuns.cancel_appointment = (appointment_id) => {
 
 		var updatedData = {
 			is_active: String(0)
+		};
+
+	  return db.update('appointments', searchUserPattern, updatedData);
+    })
+    .then(function(result) {
+		db.close();
+		return result;
+    });
+};
+
+//confirm given appointment
+exportFuns.confirm_appointment = (appointment_id) => {
+	
+    let db = new Mongo;
+    let searchPattern = {
+		_id: "" + appointment_id,
+    };
+	return db.connect(config.mongoURI)
+    .then(function() {
+        let searchUserPattern = {
+			_id: db.makeID(appointment_id)
+		};
+
+		var updatedData = {
+			is_confirmed: String(1)
 		};
 
 	  return db.update('appointments', searchUserPattern, updatedData);

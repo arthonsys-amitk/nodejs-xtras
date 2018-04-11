@@ -630,6 +630,7 @@ api.add_appointments = (req, res)=>{
     }    
 
 }
+
 /**
  * @api {post} /get_appointments Get appointments
  * @apiGroup Post
@@ -814,6 +815,63 @@ api.cancel_appointment = (req, res)=>{
 		res.json({
 			"status": 400,
 			"api_name": "cancel_appointment",
+			"message": "Some request parameters are missing.",
+			"data": {}
+		});
+		return;
+	}    
+}
+
+/**
+ * @api {post} /confirm_appointment Confirm Appointment
+ * @apiGroup Post
+ * @apiparam {String} appointment_id Appointment Id
+
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 200 OK
+ *  {
+		"status": 200,
+		"api_name": "confirm_appointment",
+		"message": "Appointment is confirmed.",
+		"data": "1"
+	}
+ * @apiErrorExample {json} Failed
+ *    HTTP/1.1 400 Failed
+      {
+			"status": 400,
+			"api_name": "confirm_appointment",
+			"message": "Some request parameters are missing.",
+			"data": {}
+	  }
+*/
+api.confirm_appointment = (req, res)=>{
+   if(Object.keys(req.body).length == 1) {
+
+		services.confirm_appointment(req.body.appointment_id)
+		.then(function(result){
+				if(!result || result == null) {
+					res.json({
+						"status": 400,
+						"api_name": "confirm_appointment",
+						"message": "Appointment could not be updated",
+						"data": "" + result
+					});
+				} else {					
+					res.json({
+						"status": 200,
+						"api_name": "confirm_appointment",
+						"message": "Appointment is confirmed.",
+						"data": "" + result
+					});
+				}
+				return;
+		})
+
+	}else
+	{
+		res.json({
+			"status": 400,
+			"api_name": "confirm_appointment",
 			"message": "Some request parameters are missing.",
 			"data": {}
 		});
