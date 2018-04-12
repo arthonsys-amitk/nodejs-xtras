@@ -4,6 +4,7 @@ var _      = require('lodash'),
     fs     = require('fs'),
     config = require('../../config'),
     {services} = require('../models'),
+    {search} = require('../models'),
     {crypto} = require('../helpers'),
     {sendmail} = require('../helpers');
 
@@ -46,55 +47,120 @@ var expiresIn = (numDays)=>{
 
 //++++++++++++++++++++++++++++++++++++++++++ CODE FOR APIs +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+
 /**
- * @api {post} /search_by_keyword Post Service
+ * @api {post} /search_services Search
  * @apiGroup Search
  * @apiparam {String} search_keyword Keyword for search
+ * @apiparam {String} type Service Type (individual/ business/ price)
+ * @apiparam {String} [fulladdress] Full Address string (for zipcode search)
+ * @apiparam {String} [lat] Latitude (for location search)
+ * @apiparam {String} [lng] Longitude (for location search)
+ * @apiparam {String} [address] Street Address (for address search)
+ * @apiparam {String} [city] City (for address search)
+ * @apiparam {String} [province] Province (for address search)
+ * @apiparam {String} [zipcode] Zipcode (for address search)
+ * @apiparam {String} [country] Country (for address search)
 
  * @apiSuccessExample {json} Success
- *    {
-    "status": 200,
-    "api_name": "search_by_keyword",
-    "message": "You have Search Service successfully.",
-    "data": {
-        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHBpcmVzIjoxNTIyODUyOTQzNjI0LCJzZXJ2aWNlc0lEIjoiNWFjMzkyY2YzODY4OGMxMjFjMDM2YmFiIn0.7jfEHnUfj4Df5-F5KduUztM4AK3_pn4_F-cfMD6K5qM",
-        "expires": 1522852943624,
-        "services": [ {
-            "_id": "5ac4699e0d4b66316d0ee736",
-            "service_category_id": "ObjectId('5ac1e4fcd74b0f03981a5e70')",
-            "service_name": "Lawn Cleaning",
-            "service_type": "individual",
-            "additional_details": "dtls...",
-            "service_radius": "5.0",
-            "service_radius_units": "Km",
-            "weekday_start_time": "10:00",
-            "weekday_stop_time": "18:00",
-            "weekend_start_time": "10.00",
-            "weekend_stop_time": "17:00",
-            "available_monday": "1",
-            "available_tuesday": "1",
-            "available_wednesday": "1",
-            "available_thursday": "1",
-            "available_friday": "1",
-            "available_saturday": "0",
-            "available_sunday": "0",
-            "is_active": "0",
-            "cancel_hours": "24",
-            "cancel_fee": "50",
-            "reschedule_hours": "24",
-            "reschedule_fee": "50",
-            "cancel_rsh_policy": "",
-            "legal_policy": "",
-            "address": "21/30 Kaveri Path",
-            "city": "Jaipur",
-            "province": "Rajasthan",
-            "zipcode": "302017",
-            "country": "India",
-            "rating": "0",
-            "image": "http://35.168.99.29:3001/uploads/services/service_1522821734344139.jpg"
-        }]
-    }
-}
+ * {
+		"status": 200,
+		"api_name": "search_services",
+		"message": "Search results fetched successfully",
+		"data": [
+			{
+				"_id": "5acb0aec7c8fb519ec0fee6a",
+				"service_category_id": "5ac70bf8e0c24c56d148b6c4",
+				"service_name": "Lawn Mowing Service",
+				"service_type": "individual",
+				"additional_details": "",
+				"service_radius": "552",
+				"service_radius_units": "Km",
+				"weekday_start_time": "9:00AM",
+				"weekday_stop_time": "6:00PM",
+				"weekend_start_time": "10:00AM",
+				"weekend_stop_time": "5:00PM",
+				"available_monday": "1",
+				"available_tuesday": "1",
+				"available_wednesday": "1",
+				"available_thursday": "1",
+				"available_friday": "1",
+				"available_saturday": "0",
+				"available_sunday": "0",
+				"is_active": "0",
+				"cancel_hours": "24",
+				"cancel_fee": "50",
+				"reschedule_hours": "24",
+				"reschedule_fee": "50",
+				"cancel_rsh_policy": "http://127.0.0.1:3001/uploads/policies/cancelpolicy_1523256044547270.jpg",
+				"legal_policy": "http://127.0.0.1:3001/uploads/policies/legalpolicy_1523256044551324.jpg",
+				"address": "21/30 Kaveri Path",
+				"city": "Jaipur",
+				"province": "Rajasthan",
+				"zipcode": "302017",
+				"country": "India",
+				"rating": "0",
+				"currency": "$",
+				"userdata": {
+					"_id": "5ac2249386ecbf5d545fe898",
+					"fullname": "Mike Adams",
+					"user_role": 2,
+					"email": "mike.adams@mailinator.com",
+					"alternate_email": "",
+					"phone": "",
+					"phone_1": "",
+					"phone_2": "",
+					"address": "",
+					"address_1": "",
+					"address_2": "",
+					"city": "",
+					"state": "",
+					"zip_code": "",
+					"country": "",
+					"latitude": "",
+					"longitude": "",
+					"password": "333f44ba2976b0",
+					"user_image": "http://35.168.99.29:3001/image/automobile-svc.png",
+					"facebook_login_id": "348574680756857680",
+					"google_login_id": "",
+					"social_login_data_status": 1,
+					"otp_status": 0,
+					"is_active": 0,
+					"is_deleted": 0,
+					"created_time": "2018-04-02T12:39:47.289Z",
+					"modified_time": "2018-04-02T12:39:47.289Z",
+					"profile_complete": 0
+				},
+				"service_area_and_pricing": [
+					{
+						"_id": "5acb0aec7c8fb519ec0fee67",
+						"area_from_sqft": "11",
+						"area_to_sqft": "11",
+						"price": "11"
+					}
+				],
+				"service_grass_snow_height": [
+					{
+						"_id": "5acb0aec7c8fb519ec0fee68",
+						"area_from_sqft": "11",
+						"area_to_sqft": "11",
+						"price": "11"
+					}
+				],
+				"service_addons": [],
+				"service_options": [
+					{
+						"_id": "5acb0aec7c8fb519ec0fee69",
+						"name": "svcd",
+						"price": "21"
+					}
+				],
+				"service_uploads": [],
+				"parent_category_id": "",
+				"parent_category_name": ""
+			}
+		]
+	}
  * @apiErrorExample {json} Failed
  *    HTTP/1.1 400 Failed
       {
@@ -104,48 +170,54 @@ var expiresIn = (numDays)=>{
           "data": {}
       }
 */
-
-api.search_by_keyword = (req, res)=>{
-	
+api.search_services = (req, res)=>{
   let search_keyword = _.trim(req.body.search_keyword);
- 	
- 	if(Object.keys(req.body).length > 0) {
-		services.search_by_keyword(req.body.search_keyword)
-	.then(function(services_data) {
-		if(services_data != null) {
-
-		
-				return Promise.map(services_data, service => {
-		                return services.get_service_image(service._id)
-		                .then(result => {
-		                    service.image = result;
-		                    return service;
-		                })
-
-		        }).then(finalList => {
-
-		            res.json({
-					  "status": 200,
-					  "api_name": "search_by_keyword",
-					  "message": "You have posted Service successfully.",
-					  "data": finalList
-					});
-					return;
-		        });
-
-		}
-	});
+  let fulladdress = _.trim(req.body.fulladdress);
+  let search_lat = _.trim(req.body.lat);
+  let search_long = _.trim(req.body.lng);
+  let address = _.trim(req.body.address);
+  let city = _.trim(req.body.city);
+  let province = _.trim(req.body.province);
+  let zipcode = _.trim(req.body.zipcode);
+  let country = _.trim(req.body.country);
+  let type = _.trim(req.body.type);
+  
+  if(Object.keys(req.body).length >= 2 ) {
+	  var result = "";
+	  if(fulladdress && search_keyword) {		  
+		  search.zipcodesearch(search_keyword, fulladdress, type)
+		  .then(function(result){
+			  var arr_services = [];
+			  var ctr = 0;
+			  for(ctr = 0; ctr < result.length; ctr++) {
+				var valid = search.checkServiceDistance(result[ctr], fulladdress);
+				if(valid) {
+					arr_services.push(result[ctr]);
+				}
+			  }
+			res.json({
+			  "status": 200,
+			  "api_name": "search_services",
+			  "message": "Search results fetched successfully",
+			  "data": arr_services
+			});
+			return;
+		  });
+	  } else if(search_lat && search_long && search_keyword) {
+		  result = search.locationsearch(search_keyword, search_lat, search_long);
+	  } else if(city && country && search_keyword) {
+		  result = search.addresssearch(search_keyword, address, city, province, zipcode, country);
+	  }
   } else {
-        res.json({
-          "status": 400,
-          "api_name": "search_by_keyword",
-          "message": "Some request parameters are missing.",
-          "data": {}
-        });
-        return;
-    }
+	res.json({
+		  "status": 400,
+		  "api_name": "search_services",
+		  "message": "Some request parameters are missing.",
+		  "data": {}
+		});
+		return;
+	}
 };
-
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

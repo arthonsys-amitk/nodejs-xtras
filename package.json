@@ -26,6 +26,7 @@
     "emailjs": "^1.0.12",
     "express": "^4.15.3",
     "form-data": "^2.3.1",
+    "google-distance": "^1.0.1",
     "jwt-simple": "^0.5.1",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",

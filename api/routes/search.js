@@ -6,6 +6,6 @@ var express = require('express'),
     {search} = require('../controllers'),
     router = module.exports = express.Router();
 
-router.post('/search_by_keyword', search.api.search_by_keyword);
+router.post('/search_services', search.api.search_services);
 
 
