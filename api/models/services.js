@@ -355,6 +355,7 @@ exportFuns.get_appointments = (user_id) => {
 		var resultset = {};
 		result.forEach(function(record){
 			var apptmt_date = record.appointment_date.split("-").reverse().join("-");
+			record.appointment_time = sendmail.convertToSmallTime(record.appointment_time);
 			if(record.consumer_id == user_id) { //providers	
 				if(new Date(apptmt_date) >= today) {
 					arr_providers_current.push(record);

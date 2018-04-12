@@ -18,6 +18,8 @@ exportFuns.sendEmail = (to_email, subject, message) => {
 
 
 exportFuns.convertToSmallTime = (time) => {
+	time = time.replace(' ', '');
+	time = time.replace(/[PM|AM|am|pm]/g, '');
     time = time.toString ().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
 
 	if (time.length > 1) { // If time format correct
