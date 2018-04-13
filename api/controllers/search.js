@@ -218,8 +218,32 @@ api.search_services = (req, res)=>{
 			});
 			return;
 		  });
-	  } else if(search_lat && search_long && search_keyword) {
-		  result = search.locationsearch(search_keyword, search_lat, search_long);
+	  } else if(search_lat && search_long && search_keyword) {		  
+		  search.locationsearch(search_keyword, search_lat, search_long, type, limit, page)
+		  .then(function(result){
+			  var arr_services = [];
+			  var ctr = 0;
+			  for(ctr = 0; ctr < result.length; ctr++) {
+				var valid = search.checkServiceDistanceByLocation(result[ctr], search_lat, search_long);
+				if(valid) {
+					result[ctr].rating = parseFloat(result[ctr].rating).toFixed(2);
+					result[ctr].min_price = parseFloat(services.getMinServicePrice(result[ctr])).toFixed(2);
+					arr_services.push(result[ctr]);
+				}
+			  }
+			var num_records = arr_services.length;
+			if(num_records) {
+				num_pages = Math.ceil(num_records / page_size);
+			}
+			res.json({
+			  "status": 200,
+			  "api_name": "search_services",
+			  "message": "Search results fetched successfully",
+			  "data": arr_services,
+			  "num_pages" : "" + num_pages 
+			});
+			return;
+		  });
 	  } else if(city && country && search_keyword) {
 		  result = search.addresssearch(search_keyword, address, city, province, zipcode, country);
 	  }
