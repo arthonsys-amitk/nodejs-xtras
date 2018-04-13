@@ -698,7 +698,7 @@ api.reschedule_appointment = (req, res)=>{
 	let appointment_date = _.trim(req.body.appointment_date) || '';
 	let appointment_time = _.trim(req.body.appointment_time) || '';
 	
-    if(Object.keys(req.body).length == 3) {
+    if(Object.keys(req.body).length == 3 && appointment_id) {
 		services.reschedule_appointment(appointment_id, appointment_date, appointment_time)
 		.then(function(response) {
 			if(response!=null && response){
