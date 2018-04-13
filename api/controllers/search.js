@@ -61,6 +61,8 @@ var expiresIn = (numDays)=>{
  * @apiparam {String} [province] Province (for address search)
  * @apiparam {String} [zipcode] Zipcode (for address search)
  * @apiparam {String} [country] Country (for address search)
+ * @apiparam {String} [limit] Pagesize of records to fetch at one time (e.g. 20)
+ * @apiparam {String} [page] Page Number
 
  * @apiSuccessExample {json} Success
  * {
@@ -99,7 +101,7 @@ var expiresIn = (numDays)=>{
 				"province": "Rajasthan",
 				"zipcode": "302017",
 				"country": "India",
-				"rating": "0",
+				"rating": "0.00",
 				"currency": "$",
 				"userdata": {
 					"_id": "5ac2249386ecbf5d545fe898",
@@ -157,9 +159,11 @@ var expiresIn = (numDays)=>{
 				],
 				"service_uploads": [],
 				"parent_category_id": "",
-				"parent_category_name": ""
+				"parent_category_name": "",
+				"min_price": "11.00"
 			}
-		]
+		],
+		"num_pages": "1"
 	}
  * @apiErrorExample {json} Failed
  *    HTTP/1.1 400 Failed
@@ -181,25 +185,36 @@ api.search_services = (req, res)=>{
   let zipcode = _.trim(req.body.zipcode);
   let country = _.trim(req.body.country);
   let type = _.trim(req.body.type);
+  let limit = req.body.limit || 0;
+  let page = req.body.page || 0;
   
   if(Object.keys(req.body).length >= 2 ) {
+	  var num_pages = 0;
+	  var page_size = limit; //number of records per page
 	  var result = "";
 	  if(fulladdress && search_keyword) {		  
-		  search.zipcodesearch(search_keyword, fulladdress, type)
+		  search.zipcodesearch(search_keyword, fulladdress, type, limit, page)
 		  .then(function(result){
 			  var arr_services = [];
 			  var ctr = 0;
 			  for(ctr = 0; ctr < result.length; ctr++) {
 				var valid = search.checkServiceDistance(result[ctr], fulladdress);
 				if(valid) {
+					result[ctr].rating = parseFloat(result[ctr].rating).toFixed(2);
+					result[ctr].min_price = parseFloat(services.getMinServicePrice(result[ctr])).toFixed(2);
 					arr_services.push(result[ctr]);
 				}
 			  }
+			var num_records = arr_services.length;
+			if(num_records) {
+				num_pages = Math.ceil(num_records / page_size);
+			}
 			res.json({
 			  "status": 200,
 			  "api_name": "search_services",
 			  "message": "Search results fetched successfully",
-			  "data": arr_services
+			  "data": arr_services,
+			  "num_pages" : "" + num_pages 
 			});
 			return;
 		  });

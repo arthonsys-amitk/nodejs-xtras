@@ -10,7 +10,7 @@ var exportFuns = {},
 var distance = require('google-distance');
 var promise = require('bluebird');
 
-exportFuns.zipcodesearch = (search_keyword, fulladdress, type)=>{
+exportFuns.zipcodesearch = (search_keyword, fulladdress, type, limit, page)=>{
   let db = new Mongo;
 
   return db.connect(config.mongoURI)
@@ -30,7 +30,10 @@ exportFuns.zipcodesearch = (search_keyword, fulladdress, type)=>{
 			};
 	}
 	
-	return db.find('services', searchPattern, {'_id': -1});	
+	if(limit && page)
+		return db.findPage('services', searchPattern, {'_id': -1}, limit, page);
+	else
+		return db.find('services', searchPattern, {'_id': -1});
   });
 };
 
