@@ -918,7 +918,7 @@ api.update_profile = (req, res) => {
  * @api {post} /user_logout User Logout
  * @apiGroup User
  * @apiSuccess {String} user_id User Id
- * @apiSuccess {String} device_token Device Token
+ * @apiSuccess {String} [device_token] Device Token
  * @apiSuccess {String} device_type Device Type : android / ios
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 200 OK
@@ -940,8 +940,9 @@ api.update_profile = (req, res) => {
 
 api.user_logout = (req, res)=>{
 
-  if(Object.keys(req.body).length == 3) {
-	  if(req.body.user_id=='' || req.body.device_token=='' || req.body.device_type==''){
+  if(Object.keys(req.body).length >= 2) {
+	  //if(req.body.user_id=='' || req.body.device_token=='' || req.body.device_type==''){
+	  if(req.body.user_id=='' || req.body.device_type==''){
 		res.json({
             "status": 400,
             "api_name": "user_logout",
@@ -951,23 +952,33 @@ api.user_logout = (req, res)=>{
 		return;
 	  }
   
-      user.check_device_token_exist(req.body.user_id, req.body.device_token, req.body.device_type)
-      .then(function(token_data) {
+	  if(req.body.device_type != null && req.body.device_type != undefined && req.body.device_type != "") {
+		  user.check_device_token_exist(req.body.user_id, req.body.device_token, req.body.device_type)
+		  .then(function(token_data) {
 
-          if(token_data != null) 
-          {
-              // save device token
-              user.remove_device_token(req.body.user_id, req.body.device_token, req.body.device_type);
-          }
+			  if(token_data != null) 
+			  {
+				  // save device token
+				  user.remove_device_token(req.body.user_id, req.body.device_token, req.body.device_type);
+			  }
 
-          res.json({
-            "status": 200,
-            "api_name": "user_logout",
-            "message": "You have logout successfully.",
-            "data": {}
-          });
-      });
-
+			  res.json({
+				"status": 200,
+				"api_name": "user_logout",
+				"message": "You have logout successfully.",
+				"data": {}
+			  });
+		  });
+	  } else {
+		  //when no device_token is supplied
+		  res.json({
+			"status": 200,
+			"api_name": "user_logout",
+			"message": "You have logout successfully.",
+			"data": {}
+		  });
+		  return;
+	  }
   } else {
         res.json({
           "status": 400,
