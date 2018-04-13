@@ -365,7 +365,7 @@ exportFuns.get_appointments = (user_id) => {
 			var apptmt_date = record.appointment_date.split("-").reverse().join("-");
 			record.appointment_time = sendmail.convertToSmallTime(record.appointment_time);
 			if(record.consumer_id == user_id) { //providers	
-				if((new Date(apptmt_date) >= today) && record.is_active) {
+				if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
 					arr_providers_current.push(record);
 				} else {
 					arr_providers_previous.push(record);
@@ -377,7 +377,7 @@ exportFuns.get_appointments = (user_id) => {
 					record.provider_firstname = firstName;
 					record.provider_lastname = lastName;
 				}
-				if((new Date(apptmt_date) >= today) && record.is_active) {
+				if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
 					arr_consumers_current.push(record);
 				} else {
 					arr_consumers_previous.push(record);
