@@ -360,6 +360,7 @@ exportFuns.get_appointments = (user_id) => {
 		var arr_consumers_previous = [];
 		
 		var today = new Date();
+		today.setHours(0, 0, 0, 0);
 		var resultset = {};
 		result.forEach(function(record){
 			var apptmt_date = record.appointment_date.split("-").reverse().join("-");
