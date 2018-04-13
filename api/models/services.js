@@ -274,17 +274,26 @@ exportFuns.insert_appointment = (data) => {
     });
 };
 
+//get appointment by id
+exportFuns.get_appointment_by_id = (appointment_id) => {
+	let db = new Mongo;
+        return db.connect(config.mongoURI)
+    .then(function() {
+		let searchPattern = {
+			_id : db.makeID(appointment_id)
+	    };
+		return db.findOne('appointments', searchPattern);		
+    });
+};
+
 // Reschedule Appointment
 exportFuns.reschedule_appointment = (appointment_id, appointment_date, appointment_time) => {
     
     let db = new Mongo;
     return db.connect(config.mongoURI)
     .then(function() {
-		var searchPattern = {
-			"_id" : "" + appointment_id
-		};
-		console.log(searchPattern);
-		return db.findOne('appointments', searchPattern)
+		
+		return exportFuns.get_appointment_by_id(appointment_id)
 		.then(function(resrecord){
 			if(resrecord != null && resrecord != "" && resrecord != []) {
 				var appointment_data = {
@@ -307,10 +316,10 @@ exportFuns.reschedule_appointment = (appointment_id, appointment_date, appointme
 								updated_at:new Date(),
 								is_active:1,
 								is_deleted:0
-							};
+							};					
 				return user_model.getUser(resrecord.provider_id)
 				.then(function(userresult){
-					if(userresult != null) {
+					if(userresult != null) {						
 						var firstName = userresult.fullname.split(' ').slice(0, -1).join(' ');
 						var lastName = userresult.fullname.split(' ').slice(-1).join(' ');
 						appointment_data.provider_firstname = firstName;
@@ -318,15 +327,14 @@ exportFuns.reschedule_appointment = (appointment_id, appointment_date, appointme
 						appointment_data.provider_company = "";
 					}
 					return db.insert('appointments', appointment_data);
+				})
+				.then(function(result){
+					return result.ops[0];
 				});
 			} else {
 				return "";
 			}
 		});
-    })
-    .then(function(userdata) {
-        db.close();
-        return userdata;
     });
 };
 

@@ -645,21 +645,68 @@ api.add_appointments = (req, res)=>{
 
 }
 
+/**
+ * @api {post} /reschedule_appointment RescheduleAppointment
+ * @apiGroup Post
+ * @apiparam {String} appointment_id Appointment Id which needs to be rescheduled 
+ * @apiparam {String} appointment_date New Appointment Date (e.g. 05-04-2018)
+ * @apiparam {String} appointment_time New Appointment Time (e.g 09:40 PM)
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 200 OK
+ *    {
+		"status": 200,
+		"api_name": "reschedule_appointment",
+		"message": "Appointment rescheduled successfully.",
+		"data": {
+			"parent_appointment_id": "5acb669182938a19a8872a9b",
+			"consumer_id": "5ac2287986ecbf5d545fe89a",
+			"provider_id": "5ac2249386ecbf5d545fe898",
+			"service_id": "5acb0e11675eac18ec972467",
+			"appointment_date": "05-04-2018",
+			"appointment_time": "09:40 PM",
+			"service_addons": "[\"_id\": \"5acb0e11675eac18ec972464\", \"price\": \"11\"]",
+			"service_options": "",
+			"service_area_and_pricing": "",
+			"service_grass_snow_height": "",
+			"notes": "",
+			"svc_option_ids": "",
+			"svc_addon_ids": "",
+			"coupon_id": "",
+			"is_confirmed": 0,
+			"created_at": "2018-04-13T04:59:44.371Z",
+			"updated_at": "2018-04-13T04:59:44.371Z",
+			"is_active": 1,
+			"is_deleted": 0,
+			"provider_firstname": "Mike",
+			"provider_lastname": "Adams",
+			"provider_company": "",
+			"_id": "5ad0394036b32810c029a6ae"
+		}
+	}
+ * @apiErrorExample {json} Failed
+ *    HTTP/1.1 400 Failed
+      {
+			"status": 400,
+			"api_name": "reschedule_appointment",
+			"message": "Some request parameters are missing.",
+			"data": {}
+	  }
+*/
 api.reschedule_appointment = (req, res)=>{
     
-	let appointment_id = _.trim(req.body.appointment_id) || '';
+	let appointment_id = req.body.appointment_id;
 	let appointment_date = _.trim(req.body.appointment_date) || '';
 	let appointment_time = _.trim(req.body.appointment_time) || '';
 	
     if(Object.keys(req.body).length == 3) {
 		services.reschedule_appointment(appointment_id, appointment_date, appointment_time)
 		.then(function(response) {
-            if(response!=null && response){
+			if(response!=null && response){
                 res.json({
                     "status": 200,
                     "api_name": "reschedule_appointment",
                     "message": "Appointment rescheduled successfully.",
-                    "data": response.ops[0]
+                    "data": response
                 });
             } else {
                 res.json({
