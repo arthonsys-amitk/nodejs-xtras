@@ -231,10 +231,42 @@ api.post_service = (req, res)=> {
   if(country != null && country != "undefined" && country == "Canada") {
 	 currency = "C$";
   }
-  if(weekday_start_time) { weekday_start_time = sendmail.convertToSmallTime(weekday_start_time); }
-  if(weekday_stop_time) { weekday_stop_time = sendmail.convertToSmallTime(weekday_stop_time); }
-  if(weekend_start_time) { weekend_start_time = sendmail.convertToSmallTime(weekend_start_time); }
-  if(weekend_stop_time) { weekend_stop_time = sendmail.convertToSmallTime(weekend_stop_time); }
+  if(weekday_start_time) { 
+	var arr_wkd_st_time = weekday_start_time.split(":");
+	if(arr_wkd_st_time.length > 1) {
+		if(arr_wkd_st_time[0] < 10 && arr_wkd_st_time[0].length != 2) { arr_wkd_st_time[0] = "0" + arr_wkd_st_time[0].replace(' ', ''); }
+		if(arr_wkd_st_time[1] < 10 && arr_wkd_st_time[1].length != 2) { arr_wkd_st_time[1] = "0" + arr_wkd_st_time[1].replace(' ', ''); }
+		weekday_start_time = arr_wkd_st_time.join(":");
+	}
+	weekday_start_time = sendmail.convertToSmallTime(weekday_start_time);
+  }
+  if(weekday_stop_time) { 
+	var arr_wkd_stp_time = weekday_stop_time.split(":");
+	if(arr_wkd_stp_time.length > 1) {
+		if(arr_wkd_stp_time[0] < 10 && arr_wkd_stp_time[0].length != 2) { arr_wkd_stp_time[0] = "0" + arr_wkd_stp_time[0].replace(' ', ''); }
+		if(arr_wkd_stp_time[1] < 10 && arr_wkd_stp_time[1].length != 2) { arr_wkd_stp_time[1] = "0" + arr_wkd_stp_time[1].replace(' ', ''); }
+		weekday_stop_time = arr_wkd_stp_time.join(":");
+	}
+	weekday_stop_time = sendmail.convertToSmallTime(weekday_stop_time);
+  }
+  if(weekend_start_time) {
+	var arr_wknd_st_time = weekend_start_time.split(":");
+	if(arr_wknd_st_time.length > 1) {
+		if(arr_wknd_st_time[0] < 10 && arr_wknd_st_time[0].length != 2) { arr_wknd_st_time[0] = "0" + arr_wknd_st_time[0].replace(' ', ''); }
+		if(arr_wknd_st_time[1] < 10 && arr_wknd_st_time[0].length != 2) { arr_wknd_st_time[1] = "0" + arr_wknd_st_time[1].replace(' ', ''); }
+		weekend_start_time = arr_wknd_st_time.join(":");
+	}
+	weekend_start_time = sendmail.convertToSmallTime(weekend_start_time);
+  }
+  if(weekend_stop_time) {
+	var arr_wknd_stp_time = weekend_stop_time.split(":");
+	if(arr_wknd_stp_time.length > 1) {
+		if(arr_wknd_stp_time[0] < 10 && arr_wknd_stp_time[0].length != 2) { arr_wknd_stp_time[0] = "0" + arr_wknd_stp_time[0].replace(' ', ''); }
+		if(arr_wknd_stp_time[1] < 10 && arr_wknd_stp_time[0].length != 2) { arr_wknd_stp_time[1] = "0" + arr_wknd_stp_time[1].replace(' ', ''); }
+		weekend_stop_time = arr_wknd_stp_time.join(":");
+	}
+	weekend_stop_time = sendmail.convertToSmallTime(weekend_stop_time);
+  }
   
   if(Object.keys(req.body).length >= 1 ) {
 	var servicedata = {
