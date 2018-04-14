@@ -363,32 +363,174 @@ exportFuns.get_appointments = (user_id) => {
 		today.setHours(0, 0, 0, 0);
 		var resultset = {};
 		result.forEach(function(record){
-			var apptmt_date = record.appointment_date.split("-").reverse().join("-");
-			record.appointment_time = sendmail.convertToSmallTime(record.appointment_time);
-			if(record.consumer_id == user_id) { //providers	
-				if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
-					arr_providers_current.push(record);
-				} else {
-					arr_providers_previous.push(record);
-				}
-			} else { //consumers
-				if(record.user_name) {
-					var firstName = record.user_name.split(' ').slice(0, -1).join(' ');
-					var lastName = record.user_name.split(' ').slice(-1).join(' ');
-					record.provider_firstname = firstName;
-					record.provider_lastname = lastName;
-				}
-				if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
-					arr_consumers_current.push(record);
-				} else {
-					arr_consumers_previous.push(record);
-				}
+			if(record.consumer_id == user_id) {
+				user_model.getUser(record.provider_id)
+				.then(function(providerdata){
+					if(record.coupon_id != null && record.coupon_id != undefined && record.coupon_id){
+						//if coupon is applied
+						return exportFuns.getCouponById(req.body.coupon_id)
+						.then(function(coupondata){
+							var total_payment = "0.00";
+							var discount = "0.00";
+							record.userdata = providerdata;
+							payment_data = exportFuns.get_total_payment_amount(record, coupondata.percent);
+							if(payment_data.length) {
+								total_payment = payment_data[0];																	
+								discount = payment_data[1];																
+							}
+							record.total_payment = total_payment;
+							record.discount = discount;
+							var apptmt_date = record.appointment_date.split("-").reverse().join("-");
+							record.appointment_time = sendmail.convertToSmallTime(record.appointment_time);
+							if(record.consumer_id == user_id) { //providers	
+								if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
+									arr_providers_current.push(record);
+								} else {
+									arr_providers_previous.push(record);
+								}
+							} else { //consumers
+								if(record.user_name) {
+									var firstName = record.user_name.split(' ').slice(0, -1).join(' ');
+									var lastName = record.user_name.split(' ').slice(-1).join(' ');
+									record.provider_firstname = firstName;
+									record.provider_lastname = lastName;
+								}
+								if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
+									arr_consumers_current.push(record);
+								} else {
+									arr_consumers_previous.push(record);
+								}
+							}
+							arr_providers = {"previous" : arr_providers_previous, "current" : arr_providers_current};
+							arr_consumers = {"previous" : arr_consumers_previous, "current" : arr_consumers_current};
+							resultset = {"providers" : arr_providers, "customers" : arr_consumers};
+							return resultset;
+						});
+					} else {
+						//coupon is not involved
+						var total_payment = "0.00";
+						var discount = "0.00";
+						record.userdata = providerdata;
+						payment_data = exportFuns.get_total_payment_amount(record, 0);
+						if(payment_data.length) {
+							total_payment = payment_data[0];																	
+							discount = payment_data[1];																
+						}
+						record.total_payment = total_payment;
+						record.discount = discount;
+						var apptmt_date = record.appointment_date.split("-").reverse().join("-");
+						record.appointment_time = sendmail.convertToSmallTime(record.appointment_time);
+						if(record.consumer_id == user_id) { //providers	
+							if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
+								arr_providers_current.push(record);
+							} else {
+								arr_providers_previous.push(record);
+							}
+						} else { //consumers
+							if(record.user_name) {
+								var firstName = record.user_name.split(' ').slice(0, -1).join(' ');
+								var lastName = record.user_name.split(' ').slice(-1).join(' ');
+								record.provider_firstname = firstName;
+								record.provider_lastname = lastName;
+							}
+							if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
+								arr_consumers_current.push(record);
+							} else {
+								arr_consumers_previous.push(record);
+							}
+						}
+						arr_providers = {"previous" : arr_providers_previous, "current" : arr_providers_current};
+						arr_consumers = {"previous" : arr_consumers_previous, "current" : arr_consumers_current};
+						resultset = {"providers" : arr_providers, "customers" : arr_consumers};
+						return resultset;
+					}
+				});
+			} else {
+				user_model.getUser(record.consumer_id)
+				.then(function(consumerdata){
+					if(record.coupon_id != null && record.coupon_id != undefined && record.coupon_id){
+						//if coupon is applied
+						return exportFuns.getCouponById(req.body.coupon_id)
+						.then(function(coupondata){
+							var total_payment = "0.00";
+							var discount = "0.00";
+							record.userdata = consumerdata;
+							payment_data = exportFuns.get_total_payment_amount(record, coupondata.percent);
+							if(payment_data.length) {
+								total_payment = payment_data[0];																	
+								discount = payment_data[1];																
+							}
+							record.total_payment = total_payment;
+							record.discount = discount;
+							
+							var apptmt_date = record.appointment_date.split("-").reverse().join("-");
+							record.appointment_time = sendmail.convertToSmallTime(record.appointment_time);
+							if(record.consumer_id == user_id) { //providers	
+								if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
+									arr_providers_current.push(record);
+								} else {
+									arr_providers_previous.push(record);
+								}
+							} else { //consumers
+								if(record.user_name) {
+									var firstName = record.user_name.split(' ').slice(0, -1).join(' ');
+									var lastName = record.user_name.split(' ').slice(-1).join(' ');
+									record.provider_firstname = firstName;
+									record.provider_lastname = lastName;
+								}
+								if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
+									arr_consumers_current.push(record);
+								} else {
+									arr_consumers_previous.push(record);
+								}
+							}
+							arr_providers = {"previous" : arr_providers_previous, "current" : arr_providers_current};
+							arr_consumers = {"previous" : arr_consumers_previous, "current" : arr_consumers_current};
+							resultset = {"providers" : arr_providers, "customers" : arr_consumers};
+							return resultset;
+						});
+					} else {
+						//coupon is not involved						
+						var total_payment = "0.00";
+						var discount = "0.00";
+						record.userdata = consumerdata;
+						payment_data = exportFuns.get_total_payment_amount(record, 0);
+						if(payment_data.length) {
+							total_payment = payment_data[0];																	
+							discount = payment_data[1];																
+						}
+						record.total_payment = total_payment;
+						record.discount = discount;
+						
+						var apptmt_date = record.appointment_date.split("-").reverse().join("-");
+						record.appointment_time = sendmail.convertToSmallTime(record.appointment_time);
+						if(record.consumer_id == user_id) { //providers	
+							if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
+								arr_providers_current.push(record);
+							} else {
+								arr_providers_previous.push(record);
+							}
+						} else { //consumers
+							if(record.user_name) {
+								var firstName = record.user_name.split(' ').slice(0, -1).join(' ');
+								var lastName = record.user_name.split(' ').slice(-1).join(' ');
+								record.provider_firstname = firstName;
+								record.provider_lastname = lastName;
+							}
+							if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
+								arr_consumers_current.push(record);
+							} else {
+								arr_consumers_previous.push(record);
+							}
+						}
+						arr_providers = {"previous" : arr_providers_previous, "current" : arr_providers_current};
+						arr_consumers = {"previous" : arr_consumers_previous, "current" : arr_consumers_current};
+						resultset = {"providers" : arr_providers, "customers" : arr_consumers};
+						return resultset;						
+					}
+				});
 			}
 		});
-		arr_providers = {"previous" : arr_providers_previous, "current" : arr_providers_current};
-		arr_consumers = {"previous" : arr_consumers_previous, "current" : arr_consumers_current};
-		resultset = {"providers" : arr_providers, "customers" : arr_consumers};
-        return resultset;
     });
 };
 

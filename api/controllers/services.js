@@ -677,10 +677,10 @@ api.add_appointments = (req, res)=>{
 										"api_name": "add_appointments",
 										"message": "Appointment added successfully.",
 										"data": appointment_data,
-										"consumerdata" : consumerdata,
-										"providerdata" : providerdata,
-										"discount" : discount,
-										"payment_amount" : total_payment
+										//"consumerdata" : consumerdata,
+										//"providerdata" : providerdata,
+										//"discount" : discount,
+										//"payment_amount" : total_payment
 									});
 									return;
 								});
@@ -706,10 +706,10 @@ api.add_appointments = (req, res)=>{
 										"api_name": "add_appointments",
 										"message": "Appointment added successfully.",
 										"data": appointment_data,
-										"consumerdata" : consumerdata,
-										"providerdata" : providerdata,
-										"discount" : discount,
-										"payment_amount" : total_payment
+										//"consumerdata" : consumerdata,
+										//"providerdata" : providerdata,
+										//"discount" : discount,
+										//"payment_amount" : total_payment
 									});
 									return;
 								});
