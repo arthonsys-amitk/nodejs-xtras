@@ -192,7 +192,7 @@ api.search_services = (req, res)=>{
 	  var num_pages = 0;
 	  var page_size = limit; //number of records per page
 	  var result = "";
-	  if(fulladdress && search_keyword) {		  
+	  if(fulladdress && search_keyword) {
 		  search.zipcodesearch(search_keyword, fulladdress, type, limit, page)
 		  .then(function(result){
 			  var arr_services = [];
