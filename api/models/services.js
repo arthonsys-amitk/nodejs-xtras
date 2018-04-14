@@ -559,5 +559,69 @@ exportFuns.getMinServicePrice = (recpost)=>{
 	
 	return min_price;
 };
+
+//get coupon by id
+exportFuns.getCouponById = (coupon_id)=>{
+  let db = new Mongo;
+  let oid = db.makeID(coupon_id);
+  let searchPattern = {_id : oid};
+
+  return db.connect(config.mongoURI)
+  .then(function(){
+    return db.findOne('coupon', searchPattern);
+  })
+  .then(function(coupondata){
+    return coupondata;
+  });
+};
+
+//get total paymetn data as array
+exportFuns.get_total_payment_amount = (appointment_data, percent) => {
+	var payment_data = [];
+	var total_price = 0;
+	if(appointment_data.service_area_and_pricing != null && appointment_data.service_area_and_pricing != undefined && appointment_data.service_area_and_pricing != "") {
+		var svc_area = JSON.parse(appointment_data.service_area_and_pricing);
+		for(var i = 0; i < svc_area.length; i++) {
+			if(svc_area[i].price != null && svc_area[i].price != undefined && svc_area[i].price != "" && svc_area[i].price) {
+				total_price = total_price + svc_area[i].price;
+			}
+		}
+	}
+	
+	if(appointment_data.service_grass_snow_height != null && appointment_data.service_grass_snow_height != undefined && appointment_data.service_grass_snow_height != "") {
+		var svc_grass = JSON.parse(appointment_data.service_grass_snow_height);
+		for(var i = 0; i < svc_grass.length; i++) {
+			if(svc_grass[i].price != null && svc_grass[i].price != undefined && svc_grass[i].price != "" && svc_grass[i].price) {
+				total_price = total_price + svc_grass[i].price;
+			}
+		}
+	}
+	
+	if(appointment_data.service_addons != null && appointment_data.service_addons != undefined && appointment_data.service_addons != "") {
+		var svc_addon = JSON.parse(appointment_data.service_addons);
+		for(var i = 0; i < svc_addon.length; i++) {
+			if(svc_addon[i].price != null && svc_addon[i].price != undefined && svc_addon[i].price != "" && svc_addon[i].price) {
+				total_price = total_price + svc_addon[i].price;
+			}
+		}
+	}
+	
+	if(appointment_data.service_options != null && appointment_data.service_options != undefined && appointment_data.service_options != "") {
+		var svc_option = JSON.parse(appointment_data.service_options);
+		for(var i = 0; i < svc_option.length; i++) {
+			if(svc_option[i].price != null && svc_option[i].price != undefined && svc_option[i].price != "" && svc_option[i].price) {
+				total_price = total_price + svc_option[i].price;
+			}
+		}
+	}
+	var discount = 0;
+	if(percent > 0) {
+		discount = parseFloat((total_price * percent) /100).toFixed(2);
+		total_price = parseFloat(total_price - discount).toFixed(2);
+	}
+	payment_data.push(total_price);
+	payment_data.push(discount);
+	return payment_data;
+};
   
 module.exports = exportFuns;

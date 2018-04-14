@@ -649,12 +649,72 @@ api.add_appointments = (req, res)=>{
 		services.insert_appointment(appointment_data)
         .then(function(response) {
             if(response!=null){
-                res.json({
-                    "status": 200,
-                    "api_name": "add_appointments",
-                    "message": "Appointment added successfully.",
-                    "data": appointment_data
-                });
+                if(req.body.coupon_id != null && req.body.coupon_id != undefined && req.body.coupon_id) {
+					//coupon id is provided
+					return services.getCouponById(req.body.coupon_id)
+					.then(function(coupondata) {
+						return user.getUser(req.body.consumer_id)
+						.then(function(consumerdata){
+							return user.getUser(req.body.provider_id)
+								.then(function(providerdata){
+									var payment_data = [];
+									var discount = "0.00";
+									var total_payment = "0.00";
+									//console.log(coupondata.percent + ", exp:" + coupondata.expiry_date);
+									//console.log(coupondata.service_ids);
+									if((new Date(coupondata.expiry_date) <= new Date()) && (!coupondata.is_deleted)) {
+										//coupon is valid
+										payment_data = services.get_total_payment_amount(appointment_data, coupondata.percent);
+									} else {
+										payment_data = services.get_total_payment_amount(appointment_data, 0);
+									}
+									if(payment_data.length) {
+										total_payment = payment_data[0];
+										discount = payment_data[1];
+									}
+									res.json({
+										"status": 200,
+										"api_name": "add_appointments",
+										"message": "Appointment added successfully.",
+										"data": appointment_data,
+										"consumerdata" : consumerdata,
+										"providerdata" : providerdata,
+										"discount" : discount,
+										"payment_amount" : total_payment
+									});
+									return;
+								});
+						});
+					});
+					
+				} else {
+					//no coupon id is involved
+					return user.getUser(req.body.consumer_id)
+						.then(function(consumerdata){
+							return user.getUser(req.body.provider_id)
+								.then(function(providerdata){
+									var payment_data = [];
+									var discount = "0.00";
+									var total_payment = "0.00";
+									payment_data = services.get_total_payment_amount(appointment_data, 0);
+									if(payment_data.length) {
+										total_payment = payment_data[0];
+										discount = payment_data[1];
+									}
+									res.json({
+										"status": 200,
+										"api_name": "add_appointments",
+										"message": "Appointment added successfully.",
+										"data": appointment_data,
+										"consumerdata" : consumerdata,
+										"providerdata" : providerdata,
+										"discount" : discount,
+										"payment_amount" : total_payment
+									});
+									return;
+								});
+						});
+				}
             }else{
                 res.json({
                     "status": 200,
