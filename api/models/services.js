@@ -7,7 +7,8 @@ var exportFuns = {},
 	user_model = require('./user'),
     Mongo      = require('../../mongo');
 
-
+const Promise = require("bluebird");
+	
 // create service/post
 exportFuns.postService = (services)=>{
   let db = new Mongo;
@@ -338,8 +339,67 @@ exportFuns.reschedule_appointment = (appointment_id, appointment_date, appointme
     });
 };
 
+
 // Get appointments by user_id
 exportFuns.get_appointments = (user_id) => {
+    
+    let db = new Mongo;
+    let searchPattern = {
+		$or : [ {"consumer_id" : "" + user_id},{"provider_id" : "" + user_id} ] 
+    };
+	return db.connect(config.mongoURI)
+    .then(function() {
+        return db.find('appointments', searchPattern);
+    })
+    .then(function(result) {
+        var arr_providers = {};
+		var arr_consumers = {};
+		
+		var arr_providers_current = [];
+		var arr_providers_previous = [];
+		var arr_consumers_current = [];
+		var arr_consumers_previous = [];
+		
+		var today = new Date();
+		today.setHours(0, 0, 0, 0);
+		var resultset = {};
+					
+		return exportFuns.addRatingtoAppointments(result, user_id)
+		.then(function(procresult){
+			procresult.forEach(function(record){
+				var apptmt_date = record.appointment_date.split("-").reverse().join("-");
+				record.appointment_time = sendmail.convertToSmallTime(record.appointment_time);
+				if(record.consumer_id == user_id) { //providers	
+					if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
+						arr_providers_current.push(record);
+					} else {
+						arr_providers_previous.push(record);
+					}
+				} else { //consumers
+					if(record.user_name) {
+						var firstName = record.user_name.split(' ').slice(0, -1).join(' ');
+						var lastName = record.user_name.split(' ').slice(-1).join(' ');
+						record.provider_firstname = firstName;
+						record.provider_lastname = lastName;
+					}
+					if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
+						arr_consumers_current.push(record);
+					} else {
+						arr_consumers_previous.push(record);
+					}
+				}			
+			});
+			arr_providers = {"previous" : arr_providers_previous, "current" : arr_providers_current};
+			arr_consumers = {"previous" : arr_consumers_previous, "current" : arr_consumers_current};
+			resultset = {"providers" : arr_providers, "customers" : arr_consumers};
+			return resultset;
+		});			
+		
+    });
+};
+
+// Get appointments by user_id
+exportFuns.get_appointments_old = (user_id) => {
     
     let db = new Mongo;
     let searchPattern = {
@@ -362,176 +422,142 @@ exportFuns.get_appointments = (user_id) => {
 		var today = new Date();
 		today.setHours(0, 0, 0, 0);
 		var resultset = {};
+		console.log("result:" + result.length);
+			
 		result.forEach(function(record){
-			if(record.consumer_id == user_id) {
-				user_model.getUser(record.provider_id)
-				.then(function(providerdata){
-					if(record.coupon_id != null && record.coupon_id != undefined && record.coupon_id){
-						//if coupon is applied
-						return exportFuns.getCouponById(req.body.coupon_id)
-						.then(function(coupondata){
-							var total_payment = "0.00";
-							var discount = "0.00";
-							record.userdata = providerdata;
-							payment_data = exportFuns.get_total_payment_amount(record, coupondata.percent);
-							if(payment_data.length) {
-								total_payment = payment_data[0];																	
-								discount = payment_data[1];																
-							}
-							record.total_payment = total_payment;
-							record.discount = discount;
-							var apptmt_date = record.appointment_date.split("-").reverse().join("-");
-							record.appointment_time = sendmail.convertToSmallTime(record.appointment_time);
-							if(record.consumer_id == user_id) { //providers	
-								if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
-									arr_providers_current.push(record);
-								} else {
-									arr_providers_previous.push(record);
-								}
-							} else { //consumers
-								if(record.user_name) {
-									var firstName = record.user_name.split(' ').slice(0, -1).join(' ');
-									var lastName = record.user_name.split(' ').slice(-1).join(' ');
-									record.provider_firstname = firstName;
-									record.provider_lastname = lastName;
-								}
-								if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
-									arr_consumers_current.push(record);
-								} else {
-									arr_consumers_previous.push(record);
-								}
-							}
-							arr_providers = {"previous" : arr_providers_previous, "current" : arr_providers_current};
-							arr_consumers = {"previous" : arr_consumers_previous, "current" : arr_consumers_current};
-							resultset = {"providers" : arr_providers, "customers" : arr_consumers};
-							return resultset;
-						});
-					} else {
-						//coupon is not involved
-						var total_payment = "0.00";
-						var discount = "0.00";
-						record.userdata = providerdata;
-						payment_data = exportFuns.get_total_payment_amount(record, 0);
-						if(payment_data.length) {
-							total_payment = payment_data[0];																	
-							discount = payment_data[1];																
-						}
-						record.total_payment = total_payment;
-						record.discount = discount;
-						var apptmt_date = record.appointment_date.split("-").reverse().join("-");
-						record.appointment_time = sendmail.convertToSmallTime(record.appointment_time);
-						if(record.consumer_id == user_id) { //providers	
-							if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
-								arr_providers_current.push(record);
-							} else {
-								arr_providers_previous.push(record);
-							}
-						} else { //consumers
-							if(record.user_name) {
-								var firstName = record.user_name.split(' ').slice(0, -1).join(' ');
-								var lastName = record.user_name.split(' ').slice(-1).join(' ');
-								record.provider_firstname = firstName;
-								record.provider_lastname = lastName;
-							}
-							if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
-								arr_consumers_current.push(record);
-							} else {
-								arr_consumers_previous.push(record);
-							}
-						}
-						arr_providers = {"previous" : arr_providers_previous, "current" : arr_providers_current};
-						arr_consumers = {"previous" : arr_consumers_previous, "current" : arr_consumers_current};
-						resultset = {"providers" : arr_providers, "customers" : arr_consumers};
-						return resultset;
-					}
-				});
-			} else {
-				user_model.getUser(record.consumer_id)
-				.then(function(consumerdata){
-					if(record.coupon_id != null && record.coupon_id != undefined && record.coupon_id){
-						//if coupon is applied
-						return exportFuns.getCouponById(req.body.coupon_id)
-						.then(function(coupondata){
-							var total_payment = "0.00";
-							var discount = "0.00";
-							record.userdata = consumerdata;
-							payment_data = exportFuns.get_total_payment_amount(record, coupondata.percent);
-							if(payment_data.length) {
-								total_payment = payment_data[0];																	
-								discount = payment_data[1];																
-							}
-							record.total_payment = total_payment;
-							record.discount = discount;
+			var apptmt_date = record.appointment_date.split("-").reverse().join("-");
+			record.appointment_time = sendmail.convertToSmallTime(record.appointment_time);
+			if(record.consumer_id == user_id) { //providers	
+				record.userdata = record.providerdata;
+				delete record.providerdata;
+				delete record.consumerdata;
+				if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
+					arr_providers_current.push(record);
+				} else {
+					arr_providers_previous.push(record);
+				}
+			} else { //consumers
+				record.userdata = record.consumerdata;
+				delete record.providerdata;
+				delete record.consumerdata;
+				if(record.user_name) {
+					var firstName = record.user_name.split(' ').slice(0, -1).join(' ');
+					var lastName = record.user_name.split(' ').slice(-1).join(' ');
+					record.provider_firstname = firstName;
+					record.provider_lastname = lastName;
+				}
+				if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
+					arr_consumers_current.push(record);
+				} else {
+					arr_consumers_previous.push(record);
+				}
+			}			
+		});
+		arr_providers = {"previous" : arr_providers_previous, "current" : arr_providers_current};
+		arr_consumers = {"previous" : arr_consumers_previous, "current" : arr_consumers_current};
+		resultset = {"providers" : arr_providers, "customers" : arr_consumers};
+        return resultset;
+    });
+};
+
+//adds rating and userdata to supplied appointment records
+exportFuns.addRatingtoAppointments = (result, user_id) => {
+	
+	return Promise.map(result, record => {
+						return exportFuns.getRatingByServiceId(record.service_id)
+						.then(function(svcrecord){
+							if(svcrecord.rating !=null && svcrecord.rating != undefined )
+								record.rating = parseFloat(svcrecord.rating).toFixed(2);
+							else
+								record.rating = "0.00";
+							
+							if(svcrecord.cancel_rsh_policy !=null && svcrecord.cancel_rsh_policy != undefined )
+								record.cancel_rsh_policy = svcrecord.cancel_rsh_policy;
+							else
+								record.cancel_rsh_policy = "";
+							
+							if(svcrecord.cancel_fee !=null && svcrecord.cancel_fee != undefined )
+								record.cancel_fee = svcrecord.cancel_fee;
+							else
+								record.cancel_fee = "";
+							
+							if(svcrecord.reschedule_fee !=null && svcrecord.reschedule_fee != undefined )
+								record.reschedule_fee = svcrecord.reschedule_fee;
+							else
+								record.reschedule_fee = "";
+							
+							if(svcrecord.legal_policy !=null && svcrecord.legal_policy != undefined )
+								record.legal_policy = svcrecord.legal_policy;
+							else
+								record.legal_policy = "";
+							
+							
+							if(svcrecord.cancel_hours !=null && svcrecord.cancel_hours != undefined )
+								record.cancel_hours = svcrecord.cancel_hours;
+							else
+								record.cancel_hours = "";
+							
+							if(svcrecord.reschedule_hours !=null && svcrecord.reschedule_hours != undefined )
+								record.reschedule_hours = svcrecord.reschedule_hours;
+							else
+								record.reschedule_hours = "";
+							
 							
 							var apptmt_date = record.appointment_date.split("-").reverse().join("-");
 							record.appointment_time = sendmail.convertToSmallTime(record.appointment_time);
+							
+							if(record.service_addons != "")	record.service_addons = JSON.parse(record.service_addons);
+							if(record.service_options != "")	record.service_options = JSON.parse(record.service_options);
+							if(record.service_area_and_pricing != "")	record.service_area_and_pricing = JSON.parse(record.service_area_and_pricing);
+							if(record.service_grass_snow_height != "")	record.service_grass_snow_height = JSON.parse(record.service_grass_snow_height);
+							
+							var currency = "$";
 							if(record.consumer_id == user_id) { //providers	
-								if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
-									arr_providers_current.push(record);
-								} else {
-									arr_providers_previous.push(record);
+								if(record.providerdata.country != null && record.providerdata.country != undefined && record.providerdata.country == "Canada") {
+									currency = "C$";
 								}
+								record.currency = currency;
+							
+								record.userdata = record.providerdata;
+								delete record.providerdata;
+								delete record.consumerdata;								
 							} else { //consumers
+								if(record.consumerdata.country != null && record.consumerdata.country != undefined && record.consumerdata.country == "Canada") {
+									currency = "C$";
+								}
+								record.currency = currency;
+								
+								record.userdata = record.consumerdata;
+								delete record.providerdata;
+								delete record.consumerdata;
 								if(record.user_name) {
 									var firstName = record.user_name.split(' ').slice(0, -1).join(' ');
 									var lastName = record.user_name.split(' ').slice(-1).join(' ');
 									record.provider_firstname = firstName;
 									record.provider_lastname = lastName;
-								}
-								if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
-									arr_consumers_current.push(record);
-								} else {
-									arr_consumers_previous.push(record);
-								}
-							}
-							arr_providers = {"previous" : arr_providers_previous, "current" : arr_providers_current};
-							arr_consumers = {"previous" : arr_consumers_previous, "current" : arr_consumers_current};
-							resultset = {"providers" : arr_providers, "customers" : arr_consumers};
-							return resultset;
-						});
-					} else {
-						//coupon is not involved						
-						var total_payment = "0.00";
-						var discount = "0.00";
-						record.userdata = consumerdata;
-						payment_data = exportFuns.get_total_payment_amount(record, 0);
-						if(payment_data.length) {
-							total_payment = payment_data[0];																	
-							discount = payment_data[1];																
-						}
-						record.total_payment = total_payment;
-						record.discount = discount;
-						
-						var apptmt_date = record.appointment_date.split("-").reverse().join("-");
-						record.appointment_time = sendmail.convertToSmallTime(record.appointment_time);
-						if(record.consumer_id == user_id) { //providers	
-							if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
-								arr_providers_current.push(record);
-							} else {
-								arr_providers_previous.push(record);
-							}
-						} else { //consumers
-							if(record.user_name) {
-								var firstName = record.user_name.split(' ').slice(0, -1).join(' ');
-								var lastName = record.user_name.split(' ').slice(-1).join(' ');
-								record.provider_firstname = firstName;
-								record.provider_lastname = lastName;
-							}
-							if((new Date(apptmt_date) >= today) && (record.is_active > 0)) {
-								arr_consumers_current.push(record);
-							} else {
-								arr_consumers_previous.push(record);
-							}
-						}
-						arr_providers = {"previous" : arr_providers_previous, "current" : arr_providers_current};
-						arr_consumers = {"previous" : arr_consumers_previous, "current" : arr_consumers_current};
-						resultset = {"providers" : arr_providers, "customers" : arr_consumers};
-						return resultset;						
-					}
-				});
-			}
+								}								
+							}							
+		                    return record;
+		                })
+		}).then(finalList => {
+			return finalList;
 		});
-    });
+};
+
+//get service by id
+exportFuns.getRatingByServiceId = (serviceId) => {
+	let db = new Mongo;
+	let oid = db.makeID(serviceId);
+	let searchPattern = {_id : oid};
+
+	return db.connect(config.mongoURI)
+	.then(function(){
+		return db.findOne('services', searchPattern);
+	})
+	.then(function(service){
+		db.close();
+		return service;
+	});
 };
 
 //cancel given appointment
@@ -717,42 +743,72 @@ exportFuns.getCouponById = (coupon_id)=>{
   });
 };
 
-//get total paymetn data as array
+//get payment details
+exportFuns.get_payment_details = (appointment_id, user_id) => {
+	exportFuns.get_appointment_by_id(appointment_id)
+	.then(function(appointment_data){
+		return exportFuns.getCouponById(appointment_data.coupon_id)
+		.then(function(coupondata){
+			var pdataresult = {};
+			var percent_discount = (coupondata.percent != null) ? coupondata.percent: 0;
+			var pdata = exportFuns.get_total_payment_amount(appointment_data, percent_discount);
+			pdataresult.total_price = pdata[0];
+			pdataresult.discount = pdata[1];
+			/*
+			pdataresult.provider_name = (user_id == appointment_data.consumer_id)? appointment_data.providerdata.fullname;
+			pdataresult.consumer_name = (user_id == appointment_data.consumer_id)? appointment_data.consumerdata.fullname;
+			pdataresult.provider_name = (user_id == appointment_data.provider_id)? appointment_data.consumerdata.fullname;
+			pdataresult.consumer_name = (user_id == appointment_data.provider_id)? appointment_data.providerdata.fullname;
+			*/
+			return pdataresult;
+		});
+	});
+};
+
+//get total payment data as array
 exportFuns.get_total_payment_amount = (appointment_data, percent) => {
 	var payment_data = [];
 	var total_price = 0;
 	if(appointment_data.service_area_and_pricing != null && appointment_data.service_area_and_pricing != undefined && appointment_data.service_area_and_pricing != "") {
-		var svc_area = JSON.parse(appointment_data.service_area_and_pricing);
-		for(var i = 0; i < svc_area.length; i++) {
-			if(svc_area[i].price != null && svc_area[i].price != undefined && svc_area[i].price != "" && svc_area[i].price) {
-				total_price = total_price + svc_area[i].price;
+		if(typeof appointment_data.service_area_and_pricing === 'object') {
+			var svc_area = JSON.parse(appointment_data.service_area_and_pricing);
+			for(var i = 0; i < svc_area.length; i++) {
+				if(svc_area[i].price != null && svc_area[i].price != undefined && svc_area[i].price != "" && svc_area[i].price) {
+					total_price = total_price + svc_area[i].price;
+				}
 			}
 		}
 	}
 	
 	if(appointment_data.service_grass_snow_height != null && appointment_data.service_grass_snow_height != undefined && appointment_data.service_grass_snow_height != "") {
-		var svc_grass = JSON.parse(appointment_data.service_grass_snow_height);
-		for(var i = 0; i < svc_grass.length; i++) {
-			if(svc_grass[i].price != null && svc_grass[i].price != undefined && svc_grass[i].price != "" && svc_grass[i].price) {
-				total_price = total_price + svc_grass[i].price;
+		if(typeof appointment_data.service_grass_snow_height === 'object') {
+			var svc_grass = JSON.parse(appointment_data.service_grass_snow_height);
+			for(var i = 0; i < svc_grass.length; i++) {
+				if(svc_grass[i].price != null && svc_grass[i].price != undefined && svc_grass[i].price != "" && svc_grass[i].price) {
+					total_price = total_price + svc_grass[i].price;
+				}
 			}
 		}
 	}
 	
 	if(appointment_data.service_addons != null && appointment_data.service_addons != undefined && appointment_data.service_addons != "") {
-		var svc_addon = JSON.parse(appointment_data.service_addons);
-		for(var i = 0; i < svc_addon.length; i++) {
-			if(svc_addon[i].price != null && svc_addon[i].price != undefined && svc_addon[i].price != "" && svc_addon[i].price) {
-				total_price = total_price + svc_addon[i].price;
+		if(typeof appointment_data.service_addons === 'object') {
+			var svc_addon = JSON.parse(appointment_data.service_addons);
+			for(var i = 0; i < svc_addon.length; i++) {
+				if(svc_addon[i].price != null && svc_addon[i].price != undefined && svc_addon[i].price != "" && svc_addon[i].price) {
+					total_price = total_price + svc_addon[i].price;
+				}
 			}
 		}
 	}
 	
 	if(appointment_data.service_options != null && appointment_data.service_options != undefined && appointment_data.service_options != "") {
-		var svc_option = JSON.parse(appointment_data.service_options);
-		for(var i = 0; i < svc_option.length; i++) {
-			if(svc_option[i].price != null && svc_option[i].price != undefined && svc_option[i].price != "" && svc_option[i].price) {
-				total_price = total_price + svc_option[i].price;
+		if(typeof appointment_data.service_options === 'object') {
+			var svc_option = JSON.parse(appointment_data.service_options);
+			for(var i = 0; i < svc_option.length; i++) {
+				if(svc_option[i].price != null && svc_option[i].price != undefined && svc_option[i].price != "" && svc_option[i].price) {
+					total_price = total_price + svc_option[i].price;
+				}
 			}
 		}
 	}
