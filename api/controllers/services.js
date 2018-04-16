@@ -1143,14 +1143,38 @@ api.add_review = (req, res)=>{
      }    
  }
 
+/**
+ * @api {post} /get_payment_details Get Payment Details
+ * @apiGroup Post
+ * @apiparam {String} appointment_id Appointment Id
+ * @apiparam {String} user_id User Id
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 200 OK
+ *    {
+		"status": 200,
+		"api_name": "get_payment_details",
+		"message": "Payment Details fetched successfully",
+		"data": {
+			"total_price": "5.50",
+			"discount": "5.50",
+			"provider_name": "Mike Adams",
+			"consumer_name": "Bijender Singh"
+		}
+	}
+ * @apiErrorExample {json} Failed
+ *    HTTP/1.1 400 Failed
+     {
+        "status": 400,
+        "api_name": "get_payment_details",
+        "message": "Some request parameters are missing",
+        "data": {}
+    }
+*/
 api.get_payment_details = (req, res) => {
     if(Object.keys(req.body).length >= 2) {
 		let appointment_id = _.trim(req.body.appointment_id) || '';
 		let user_id = _.trim(req.body.user_id) || '';
-		var ret = services.get_payment_details(appointment_id, user_id);
-		console.log("ret");
-		console.log(ret);
-		/*
+		var ret = services.get_payment_details(appointment_id, user_id)
 		.then(function(result){
 			res.json({
 				 "status": 200,
@@ -1160,7 +1184,6 @@ api.get_payment_details = (req, res) => {
 			 });
 			return;
 		});
-		*/
 	} else {
 		res.json({
              "status": 400,
