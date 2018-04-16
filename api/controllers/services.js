@@ -646,9 +646,7 @@ api.add_appointments = (req, res)=>{
 							user_name: req.body.user_name
                         };
 					
-		services.insert_appointment(appointment_data)
-        .then(function(response) {
-            if(response!=null){
+		//services.insert_appointment(appointment_data)        
                 if(req.body.coupon_id != null && req.body.coupon_id != undefined && req.body.coupon_id) {
 					//coupon id is provided
 					return services.getCouponById(req.body.coupon_id)
@@ -672,17 +670,22 @@ api.add_appointments = (req, res)=>{
 										total_payment = payment_data[0];
 										discount = payment_data[1];
 									}
-									res.json({
-										"status": 200,
-										"api_name": "add_appointments",
-										"message": "Appointment added successfully.",
-										"data": appointment_data,
-										//"consumerdata" : consumerdata,
-										//"providerdata" : providerdata,
-										//"discount" : discount,
-										//"payment_amount" : total_payment
-									});
-									return;
+									appointment_data.consumerdata = consumerdata;
+									appointment_data.providerdata = providerdata;
+									services.insert_appointment(appointment_data)
+									.then(function(aptresult){
+										res.json({
+											"status": 200,
+											"api_name": "add_appointments",
+											"message": "Appointment added successfully.",
+											"data": appointment_data,
+											"consumerdata" : consumerdata,
+											"providerdata" : providerdata,
+											//"discount" : discount,
+											//"payment_amount" : total_payment
+										});
+										return;
+									});									
 								});
 						});
 					});
@@ -701,41 +704,36 @@ api.add_appointments = (req, res)=>{
 										total_payment = payment_data[0];
 										discount = payment_data[1];
 									}
-									res.json({
-										"status": 200,
-										"api_name": "add_appointments",
-										"message": "Appointment added successfully.",
-										"data": appointment_data,
-										//"consumerdata" : consumerdata,
-										//"providerdata" : providerdata,
-										//"discount" : discount,
-										//"payment_amount" : total_payment
-									});
-									return;
+									appointment_data.consumerdata = consumerdata;
+									appointment_data.providerdata = providerdata;
+									services.insert_appointment(appointment_data)
+									.then(function(aptresult){
+										res.json({
+											"status": 200,
+											"api_name": "add_appointments",
+											"message": "Appointment added successfully.",
+											"data": appointment_data,
+											//"consumerdata" : consumerdata,
+											//"providerdata" : providerdata,
+											//"discount" : discount,
+											//"payment_amount" : total_payment
+										});
+										return;
+									});									
 								});
 						});
 				}
-            }else{
-                res.json({
-                    "status": 200,
-                    "api_name": "add_appointments",
-                    "message": "Appointment not added.",
-                    "data": {}
-                });
-            }
-        });
-    }else
-    {
-        res.json({
-            "status": 400,
-            "api_name": "add_appointments",
-            "message": "Some request parameters are missing.",
-            "data": {}
-          });
-        return;
-    }    
-
-}
+            
+        } else {
+			res.json({
+				"status": 400,
+				"api_name": "add_appointments",
+				"message": "Some request parameters are missing.",
+				"data": {}
+			  });
+			return;
+		}    
+};
 
 /**
  * @api {post} /reschedule_appointment RescheduleAppointment
@@ -835,83 +833,77 @@ api.reschedule_appointment = (req, res)=>{
 			"providers": {
 				"previous": [
 					{
-						"_id": "5acb660e94841914c49fa689",
+						"_id": "5ad467a633409719183c84d8",
 						"parent_appointment_id": "",
 						"consumer_id": "5ac2287986ecbf5d545fe89a",
 						"provider_id": "5ac2249386ecbf5d545fe898",
 						"service_id": "5acb0e11675eac18ec972467",
 						"appointment_date": "04-04-2018",
-						"appointment_time": "09:50PM",
-						"service_addons": "[\"_id\": \"5acb0e11675eac18ec972464\", \"price\": \"11\"]",
+						"appointment_time": "9:50",
+						"service_addons": [
+							{
+								"_id": "5acb0e11675eac18ec972464",
+								"price": "11"
+							}
+						],
 						"service_options": "",
 						"service_area_and_pricing": "",
 						"service_grass_snow_height": "",
 						"notes": "",
 						"svc_option_ids": "",
 						"svc_addon_ids": "",
-						"coupon_id": "",
-						"is_confirmed": 1,
-						"created_at": "2018-04-09T13:09:34.226Z",
-						"updated_at": "2018-04-09T13:09:34.226Z",
+						"coupon_id": "5ac60edd255db317306f7047",
+						"is_confirmed": 0,
+						"created_at": "2018-04-16T09:06:46.055Z",
+						"updated_at": "2018-04-16T09:06:46.055Z",
 						"is_active": 1,
 						"is_deleted": 0,
+						"service_name": null,
+						"user_name": null,
 						"provider_firstname": "Mike",
 						"provider_lastname": "Adams",
-						"provider_company": ""
-					},
-					{
-						"_id": "5acb669182938a19a8872a9b",
-						"parent_appointment_id": "",
-						"consumer_id": "5ac2287986ecbf5d545fe89a",
-						"provider_id": "5ac2249386ecbf5d545fe898",
-						"service_id": "5acb0e11675eac18ec972467",
-						"appointment_date": "04-04-2018",
-						"appointment_time": "09:50PM",
-						"service_addons": "[\"_id\": \"5acb0e11675eac18ec972464\", \"price\": \"11\"]",
-						"service_options": "",
-						"service_area_and_pricing": "",
-						"service_grass_snow_height": "",
-						"notes": "",
-						"svc_option_ids": "",
-						"svc_addon_ids": "",
-						"coupon_id": "",
-						"is_confirmed": 1,
-						"created_at": "2018-04-09T13:11:45.002Z",
-						"updated_at": "2018-04-09T13:11:45.002Z",
-						"is_active": 1,
-						"is_deleted": 0,
-						"provider_firstname": "Mike",
-						"provider_lastname": "Adams",
-						"provider_company": ""
+						"provider_company": "",
+						"coupon_code": "indian",
+						"rating": "0.00",
+						"cancel_rsh_policy": "http://127.0.0.1:3001/uploads/policies/cancelpolicy_1523256849050431.jpg",
+						"cancel_fee": "50",
+						"reschedule_fee": "50",
+						"legal_policy": "http://127.0.0.1:3001/uploads/policies/legalpolicy_1523256849054386.jpg",
+						"cancel_hours": "24",
+						"reschedule_hours": "24",
+						"currency": "$",
+						"userdata": {
+							"_id": "5ac2249386ecbf5d545fe898",
+							"fullname": "Mike Adams",
+							"user_role": 2,
+							"email": "mike.adams@mailinator.com",
+							"alternate_email": "",
+							"phone": "",
+							"phone_1": "",
+							"phone_2": "",
+							"address": "",
+							"address_1": "",
+							"address_2": "",
+							"city": "",
+							"state": "",
+							"zip_code": "",
+							"country": "",
+							"latitude": "",
+							"longitude": "",
+							"password": "333f44ba2976b0",
+							"user_image": "http://35.168.99.29:3001/image/automobile-svc.png",
+							"facebook_login_id": "348574680756857680",
+							"google_login_id": "",
+							"social_login_data_status": 1,
+							"otp_status": 0,
+							"is_active": 0,
+							"is_deleted": 0,
+							"created_time": "2018-04-02T12:39:47.289Z",
+							"modified_time": "2018-04-02T12:39:47.289Z"
+						}
 					}
 				],
-				"current": [
-					{
-						"_id": "5acd970ed14236022c748577",
-						"parent_appointment_id": "",
-						"consumer_id": "5ac2287986ecbf5d545fe89a",
-						"provider_id": "5ac2249386ecbf5d545fe898",
-						"service_id": "5acb0e11675eac18ec972467",
-						"appointment_date": "14-04-2018",
-						"appointment_time": "09:50PM",
-						"service_addons": "[{\"_id\": \"5acb0e11675eac18ec972464\", \"price\": \"11\"}]",
-						"service_options": "",
-						"service_area_and_pricing": "",
-						"service_grass_snow_height": "",
-						"notes": "",
-						"svc_option_ids": "",
-						"svc_addon_ids": "",
-						"coupon_id": "",
-						"is_confirmed": 0,
-						"created_at": "2018-04-11T05:03:08.131Z",
-						"updated_at": "2018-04-11T05:03:08.131Z",
-						"is_active": 1,
-						"is_deleted": 0,
-						"provider_firstname": "Mike",
-						"provider_lastname": "Adams",
-						"provider_company": ""
-					}
-				]
+				"current": []
 			},
 			"customers": {
 				"previous": [],
@@ -942,8 +934,7 @@ api.get_appointments = (req, res)=>{
 				return;
 		})
 
-	}else
-	{
+	} else {
 		res.json({
 			"status": 400,
 			"api_name": "get_appointments",
@@ -1151,8 +1142,37 @@ api.add_review = (req, res)=>{
          return;
      }    
  }
- 
 
+api.get_payment_details = (req, res) => {
+    if(Object.keys(req.body).length >= 2) {
+		let appointment_id = _.trim(req.body.appointment_id) || '';
+		let user_id = _.trim(req.body.user_id) || '';
+		var ret = services.get_payment_details(appointment_id, user_id);
+		console.log("ret");
+		console.log(ret);
+		/*
+		.then(function(result){
+			res.json({
+				 "status": 200,
+				 "api_name": "get_payment_details",
+				 "message": "Payment Details fetched successfully",
+				 "data": result
+			 });
+			return;
+		});
+		*/
+	} else {
+		res.json({
+             "status": 400,
+             "api_name": "get_payment_details",
+             "message": "Some request parameters are missing.",
+             "data": {}
+         });
+        return;
+	}
+};
+ 
+ 
 /**
  * @api {post} /get_posts Get Posts
  * @apiGroup Post

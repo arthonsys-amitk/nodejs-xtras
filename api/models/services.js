@@ -466,78 +466,86 @@ exportFuns.addRatingtoAppointments = (result, user_id) => {
 	return Promise.map(result, record => {
 						return exportFuns.getRatingByServiceId(record.service_id)
 						.then(function(svcrecord){
-							if(svcrecord.rating !=null && svcrecord.rating != undefined )
-								record.rating = parseFloat(svcrecord.rating).toFixed(2);
-							else
-								record.rating = "0.00";
-							
-							if(svcrecord.cancel_rsh_policy !=null && svcrecord.cancel_rsh_policy != undefined )
-								record.cancel_rsh_policy = svcrecord.cancel_rsh_policy;
-							else
-								record.cancel_rsh_policy = "";
-							
-							if(svcrecord.cancel_fee !=null && svcrecord.cancel_fee != undefined )
-								record.cancel_fee = svcrecord.cancel_fee;
-							else
-								record.cancel_fee = "";
-							
-							if(svcrecord.reschedule_fee !=null && svcrecord.reschedule_fee != undefined )
-								record.reschedule_fee = svcrecord.reschedule_fee;
-							else
-								record.reschedule_fee = "";
-							
-							if(svcrecord.legal_policy !=null && svcrecord.legal_policy != undefined )
-								record.legal_policy = svcrecord.legal_policy;
-							else
-								record.legal_policy = "";
-							
-							
-							if(svcrecord.cancel_hours !=null && svcrecord.cancel_hours != undefined )
-								record.cancel_hours = svcrecord.cancel_hours;
-							else
-								record.cancel_hours = "";
-							
-							if(svcrecord.reschedule_hours !=null && svcrecord.reschedule_hours != undefined )
-								record.reschedule_hours = svcrecord.reschedule_hours;
-							else
-								record.reschedule_hours = "";
-							
-							
-							var apptmt_date = record.appointment_date.split("-").reverse().join("-");
-							record.appointment_time = sendmail.convertToSmallTime(record.appointment_time);
-							
-							if(record.service_addons != "")	record.service_addons = JSON.parse(record.service_addons);
-							if(record.service_options != "")	record.service_options = JSON.parse(record.service_options);
-							if(record.service_area_and_pricing != "")	record.service_area_and_pricing = JSON.parse(record.service_area_and_pricing);
-							if(record.service_grass_snow_height != "")	record.service_grass_snow_height = JSON.parse(record.service_grass_snow_height);
-							
-							var currency = "$";
-							if(record.consumer_id == user_id) { //providers	
-								if(record.providerdata.country != null && record.providerdata.country != undefined && record.providerdata.country == "Canada") {
-									currency = "C$";
+							return exportFuns.getCouponById(record.coupon_id)
+							.then(function(coupondata){
+								if(coupondata != null && coupondata != undefined) {
+									record.coupon_code = coupondata.coupon_code;
+								} else {
+									record.coupon_code = "";
 								}
-								record.currency = currency;
-							
-								record.userdata = record.providerdata;
-								delete record.providerdata;
-								delete record.consumerdata;								
-							} else { //consumers
-								if(record.consumerdata.country != null && record.consumerdata.country != undefined && record.consumerdata.country == "Canada") {
-									currency = "C$";
-								}
-								record.currency = currency;
+								if(svcrecord.rating !=null && svcrecord.rating != undefined )
+									record.rating = parseFloat(svcrecord.rating).toFixed(2);
+								else
+									record.rating = "0.00";
 								
-								record.userdata = record.consumerdata;
-								delete record.providerdata;
-								delete record.consumerdata;
-								if(record.user_name) {
-									var firstName = record.user_name.split(' ').slice(0, -1).join(' ');
-									var lastName = record.user_name.split(' ').slice(-1).join(' ');
-									record.provider_firstname = firstName;
-									record.provider_lastname = lastName;
-								}								
-							}							
-		                    return record;
+								if(svcrecord.cancel_rsh_policy !=null && svcrecord.cancel_rsh_policy != undefined )
+									record.cancel_rsh_policy = svcrecord.cancel_rsh_policy;
+								else
+									record.cancel_rsh_policy = "";
+								
+								if(svcrecord.cancel_fee !=null && svcrecord.cancel_fee != undefined )
+									record.cancel_fee = svcrecord.cancel_fee;
+								else
+									record.cancel_fee = "";
+								
+								if(svcrecord.reschedule_fee !=null && svcrecord.reschedule_fee != undefined )
+									record.reschedule_fee = svcrecord.reschedule_fee;
+								else
+									record.reschedule_fee = "";
+								
+								if(svcrecord.legal_policy !=null && svcrecord.legal_policy != undefined )
+									record.legal_policy = svcrecord.legal_policy;
+								else
+									record.legal_policy = "";
+								
+								
+								if(svcrecord.cancel_hours !=null && svcrecord.cancel_hours != undefined )
+									record.cancel_hours = svcrecord.cancel_hours;
+								else
+									record.cancel_hours = "";
+								
+								if(svcrecord.reschedule_hours !=null && svcrecord.reschedule_hours != undefined )
+									record.reschedule_hours = svcrecord.reschedule_hours;
+								else
+									record.reschedule_hours = "";
+								
+								
+								var apptmt_date = record.appointment_date.split("-").reverse().join("-");
+								record.appointment_time = sendmail.convertToSmallTime(record.appointment_time);
+								
+								if(record.service_addons != "")	record.service_addons = JSON.parse(record.service_addons);
+								if(record.service_options != "")	record.service_options = JSON.parse(record.service_options);
+								if(record.service_area_and_pricing != "")	record.service_area_and_pricing = JSON.parse(record.service_area_and_pricing);
+								if(record.service_grass_snow_height != "")	record.service_grass_snow_height = JSON.parse(record.service_grass_snow_height);
+								
+								var currency = "$";
+								if(record.consumer_id == user_id) { //providers	
+									if(record.providerdata.country != null && record.providerdata.country != undefined && record.providerdata.country == "Canada") {
+										currency = "C$";
+									}
+									record.currency = currency;
+								
+									record.userdata = record.providerdata;
+									delete record.providerdata;
+									delete record.consumerdata;								
+								} else { //consumers
+									if(record.consumerdata.country != null && record.consumerdata.country != undefined && record.consumerdata.country == "Canada") {
+										currency = "C$";
+									}
+									record.currency = currency;
+									
+									record.userdata = record.consumerdata;
+									delete record.providerdata;
+									delete record.consumerdata;
+									if(record.user_name) {
+										var firstName = record.user_name.split(' ').slice(0, -1).join(' ');
+										var lastName = record.user_name.split(' ').slice(-1).join(' ');
+										record.provider_firstname = firstName;
+										record.provider_lastname = lastName;
+									}								
+								}							
+								return record;
+							});							
 		                })
 		}).then(finalList => {
 			return finalList;
