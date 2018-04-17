@@ -242,8 +242,10 @@ api.search_services = (req, res)=>{
 				}
 			  }
 			var num_records = arr_services.length;
-			if(num_records) {
+			if(num_records && page_size) {
 				num_pages = Math.ceil(num_records / page_size);
+			} else {
+				if(!num_pages) num_pages = 1;
 			}
 			res.json({
 			  "status": 200,
@@ -271,8 +273,10 @@ api.search_services = (req, res)=>{
 				}
 			  }
 			  var num_records = arr_services.length;
-			  if(num_records) {
+			  if(num_records && page_size) {
 					num_pages = Math.ceil(num_records / page_size);
+			  } else {
+				if(!num_pages) num_pages = 1;
 			  }
 			  res.json({
 				  "status": 200,

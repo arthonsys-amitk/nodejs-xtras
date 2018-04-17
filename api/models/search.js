@@ -23,13 +23,13 @@ exportFuns.zipcodesearch = (search_keyword, fulladdress, type, limit, page)=>{
 		searchPattern = {
 			$and : [
 					{service_type : "" + type},
-					{$text: {$search: "" + search_keyword}}
+					{"service_name": {$regex : ".*" + search_keyword + ".*", $options: "i"}},
 				]
 			
 		};
 	} else {
 			searchPattern = {
-				$text: {$search: "" + search_keyword}
+				"service_name": {$regex : ".*" + search_keyword + ".*", $options: "i"},
 			};
 	}
 	
@@ -51,13 +51,13 @@ exportFuns.addresssearch = (search_keyword, address, city, province, zipcode, co
 		searchPattern = {
 			$and : [
 					{service_type : "" + type},
-					{$text: {$search: "" + search_keyword}}
+					{"service_name": {$regex : ".*" + search_keyword + ".*", $options: "i"}},
 				]
 			
 		};
 	} else {
 			searchPattern = {
-				$text: {$search: "" + search_keyword}
+				"service_name": {$regex : ".*" + search_keyword + ".*", $options: "i"},
 			};
 	}
 	
@@ -79,13 +79,13 @@ exportFuns.locationsearch = (search_keyword, search_lat, search_long, type, limi
 		searchPattern = {
 			$and : [
 					{service_type : "" + type},
-					{$text: {$search: "" + search_keyword}}
+					{"service_name": {$regex : ".*" + search_keyword + ".*", $options: "i"}},			
 				]
 			
 		};
 	} else {
 			searchPattern = {
-				$text: {$search: "" + search_keyword}
+				"service_name": {$regex : ".*" + search_keyword + ".*", $options: "i"},
 			};
 	}
 	if(limit && page)
