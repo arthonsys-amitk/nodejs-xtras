@@ -202,12 +202,18 @@ api.search_services = (req, res)=>{
 				if(valid) {
 					result[ctr].rating = parseFloat(result[ctr].rating).toFixed(2);
 					result[ctr].min_price = parseFloat(services.getMinServicePrice(result[ctr])).toFixed(2);
+					result[ctr].service_addons = sendmail.getAsJsonObject(result[ctr].service_addons);
+					result[ctr].service_options = sendmail.getAsJsonObject(result[ctr].service_options);
+					result[ctr].service_area_and_pricing = sendmail.getAsJsonObject(result[ctr].service_area_and_pricing);
+					result[ctr].service_grass_snow_height = sendmail.getAsJsonObject(result[ctr].service_grass_snow_height);
 					arr_services.push(result[ctr]);
 				}
 			  }
 			var num_records = arr_services.length;
-			if(num_records) {
+			if(num_records && page_size) {
 				num_pages = Math.ceil(num_records / page_size);
+			} else {
+				if(!num_pages) num_pages = 1;
 			}
 			res.json({
 			  "status": 200,
@@ -228,6 +234,10 @@ api.search_services = (req, res)=>{
 				if(valid) {
 					result[ctr].rating = parseFloat(result[ctr].rating).toFixed(2);
 					result[ctr].min_price = parseFloat(services.getMinServicePrice(result[ctr])).toFixed(2);
+					result[ctr].service_addons = sendmail.getAsJsonObject(result[ctr].service_addons);
+					result[ctr].service_options = sendmail.getAsJsonObject(result[ctr].service_options);
+					result[ctr].service_area_and_pricing = sendmail.getAsJsonObject(result[ctr].service_area_and_pricing);
+					result[ctr].service_grass_snow_height = sendmail.getAsJsonObject(result[ctr].service_grass_snow_height);
 					arr_services.push(result[ctr]);
 				}
 			  }
@@ -253,6 +263,10 @@ api.search_services = (req, res)=>{
 				if(valid) {
 					result[ctr].rating = parseFloat(result[ctr].rating).toFixed(2);
 					result[ctr].min_price = parseFloat(services.getMinServicePrice(result[ctr])).toFixed(2);
+					result[ctr].service_addons = sendmail.getAsJsonObject(result[ctr].service_addons);
+					result[ctr].service_options = sendmail.getAsJsonObject(result[ctr].service_options);
+					result[ctr].service_area_and_pricing = sendmail.getAsJsonObject(result[ctr].service_area_and_pricing);
+					result[ctr].service_grass_snow_height = sendmail.getAsJsonObject(result[ctr].service_grass_snow_height);
 					arr_services.push(result[ctr]);
 				}
 			  }

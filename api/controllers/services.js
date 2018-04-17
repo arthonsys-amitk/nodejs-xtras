@@ -619,6 +619,16 @@ api.add_appointments = (req, res)=>{
 			return;
 		}
 	
+		if(req.body.service_id == null || req.body.service_name == null || req.body.service_id == ""  || req.body.service_name == "") {
+			res.json({
+				"status": 400,
+				"api_name": "add_appointments",
+				"message": "Service ID or Service Name is not provided",
+				"data": {}
+			  });
+			return;
+		}
+	
         var appointment_data = {
                             parent_appointment_id : req.body.parent_appointment_id,
                             consumer_id : req.body.consumer_id,
@@ -645,7 +655,7 @@ api.add_appointments = (req, res)=>{
 							service_name: req.body.service_name,
 							user_name: req.body.user_name
                         };
-					
+			
 		//services.insert_appointment(appointment_data)        
                 if(req.body.coupon_id != null && req.body.coupon_id != undefined && req.body.coupon_id) {
 					//coupon id is provided
@@ -1327,6 +1337,10 @@ api.get_posts = (req, res)=> {
 				item.rating = parseFloat(item.rating).toFixed(2);
 				item.min_price = parseFloat(services.getMinServicePrice(item)).toFixed(2);
 			});
+						
+			if(type == "price")
+				posts.sort(function(a,b) { return parseFloat(a.min_price) - parseFloat(b.min_price) } );
+			
 			res.json({
 				  "status": 200,
 				  "api_name": "get_posts",

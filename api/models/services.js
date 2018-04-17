@@ -514,22 +514,39 @@ exportFuns.addRatingtoAppointments = (result, user_id) => {
 								record.appointment_time = sendmail.convertToSmallTime(record.appointment_time);
 								
 								if(record.service_addons != "") {	
-									record.service_addons = JSON.parse(JSON.stringify(record.service_addons));									
+									if(typeof record.service_addons != "string")
+										record.service_addons = JSON.parse(JSON.stringify(record.service_addons));
+									else
+										record.service_addons = JSON.parse(record.service_addons);
 								} else {
 									record.service_addons = [];
 								}
+								
 								if(record.service_options != "") { 
-									record.service_options = JSON.parse(JSON.stringify(record.service_options));									
+									if(typeof record.service_options != "string")
+										record.service_options = JSON.parse(JSON.stringify(record.service_options));
+									else
+										record.service_options = JSON.parse(record.service_options);
 								} else {
 									record.service_options = [];
 								}
+								
+								
 								if(record.service_area_and_pricing != "") {
-									record.service_area_and_pricing = JSON.parse(JSON.stringify(record.service_area_and_pricing));
+									if(typeof record.service_area_and_pricing != "string")
+										record.service_area_and_pricing = JSON.parse(JSON.stringify(record.service_area_and_pricing));
+									else
+										record.service_area_and_pricing = JSON.parse(record.service_area_and_pricing);
 								} else {
 									record.service_area_and_pricing = [];
 								}
+								
+								
 								if(record.service_grass_snow_height != "") {
-									record.service_grass_snow_height = JSON.parse(JSON.stringify(record.service_grass_snow_height));
+									if(typeof record.service_grass_snow_height != "string")
+										record.service_grass_snow_height = JSON.parse(JSON.stringify(record.service_grass_snow_height));
+									else
+										record.service_grass_snow_height = JSON.parse(record.service_grass_snow_height);
 								} else {
 									record.service_grass_snow_height = [];
 								}

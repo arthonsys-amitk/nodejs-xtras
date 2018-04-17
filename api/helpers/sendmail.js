@@ -30,4 +30,11 @@ exportFuns.convertToSmallTime = (time) => {
 	return time.join (''); // return adjusted time or original string
 };
 
+exportFuns.getAsJsonObject = (jsvalue) => {
+	if(typeof jsvalue != "string")
+		return JSON.parse(JSON.stringify(jsvalue));
+	else
+		return JSON.parse(jsvalue);
+};
+
 module.exports = exportFuns;
