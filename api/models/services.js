@@ -513,10 +513,26 @@ exportFuns.addRatingtoAppointments = (result, user_id) => {
 								var apptmt_date = record.appointment_date.split("-").reverse().join("-");
 								record.appointment_time = sendmail.convertToSmallTime(record.appointment_time);
 								
-								if(record.service_addons != "")	record.service_addons = JSON.parse(record.service_addons);
-								if(record.service_options != "")	record.service_options = JSON.parse(record.service_options);
-								if(record.service_area_and_pricing != "")	record.service_area_and_pricing = JSON.parse(record.service_area_and_pricing);
-								if(record.service_grass_snow_height != "")	record.service_grass_snow_height = JSON.parse(record.service_grass_snow_height);
+								if(record.service_addons != "") {	
+									record.service_addons = JSON.parse(JSON.stringify(record.service_addons));									
+								} else {
+									record.service_addons = [];
+								}
+								if(record.service_options != "") { 
+									record.service_options = JSON.parse(JSON.stringify(record.service_options));									
+								} else {
+									record.service_options = [];
+								}
+								if(record.service_area_and_pricing != "") {
+									record.service_area_and_pricing = JSON.parse(JSON.stringify(record.service_area_and_pricing));
+								} else {
+									record.service_area_and_pricing = [];
+								}
+								if(record.service_grass_snow_height != "") {
+									record.service_grass_snow_height = JSON.parse(JSON.stringify(record.service_grass_snow_height));
+								} else {
+									record.service_grass_snow_height = [];
+								}
 								
 								var currency = "$";
 								if(record.consumer_id == user_id) { //providers	
@@ -739,7 +755,8 @@ exportFuns.getMinServicePrice = (recpost)=>{
 //get coupon by id
 exportFuns.getCouponById = (coupon_id)=>{
   let db = new Mongo;
-  let oid = db.makeID(coupon_id);
+  //let oid = db.makeID(coupon_id);
+  let oid = "" + coupon_id;
   let searchPattern = {_id : oid};
 
   return db.connect(config.mongoURI)
@@ -776,8 +793,8 @@ exportFuns.get_total_payment_amount = (appointment_data, percent) => {
 	var payment_data = [];
 	var total_price = 0;
 	if(appointment_data.service_area_and_pricing != null && appointment_data.service_area_and_pricing != undefined && appointment_data.service_area_and_pricing != "") {
-		//if(typeof appointment_data.service_area_and_pricing === 'object') {
-			var svc_area = JSON.parse(appointment_data.service_area_and_pricing);
+		//if(typeof appointment_data.service_area_and_pricing === 'string') {
+			var svc_area = JSON.parse(JSON.stringify(appointment_data.service_area_and_pricing));
 			for(var i = 0; i < svc_area.length; i++) {
 				if(svc_area[i].price != null && svc_area[i].price != undefined && svc_area[i].price != "" && svc_area[i].price) {
 					total_price = total_price + svc_area[i].price;
@@ -787,8 +804,8 @@ exportFuns.get_total_payment_amount = (appointment_data, percent) => {
 	}
 	
 	if(appointment_data.service_grass_snow_height != null && appointment_data.service_grass_snow_height != undefined && appointment_data.service_grass_snow_height != "") {
-		//if(typeof appointment_data.service_grass_snow_height === 'object') {
-			var svc_grass = JSON.parse(appointment_data.service_grass_snow_height);
+		//if(typeof appointment_data.service_grass_snow_height === 'string') {
+			var svc_grass = JSON.parse(JSON.stringify(appointment_data.service_grass_snow_height));
 			for(var i = 0; i < svc_grass.length; i++) {
 				if(svc_grass[i].price != null && svc_grass[i].price != undefined && svc_grass[i].price != "" && svc_grass[i].price) {
 					total_price = total_price + svc_grass[i].price;
@@ -798,8 +815,8 @@ exportFuns.get_total_payment_amount = (appointment_data, percent) => {
 	}
 	
 	if(appointment_data.service_addons != null && appointment_data.service_addons != undefined && appointment_data.service_addons != "") {
-		//if(typeof appointment_data.service_addons === 'array') {
-			var svc_addon = JSON.parse(appointment_data.service_addons);
+		//if(typeof appointment_data.service_addons === 'string') {
+			var svc_addon = JSON.parse(JSON.stringify(appointment_data.service_addons));
 			for(var i = 0; i < svc_addon.length; i++) {
 				if(svc_addon[i].price != null && svc_addon[i].price != undefined && svc_addon[i].price != "" && svc_addon[i].price) {
 					total_price = total_price + svc_addon[i].price;
@@ -810,7 +827,7 @@ exportFuns.get_total_payment_amount = (appointment_data, percent) => {
 	
 	if(appointment_data.service_options != null && appointment_data.service_options != undefined && appointment_data.service_options != "") {
 		//if(typeof appointment_data.service_options === 'object') {
-			var svc_option = JSON.parse(appointment_data.service_options);
+			var svc_option = JSON.parse(JSON.stringify(appointment_data.service_options));
 			for(var i = 0; i < svc_option.length; i++) {
 				if(svc_option[i].price != null && svc_option[i].price != undefined && svc_option[i].price != "" && svc_option[i].price) {
 					total_price = total_price + svc_option[i].price;
