@@ -1330,6 +1330,15 @@ api.get_posts = (req, res)=> {
 	let type = _.trim(req.body.type) || ''; //individual/business/price
 	let limit = req.body.limit || 0; //number of records
 	let page = req.body.page || 0; //page
+	if(type == null || type == "" || !(type == "individual" || type == "business" || type == "price")) {
+		res.json({
+             "status": 400,
+             "api_name": "get_posts",
+             "message": "Service Type is invalid",
+             "data": {}
+         });
+         return;
+	}
 	if(Object.keys(req.body).length >= 2 ) {
 		services.getPosts(service_category_id, type, limit, page)
 		.then(function(posts){

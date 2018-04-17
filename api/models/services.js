@@ -37,7 +37,12 @@ exportFuns.getPosts = (service_category_id, type, limit, page)=>{
 				{ "service_type": "" + type }
 			]
 		};
+	} else if(type == "price") {
+		searchPattern = {
+			"service_category_id" : "" + service_category_id
+		};
 	}
+		
 	if(page) {
 		return db.findPage('services', searchPattern, {'_id': -1}, limit, page);
 	} else {
