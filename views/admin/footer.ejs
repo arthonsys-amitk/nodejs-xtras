@@ -53,6 +53,8 @@
 <script src="/dist/js/custom.js"></script>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyDcO6PQqxwvHRKYu5lwBTXqJlEPbEGyBXc"></script>
 
+<script src="/plugins/iCheck/icheck.min.js"></script>
+
 <script type="text/javascript">
    $('#example2').DataTable();
 
@@ -81,6 +83,15 @@
             })
           //return false;   
         };
+</script>
+<script>
+	jQuery(document).ready(function(){
+		 //iCheck for checkbox and radio inputs
+		jQuery('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+		  checkboxClass: 'icheckbox_minimal-blue',
+		  radioClass   : 'iradio_minimal-blue'
+		})
+	});
 </script>
 </body>
 </html>
