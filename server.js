@@ -58,6 +58,7 @@ app.use('/api', routes.search);
 app.use('/admin', web_routes.login);
 app.use('/admin/user', web_routes.user);
 app.use('/admin/coupon', web_routes.coupon);
+app.use('/admin/', web_routes.settings);
 
 
 // secure API endpoints

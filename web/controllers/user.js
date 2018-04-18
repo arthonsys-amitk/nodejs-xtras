@@ -6,6 +6,7 @@ var _      = require('lodash'),
     config = require('../../config'),
     {user} = require('../models'),
     {crypto} = require('../helpers'),
+    userquery_model = require('../models/userquery'),
     {sendmail} = require('../helpers');
 var NodeGeocoder = require('node-geocoder');
 var options = {
@@ -31,9 +32,14 @@ web.all_user=(req,res)=>{
 	}else
 	{
 		user.all_user().then(function(user_result) {
-
-			res.render('admin/users/user_list',{"user_data":req.session.user_data,'users':user_result});
-
+			if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+				var qrycount = 0;
+				var resqueries = null;
+			} else {
+				var qrycount = req.session.resqueries.length;
+				var resqueries = req.session.resqueries;
+			}
+			res.render('admin/users/user_list',{"user_data":req.session.user_data,'users':user_result, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since});
 		});
    	}
 }

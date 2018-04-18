@@ -4,7 +4,7 @@ var _      = require('lodash'),
     fs     = require('fs'),
 	nodemailer = require("nodemailer"),
     config = require('../../config'),
-    {coupon} = require('../models'),
+    {settings} = require('../models'),
     {crypto} = require('../helpers'),
     {sendmail} = require('../helpers');
 var NodeGeocoder = require('node-geocoder');
@@ -19,7 +19,7 @@ var exportFuns = {},
     web = {};
 
 // Display all users
-web.get_coupon=(req,res)=>{
+web.notification_settings=(req,res)=>{
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
 	{
 	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
@@ -30,7 +30,7 @@ web.get_coupon=(req,res)=>{
 		res.redirect('/admin');
 	}else
 	{
-		coupon.get_coupons().then(function(coupon_result) {
+		settings.get_notification_settings().then(function(settings_result) {
 			if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
 				var qrycount = 0;
 				var resqueries = null;
@@ -38,7 +38,7 @@ web.get_coupon=(req,res)=>{
 				var qrycount = req.session.resqueries.length;
 				var resqueries = req.session.resqueries;
 			}
-			res.render('admin/coupon/coupon_list',{"user_data":req.session.user_data,'coupon':coupon_result, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since});
+			res.render('admin/settings/notification_settings',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "push_notifications" : settings_result});
 
 		});
    	}

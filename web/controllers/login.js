@@ -12,6 +12,8 @@ var _      = require('lodash'),
     {crypto} = require('../helpers'),
     {sendmail} = require('../helpers');
 
+	var dateFormat = require('dateformat');
+	
 var exportFuns = {},
     web = {};
 
@@ -105,15 +107,18 @@ web.dashboard = (req, res)=>{
 		.then(function(usercount){
 				services_model.get_services_count()
 				.then(function(svccount){
-					userquery_model.get_userquery_count()
-					.then(function(qrycount){
+					userquery_model.get_all_queries()
+					.then(function(resqueries){
+						req.session.resqueries = resqueries;
 						coupon_model.get_coupon_count()
-						.then(function(couponcount){
+						.then(function(couponcount){		
+							var membersince = dateFormat(req.session.user_data.created_at, "mmmm, yyyy");
+							req.session.member_since = membersince;
 							usercount = (usercount == null || usercount == "")? 0 : ((usercount < 10) ? ("0" + usercount): usercount);
 							svccount = (svccount == null || svccount == "")? 0 : ((svccount < 10) ? ("0" + svccount): svccount);
-							qrycount = (qrycount == null || qrycount == "")? 0 : ((qrycount < 10) ? ("0" + qrycount): qrycount);
+							var qrycount = (resqueries == null || resqueries == "")? 0 : resqueries.length;
 							couponcount = (couponcount == null || couponcount == "")? 0 : ((couponcount < 10) ? ("0" + couponcount): couponcount);
-							res.render('admin/dashboard',{"user_data":req.session.user_data, "num_users": usercount, "num_services": svccount, "num_queries" : qrycount, "num_coupons" : couponcount});
+							res.render('admin/dashboard',{"user_data":req.session.user_data, "num_users": usercount, "num_services": svccount, "num_queries" : qrycount, "num_coupons" : couponcount, "resqueries" : resqueries, "member_since" : req.session.member_since});
 						});
 					});
 				});			
@@ -137,8 +142,19 @@ web.profile = (req, res)=>{
             res.locals.flashmessages = req.session.alert_data;
             req.session.alert_data = null;
         }
+		if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+			var qrycount = 0;
+			var resqueries = null;
+		} else {
+			var qrycount = req.session.resqueries.length;
+			var resqueries = req.session.resqueries;
+		}
+		var member_since = "";
+		if(req.session.resqueries != null && req.session.resqueries != undefined ) {
+			member_since = req.session.resqueries;
+		}
 	login.getUser(req.session.user_data._id).then(function(result){
-	res.render('admin/profile',{"user_data":req.session.user_data,'profile_data':result});
+	res.render('admin/profile',{"user_data":req.session.user_data,'profile_data':result, "resqueries": resqueries, "num_queries" : qrycount, "member_since" : member_since});
 	})
 	}
 };
