@@ -24,4 +24,17 @@ exportFuns.get_coupons = ()=>{
   });
 };
 
+//get coupon count
+exportFuns.get_coupon_count = ()=>{
+  let db = new Mongo;
+  return db.connect(config.mongoURI)
+  .then(function(){
+    return db.find('coupon', {});
+  })
+  .then(function(coupon){
+    db.close();
+    return coupon.length;
+  });
+};
+
 module.exports = exportFuns;

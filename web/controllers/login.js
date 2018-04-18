@@ -5,6 +5,10 @@ var _      = require('lodash'),
 	nodemailer = require("nodemailer"),
     config = require('../../config'),
     {login} = require('../models'),
+    {user} = require('../models'),
+    services_model = require('../models/services'),
+    userquery_model = require('../models/userquery'),
+    coupon_model = require('../models/coupon'),
     {crypto} = require('../helpers'),
     {sendmail} = require('../helpers');
 
@@ -65,18 +69,18 @@ web.login_process = (req, res)=>{
                   .then(function(userObj){
 
                     if (! userObj) {
-                    	req.session.alert_data = { alert_type: "danger", alert_msg: "Username and Password didn't matched." };
+                    	req.session.alert_data = { alert_type: "danger", alert_msg: "Username and Password didn't match." };
                         res.redirect('/admin');
 
                     } else {
 						req.session.user_data=userObj;
-						req.session.alert_data = { alert_type: "success", alert_msg: "Successfully logined." };
+						req.session.alert_data = { alert_type: "success", alert_msg: "Successful login." };
                         res.redirect('/admin/dashboard')                    
                     }
                   });
 
               } else {
-                  req.session.alert_data = { alert_type: "danger", alert_msg: "Username and Password didn't matched." };
+                  req.session.alert_data = { alert_type: "danger", alert_msg: "Username and Password didn't match." };
                         res.redirect('/admin');
               } 
           });  
@@ -87,7 +91,7 @@ web.login_process = (req, res)=>{
 /***************************End login**************************** */
 web.dashboard = (req, res)=>{
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true){
-		req.flash("error","Session Limeout");
+		req.flash("error","Session Timeout");
 		res.locals.messages = req.flash();
 		res.redirect('/admin');
 	}else{
@@ -96,7 +100,24 @@ web.dashboard = (req, res)=>{
             res.locals.flashmessages = req.session.alert_data;
             req.session.alert_data = null;
         }
-	res.render('admin/dashboard',{"user_data":req.session.user_data});
+	
+		user.get_user_count()
+		.then(function(usercount){
+				services_model.get_services_count()
+				.then(function(svccount){
+					userquery_model.get_userquery_count()
+					.then(function(qrycount){
+						coupon_model.get_coupon_count()
+						.then(function(couponcount){
+							usercount = (usercount == null || usercount == "")? 0 : ((usercount < 10) ? ("0" + usercount): usercount);
+							svccount = (svccount == null || svccount == "")? 0 : ((svccount < 10) ? ("0" + svccount): svccount);
+							qrycount = (qrycount == null || qrycount == "")? 0 : ((qrycount < 10) ? ("0" + qrycount): qrycount);
+							couponcount = (couponcount == null || couponcount == "")? 0 : ((couponcount < 10) ? ("0" + couponcount): couponcount);
+							res.render('admin/dashboard',{"user_data":req.session.user_data, "num_users": usercount, "num_services": svccount, "num_queries" : qrycount, "num_coupons" : couponcount});
+						});
+					});
+				});			
+		});
 	}
 };
 web.logout = (req, res)=>{

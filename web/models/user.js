@@ -108,4 +108,20 @@ exportFuns.update_profile = (user_data,file,latitude,longitude,zipcode)=>{
 	    });
 	
 };
+
+//get_user_count
+exportFuns.get_user_count = ()=>{
+  
+  let db = new Mongo;
+  return db.connect(config.mongoURI)
+  .then(function(){
+    return db.find('users', {});
+  })
+  .then(function(user){
+    db.close();
+	return user.length;
+  });
+};
+
+
 module.exports = exportFuns;
