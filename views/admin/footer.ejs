@@ -1,0 +1,87 @@
+  <footer class="main-footer">
+    <div class="pull-right hidden-xs">
+      <b>Version</b> 2.4.0
+    </div>
+    <strong>Copyright &copy; 2014-2016 <a href="https://adminlte.io">Almsaeed Studio</a>.</strong> All rights
+    reserved.
+  </footer>
+</div>
+<!-- ./wrapper -->
+<script type="text/javascript">
+  setTimeout(function(){ $('#success_msg').fadeOut( "slow" ); }, 2000);
+
+</script>
+
+<!-- jQuery 3 -->
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="/bower_components/jquery-ui/jquery-ui.min.js"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+  $.widget.bridge('uibutton', $.ui.button);
+</script>
+<!-- Bootstrap 3.3.7 -->
+<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- DataTables -->
+<script src="/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<!-- Sparkline -->
+<script src="/bower_components/jquery-sparkline/dist/jquery.sparkline.min.js"></script>
+<!-- jvectormap -->
+<script src="/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+<script src="/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+<!-- jQuery Knob Chart -->
+<script src="/bower_components/jquery-knob/dist/jquery.knob.min.js"></script>
+<!-- daterangepicker -->
+<script src="/bower_components/moment/min/moment.min.js"></script>
+<script src="/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
+<!-- datepicker -->
+<script src="/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<!-- Bootstrap WYSIHTML5 -->
+<script src="/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<!-- Slimscroll -->
+<script src="/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="/bower_components/fastclick/lib/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="/dist/js/adminlte.min.js"></script>
+
+<!-- AdminLTE for demo purposes -->
+<script src="/dist/js/demo.js"></script>
+<!-- validation -->
+<script src="/dist/js/validator.js"></script>
+
+<script src="/dist/js/custom.js"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyDcO6PQqxwvHRKYu5lwBTXqJlEPbEGyBXc"></script>
+
+<script type="text/javascript">
+   $('#example2').DataTable();
+
+  function myFunctionName() {
+            var flag=0;
+            var street=$('#street').val();
+            var city=$('#city').val();
+            var state=$('#state').val();
+            var country=$('#country').val();
+            var places = street+','+city+','+state+','+country;
+
+            var geocoder = new google.maps.Geocoder();
+            var address = places;
+
+            geocoder.geocode( { 'address': address}, function(results, status) {
+              if(status=='ZERO_RESULTS')
+              {
+                alert('Invalid address');
+                flag=0;
+              //  return false;
+              }else{
+                 flag=1;
+                return true;
+              }
+       
+            })
+          //return false;   
+        };
+</script>
+</body>
+</html>

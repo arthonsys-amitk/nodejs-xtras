@@ -1,0 +1,63 @@
+<%-include('../header') %> 
+<%-include('../sidebar') %> 
+<div class="content-wrapper">
+   
+    <section class="content-header">
+      <h1>
+       All users
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        <li class="active">All users</li>
+      </ol>
+    </section>
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            
+           
+            <div class="box-body">
+              <table id="example2" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% var count=1; for(var i=0;i<users.length;i++){%>
+                <tr>
+                  <td><%=count%></td>
+                  <td><%=users[i].fullname%></td>
+                  <td><%=users[i].email%></td>
+                  <td><%=users[i].phone%></td>
+                  <td> <a class="btn btn-xs btn-info" href="/admin/user/edit/<%=users[i]._id%>" style="margin-right: 10px;">Edit / View</a><a class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want to delete ?');" href="/admin/user/delete/<%=users[i]._id%>">Delete</a></td>
+                </tr>
+                <% count++; } %>
+                </tbody>
+                <tfoot>
+                <tr>
+                  <th>#</th>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Action</th>
+                </tr>
+                </tfoot>
+              </table>
+            </div>
+          
+          </div>
+         
+        </div>
+      
+      </div>
+      
+    </section>
+    
+  </div>  
+    <%-include('../footer') %> 
