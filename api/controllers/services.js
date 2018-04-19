@@ -959,6 +959,7 @@ api.get_appointments = (req, res)=>{
  * @api {post} /cancel_appointment Cancel Appointment
  * @apiGroup Post
  * @apiparam {String} appointment_id Appointment Id
+ * @apiparam {String} user_id User Id (who is cancelling appointment)
 
  * @apiSuccessExample {json} Success
  *    HTTP/1.1 200 OK
@@ -978,9 +979,9 @@ api.get_appointments = (req, res)=>{
 	  }
 */
 api.cancel_appointment = (req, res)=>{
-   if(Object.keys(req.body).length == 1) {
+   if(Object.keys(req.body).length >= 2) {
 
-		services.cancel_appointment(req.body.appointment_id)
+		services.cancel_appointment(req.body.appointment_id, req.body.user_id)
 		.then(function(result){
 				if(!result || result == null) {
 					res.json({
