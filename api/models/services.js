@@ -607,7 +607,7 @@ exportFuns.getRatingByServiceId = (serviceId) => {
 };
 
 //cancel given appointment
-exportFuns.cancel_appointment = (appointment_id, user_id) => {
+exportFuns.cancel_appointment = (appointment_id) => {
 	
     let db = new Mongo;
     let searchPattern = {

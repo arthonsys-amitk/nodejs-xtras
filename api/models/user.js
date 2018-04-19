@@ -5,8 +5,8 @@ var exportFuns = {},
     {sendmail} = require('../helpers'),
 	{services} = require('../models'),
     Mongo      = require('../../mongo');
-
-	const Promise = require("bluebird");
+    const Promise = require("bluebird");
+    const push_notifications=require('./../helpers/push_notifications');
 
 // get user object from database using email
 exportFuns.getUserByEmail = (email)=>{
@@ -485,4 +485,32 @@ exportFuns.get_coupon_by_service_id = (service_id) => {
     });
 
 };
+// send push notification
+exportFuns.test_push = () => {
+    let db = new Mongo; 
+    
+     db.connect(config.mongoURI)
+    .then(function() {		
+         db.find('user_device_tokens').then(function(token_data){
+
+            for(var i=1;i<token_data.length;i++)
+            {
+                var messagePattern = 
+                { 
+                    to: token_data[i].device_token, data: {},
+                    notification: { title: 'test', body: "" }
+                }; 
+                if(token_data[i].device_type == 'android')
+                { 
+                    push_notifications.sendForAndriod(messagePattern); 
+                }
+                if(token_data[i].device_type == 'ios')
+                {
+                    push_notifications.sendForIOS(token_data[i].device_token,messagePattern.notification); 
+                }
+                
+            }
+            });
+        }); 
+    };
 module.exports = exportFuns;

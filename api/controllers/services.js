@@ -7,7 +7,8 @@ var _      = require('lodash'),
     {user} = require('../models'),
     {crypto} = require('../helpers'),
     {sendmail} = require('../helpers');
-
+const push_notifications=require('./../helpers/push_notifications');
+const all_function=require('./../helpers/all_function');
 var exportFuns = {},
     api = {},
     web = {};
@@ -684,6 +685,7 @@ api.add_appointments = (req, res)=>{
 									appointment_data.providerdata = providerdata;
 									services.insert_appointment(appointment_data)
 									.then(function(aptresult){
+
 										res.json({
 											"status": 200,
 											"api_name": "add_appointments",
@@ -718,6 +720,8 @@ api.add_appointments = (req, res)=>{
 									appointment_data.providerdata = providerdata;
 									services.insert_appointment(appointment_data)
 									.then(function(aptresult){
+										//console.log(aptresult);
+										send_add_appointment_push_notification(aptresult.ops[0]);
 										res.json({
 											"status": 200,
 											"api_name": "add_appointments",
@@ -744,7 +748,30 @@ api.add_appointments = (req, res)=>{
 			return;
 		}    
 };
+function send_add_appointment_push_notification(data){
+	var cunsumer_messagePattern = 
+                { 
+					
+					title: 'New appointment added',
+					body: '#'+data._id,
+					customData:{
+								type: "customer"
+							}
+							
+				}; 
+	var provider_messagePattern = 
+	{ 
 
+	
+			title: 'New appointment received',
+			body:'#'+data._id,
+			customData:{
+						type: "provider"
+					}
+	}; 
+	all_function.send_device_token_using_user_id(data.consumer_id,cunsumer_messagePattern);
+	all_function.send_device_token_using_user_id(data.provider_id,provider_messagePattern);
+}
 /**
  * @api {post} /reschedule_appointment RescheduleAppointment
  * @apiGroup Post
@@ -792,6 +819,7 @@ api.add_appointments = (req, res)=>{
 			"data": {}
 	  }
 */
+
 api.reschedule_appointment = (req, res)=>{
     
 	let appointment_id = req.body.appointment_id;
@@ -983,6 +1011,7 @@ api.cancel_appointment = (req, res)=>{
 
 		services.cancel_appointment(req.body.appointment_id, req.body.user_id)
 		.then(function(result){
+			
 				if(!result || result == null) {
 					res.json({
 						"status": 400,
@@ -990,7 +1019,8 @@ api.cancel_appointment = (req, res)=>{
 						"message": "Appointment could not be updated",
 						"data": "" + result
 					});
-				} else {					
+				} else {
+					send_cancel_appointment_push_notification(req.body.user_id,req.body.appointment_id)					
 					res.json({
 						"status": 200,
 						"api_name": "cancel_appointment",
@@ -1012,7 +1042,26 @@ api.cancel_appointment = (req, res)=>{
 		return;
 	}    
 }
-
+function send_cancel_appointment_push_notification(user_id,appointment_id){
+	let type='';
+	services.get_appointment_by_id(appointment_id).then(function(data){
+		if(user_id==data.consumer_id){
+			type="provider";
+		}else{
+			type="customer";
+		}
+	var cunsumer_messagePattern = 
+                { 
+					
+					title: 'Your appointment has been canceled',
+					body: '#'+appointment_id,
+					customData:{type:type}
+							
+				}; 
+	
+	all_function.send_device_token_using_user_id(data.consumer_id,cunsumer_messagePattern);
+	});
+}
 /**
  * @api {post} /confirm_appointment Confirm Appointment
  * @apiGroup Post
@@ -1035,6 +1084,8 @@ api.cancel_appointment = (req, res)=>{
 			"data": {}
 	  }
 */
+
+
 api.confirm_appointment = (req, res)=>{
    if(Object.keys(req.body).length == 1) {
 
