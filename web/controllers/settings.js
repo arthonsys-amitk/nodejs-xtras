@@ -30,6 +30,10 @@ web.notification_settings=(req,res)=>{
 		res.redirect('/admin');
 	}else
 	{
+		if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true) {
+            res.locals.flashmessages = req.session.alert_data;
+            req.session.alert_data = null;
+        }
 		settings.get_notification_settings().then(function(settings_result) {
 			if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
 				var qrycount = 0;
@@ -38,13 +42,48 @@ web.notification_settings=(req,res)=>{
 				var qrycount = req.session.resqueries.length;
 				var resqueries = req.session.resqueries;
 			}
-			res.render('admin/settings/notification_settings',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "push_notifications" : settings_result});
+			var enabled = "0";
+			if(settings_result != null && settings_result != undefined) {
+				enabled = settings_result.value;				
+			}
+			var key_id = "";
+			if(settings_result._id != null && settings_result._id != undefined)
+				key_id = settings_result._id;
+			res.render('admin/settings/notification_settings',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "notifications_enabled" : enabled, "notifications_id" : key_id});
 
 		});
    	}
 }
 
-
+//update setting for push notification
+web.notification_update=(req,res)=>{
+	var enable_notifications = "0";
+	if(req.body.chk_notifications != null && req.body.chk_notifications != "undefined")
+		enable_notifications = "1";
+	var settings_id = "";
+	if(req.body.settings_id != null && req.body.settings_id != "undefined")
+		settings_id = req.body.settings_id;
+	settings.update_notification_setting(settings_id, enable_notifications)
+	.then(function(settings_result){
+		if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+			var qrycount = 0;
+			var resqueries = null;
+		} else {
+			var qrycount = req.session.resqueries.length;
+			var resqueries = req.session.resqueries;
+		}
+		var enabled = "0";
+		if(settings_result != null && settings_result != "undefined") {
+			enabled = settings_result.value;
+		}
+		var key_id = "";
+		if(settings_result._id != null && settings_result._id != undefined)
+			key_id = settings_result._id;
+		req.session.alert_data = { alert_type: "success", alert_msg: "Successfully Updated." };
+		res.locals.flashmessages = req.session.alert_data;
+		res.render('admin/settings/notification_settings',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "notifications_enabled" : enabled, "notifications_id" : key_id});
+	});
+};
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

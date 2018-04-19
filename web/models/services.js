@@ -20,5 +20,18 @@ exportFuns.get_services_count = ()=>{
   });
 };
 
+//get list of services
+exportFuns.list_services = ()=>{
+  let db = new Mongo;
+  return db.connect(config.mongoURI)
+  .then(function(){
+    return db.find('services', {});
+  })
+  .then(function(resservices){
+    db.close();
+    return resservices;
+  });
+};
+
 
 module.exports = exportFuns;

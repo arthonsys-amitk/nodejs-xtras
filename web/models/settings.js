@@ -16,11 +16,35 @@ exportFuns.get_notification_settings = ()=>{
   let db = new Mongo;
   return db.connect(config.mongoURI)
   .then(function(){
-    return db.find('settings', searchPattern);
+    return db.findOne('settings', searchPattern);
   })
   .then(function(settings){
     db.close();
     return settings;
+  });
+};
+
+//update push notification settings
+exportFuns.update_notification_setting = (settings_id, enable_notifications) => {
+  let searchPattern = {};
+  if(settings_id) {
+	  _id: settings_id
+  } else {
+	  searchPattern = {
+		"key": {$regex : ".*push.*", $options: "i"},
+	  };
+  }
+  let db = new Mongo;
+  return db.connect(config.mongoURI)
+  .then(function(){
+    return db.update('settings', searchPattern, {"value": "" + enable_notifications});
+  })
+  .then(function(settings){    
+		return db.findOne('settings', searchPattern)
+		.then(function(ressettings){
+			db.close();
+			return ressettings;  
+		});	
   });
 };
 

@@ -92,6 +92,7 @@ web.login_process = (req, res)=>{
 
 /***************************End login**************************** */
 web.dashboard = (req, res)=>{
+	req.session.hostname = req.headers.host;
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true){
 		req.flash("error","Session Timeout");
 		res.locals.messages = req.flash();
@@ -113,7 +114,7 @@ web.dashboard = (req, res)=>{
 						coupon_model.get_coupon_count()
 						.then(function(couponcount){		
 							var membersince = dateFormat(req.session.user_data.created_at, "mmmm, yyyy");
-							req.session.member_since = membersince;
+							req.session.member_since = membersince;							
 							usercount = (usercount == null || usercount == "")? 0 : ((usercount < 10) ? ("0" + usercount): usercount);
 							svccount = (svccount == null || svccount == "")? 0 : ((svccount < 10) ? ("0" + svccount): svccount);
 							var qrycount = (resqueries == null || resqueries == "")? 0 : resqueries.length;

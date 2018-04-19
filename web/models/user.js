@@ -79,9 +79,8 @@ exportFuns.update_profile = (user_data,file,latitude,longitude,zipcode)=>{
     				  'latitude':latitude,
     				  'longitude':longitude,
     				  'zip_code':zipcode
-    				}
- 	
- 	 console.log(update_data);
+    				}; 	
+ 	 
 	    if (typeof file.profile!="undefined")
 	    {
 		    let sampleFile = file.profile;

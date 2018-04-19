@@ -32,6 +32,8 @@
   <link rel="stylesheet" href="/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
   
   <link rel="stylesheet" href="/plugins/iCheck/all.css">
+  
+  <link rel="stylesheet" href="/custom/form.css">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -75,8 +77,10 @@
               <li>
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
-					<% if(num_queries) { 
-						for(var i = 0; i < 4 ; i++) {
+					<% 
+					var upper_limit_recs = (num_queries > 4)? 4: num_queries;
+					if(num_queries) { 
+						for(var i = 0; i < upper_limit_recs ; i++) {
 						%>
 						<%
 							var dt = new Date(resqueries[i].created_at);
@@ -104,7 +108,7 @@
                   
                 </ul>
               </li>
-              <li class="footer"><a href="#">See All Messages</a></li>
+              <li class="footer"><a href="/admin/list_queries">See All Messages</a></li>
             </ul>
           </li>
 
@@ -121,7 +125,7 @@
 
                 <p>
 				  <%
-					var user_since = new Date(user_data.created_at);					
+					var user_since = new Date(user_data.created_time);					
 				  %>
                   <%=user_data.fullname; %>
                   <small>Member since <%=member_since%></small>

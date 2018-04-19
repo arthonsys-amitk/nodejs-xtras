@@ -1,25 +1,20 @@
-<%-include('../header') %> 
-<%-include('../sidebar') %> 
+<%-include('../../header') %> 
+<%-include('../../sidebar') %> 
 <div class="content-wrapper">
    
     <section class="content-header">
       <h1>
-       Users
+       Services 
       </h1>
       <ol class="breadcrumb">
         <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        <li class="active">All users</li>
+        <li>Queries</li>
+        <li class="active">View Services</li>
       </ol>
     </section>
     <section class="content">
       <div class="row">
         <div class="col-xs-12">
-			<% if (locals.flashmessages) { %>
-				<div class="alert alert-<%=flashmessages.alert_type%> alert-dismissible">
-					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-					<%=flashmessages.alert_msg%>
-				</div>
-			<% } %>
           <div class="box">
             
            
@@ -28,29 +23,29 @@
                 <thead>
                 <tr>
                   <th>#</th>
-                  <th>Username</th>
                   <th>Email</th>
-                  <th>Phone</th>
+				  <th>Date</th>
+				  <th>Query</th>
                   <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
-                <% var count=1; for(var i=0;i<users.length;i++){%>
+                <% var count=1; for(var i=0; i<queries_list.length; i++){%>
                 <tr>
                   <td><%=count%></td>
-                  <td><%=users[i].fullname%></td>
-                  <td><%=users[i].email%></td>
-                  <td><%=users[i].phone%></td>
-                  <td> <a class="btn btn-xs btn-info" href="/admin/user/edit/<%=users[i]._id%>" style="margin-right: 10px;">Edit / View</a><a class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want to delete ?');" href="/admin/user/delete/<%=users[i]._id%>">Delete</a></td>
+                  <td><%=queries_list[i].email%></td>
+                  <td><%=queries_list[i].created_at%></td>
+                  <td><%=queries_list[i].query%></td>
+                  <td> <a class="btn btn-xs btn-info" href="/admin/users/query/edit/<%=queries_list[i]._id%>" style="margin-right: 10px;">Edit / View</a><a class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want to delete ?');" href="/admin/users/query/delete/<%=queries_list[i]._id%>">Delete</a></td>
                 </tr>
                 <% count++; } %>
                 </tbody>
                 <tfoot>
                 <tr>
                   <th>#</th>
-                  <th>Username</th>
                   <th>Email</th>
-                  <th>Phone</th>
+				  <th>Date</th>
+				  <th>Query</th>
                   <th>Action</th>
                 </tr>
                 </tfoot>
@@ -66,4 +61,4 @@
     </section>
     
   </div>  
-    <%-include('../footer') %> 
+    <%-include('../../footer') %> 
