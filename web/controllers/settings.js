@@ -85,6 +85,33 @@ web.notification_update=(req,res)=>{
 	});
 };
 
+//payment_settings
+web.payment_settings = (req,res) => {
+	settings.get_payment_settings()
+	.then(function(payment_config){
+		var stripe_email = "merchant@mailinator.com";
+		var stripe_secret_key = "sk_test_xxxxxxxxxxxxxxxxx";
+		var stripe_publishable_key = "pk_test_xxxxxxxxxxxxxxxxx";
+		var stripe_mode = "sandbox"; //sandbox/production
+		if(payment_config != null && payment_config.length > 0) {
+			for(var i = 0; i < payment_config.length; i++) {
+				if(payment_config[i].key == "stripe_email") {	stripe_email = payment_config[i].value;		}
+				if(payment_config[i].key == "stripe_secret_key") {	stripe_secret_key = payment_config[i].value;		}
+				if(payment_config[i].key == "stripe_publishable_key") {	stripe_publishable_key = payment_config[i].value;		}
+				if(payment_config[i].key == "stripe_mode") {	stripe_mode = payment_config[i].value;		}
+			}
+		}
+		if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+			var qrycount = 0;
+			var resqueries = null;
+		} else {
+			var qrycount = req.session.resqueries.length;
+			var resqueries = req.session.resqueries;
+		}
+		res.locals.flashmessages = req.session.alert_data;
+		res.render('admin/settings/payment_settings',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "stripe_email" : stripe_email, "stripe_secret_key" : stripe_secret_key, "stripe_publishable_key" : stripe_publishable_key, "stripe_mode" : stripe_mode });
+	});
+};
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 exportFuns.web = web;

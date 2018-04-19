@@ -48,4 +48,21 @@ exportFuns.update_notification_setting = (settings_id, enable_notifications) => 
   });
 };
 
+//get payment configuration settings
+exportFuns.get_payment_settings = ()=>{
+  let searchPattern = {
+    "key": {$regex : ".*stripe.*", $options: "i"},
+  };
+
+  let db = new Mongo;
+  return db.connect(config.mongoURI)
+  .then(function(){
+    return db.find('settings', searchPattern);
+  })
+  .then(function(res_settings){
+    db.close();
+    return res_settings;
+  });
+};
+
 module.exports = exportFuns;
