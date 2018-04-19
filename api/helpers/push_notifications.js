@@ -10,12 +10,12 @@ var FCM = require('fcm-push');
 
 var fcm = new FCM(config.fcmServerKey);
 
-exportFuns.sendForAndroid = (messagePattern) => {
+exportFuns.sendForAndriod = (messagePattern) => {
 
     //callback style
     fcm.send(messagePattern, function(err, response){
         if (err) {
-            console.log("Android push notifications sending failed.");
+            console.log("Andriod push notifications sending failed."+err);
         } else {
             //console.log("Successfully sent with response: ", response);
         }
@@ -46,8 +46,7 @@ exportFuns.sendForIOS = (deviceToken, alert_message, payload_data={}) => {
 	note.alert = alert_message;
 	note.payload = payload_data;
 
-    apnProvider.send(note, deviceToken)
-    .then( (result) => {
+    apnProvider.send(note, deviceToken,function(result){
 	  	// see documentation for an explanation of result
 	  	console.log(result)
 	});
