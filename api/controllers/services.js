@@ -830,6 +830,7 @@ api.reschedule_appointment = (req, res)=>{
 		services.reschedule_appointment(appointment_id, appointment_date, appointment_time)
 		.then(function(response) {
 			if(response!=null && response){
+				send_reschedule_appointment_push_notification(appointment_id);
                 res.json({
                     "status": 200,
                     "api_name": "reschedule_appointment",
@@ -855,7 +856,22 @@ api.reschedule_appointment = (req, res)=>{
         return;
     }
 }
-
+function send_reschedule_appointment_push_notification(appointment_id){
+	let type='';
+	services.get_appointment_by_id(appointment_id).then(function(data){
+		
+	var cunsumer_messagePattern = 
+                { 
+					
+					title: 'Your appointment has been rescheduled',
+					body: '#'+appointment_id,
+					customData:{type:"provider"}
+							
+				}; 
+	
+	all_function.send_device_token_using_user_id(data.provider_id,cunsumer_messagePattern);
+	});
+}
 /**
  * @api {post} /get_appointments Get appointments
  * @apiGroup Post
@@ -1062,6 +1078,22 @@ function send_cancel_appointment_push_notification(user_id,appointment_id){
 	all_function.send_device_token_using_user_id(data.consumer_id,cunsumer_messagePattern);
 	});
 }
+function send_confirm_appointment_push_notification(appointment_id){
+	let type='';
+	services.get_appointment_by_id(appointment_id).then(function(data){
+		
+	var cunsumer_messagePattern = 
+                { 
+					
+					title: 'Your appointment has been Confirmed',
+					body: '#'+appointment_id,
+					customData:{type:"customer"}
+							
+				}; 
+	
+	all_function.send_device_token_using_user_id(data.consumer_id,cunsumer_messagePattern);
+	});
+}
 /**
  * @api {post} /confirm_appointment Confirm Appointment
  * @apiGroup Post
@@ -1098,7 +1130,8 @@ api.confirm_appointment = (req, res)=>{
 						"message": "Appointment could not be updated",
 						"data": "" + result
 					});
-				} else {					
+				} else {	
+					send_confirm_appointment_push_notification(req.body.appointment_id);
 					res.json({
 						"status": 200,
 						"api_name": "confirm_appointment",

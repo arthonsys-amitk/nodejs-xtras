@@ -1554,11 +1554,29 @@ api.get_coupon_by_service_id = (req, res)=>{
         return;
     }  
 };
-api.test_push = (req, res)=>{
-    
-            user.test_push()
+api.get_profile = (req, res)=>{
+    if(Object.keys(req.body).length == 1) {
+    user.check_userid_exist(req.body.user_id)
+        .then(function(userdata) {
+            res.json({
+                "status": 200,
+                "api_name": "get_profile",
+                "message": "All user data.",
+                "data": userdata
+              });
+              return;
+        });
        
-    
+    }else
+    {
+        res.json({
+            "status": 400,
+            "api_name": "get_profile",
+            "message": "Some request parameters are missing.",
+            "data": {}
+        });
+        return;
+    }  
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

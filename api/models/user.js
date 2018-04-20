@@ -485,32 +485,9 @@ exportFuns.get_coupon_by_service_id = (service_id) => {
     });
 
 };
-// send push notification
-exportFuns.test_push = () => {
-    let db = new Mongo; 
-    
-     db.connect(config.mongoURI)
-    .then(function() {		
-         db.find('user_device_tokens').then(function(token_data){
 
-            for(var i=1;i<token_data.length;i++)
-            {
-                var messagePattern = 
-                { 
-                    to: token_data[i].device_token, data: {},
-                    notification: { title: 'test', body: "" }
-                }; 
-                if(token_data[i].device_type == 'android')
-                { 
-                    push_notifications.sendForAndriod(messagePattern); 
-                }
-                if(token_data[i].device_type == 'ios')
-                {
-                    push_notifications.sendForIOS(token_data[i].device_token,messagePattern.notification); 
-                }
-                
-            }
-            });
-        }); 
-    };
+// get user profile using User id
+exportFuns.get_profile=(user_id)=>{
+    re
+}
 module.exports = exportFuns;

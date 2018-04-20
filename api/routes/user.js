@@ -19,4 +19,4 @@ router.post('/get_category', user.api.get_category);
 router.post('/social_login', user.api.social_login);
 router.post('/add_faq', user.api.add_faq);
 router.post('/send', user.api.send);
-router.post('/test_push', user.api.test_push);
+router.post('/get_profile', user.api.get_profile);
