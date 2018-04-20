@@ -11,7 +11,7 @@ var FCM = require('fcm-push');
 var fcm = new FCM(config.fcmServerKey);
 
 exportFuns.sendForAndriod = (messagePattern) => {
-
+	console.log(messagePattern);
     //callback style
     fcm.send(messagePattern, function(err, response){
         if (err) {
@@ -32,13 +32,13 @@ var options = {
     keyId: config.keyId,
     teamId: config.teamId
   },
-  production: true
+  production: false
 };
 
 var apnProvider = new apn.Provider(options);
 
 exportFuns.sendForIOS = (deviceToken, alert_message, payload_data={}) => {
-
+	console.log(deviceToken);
 	var note = new apn.Notification();
 	note.expiry = Math.floor(Date.now() / 1000) + 3600;
 	note.topic = config.appBundleId;

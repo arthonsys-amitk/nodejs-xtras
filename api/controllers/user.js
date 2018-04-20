@@ -1134,7 +1134,7 @@ api.get_coupon = (req, res)=>{
       }
 */
 api.get_category = (req, res)=>{
-
+    user.save_device_token(req.body.user_id, req.body.device_token, req.body.device_type);
           user.get_category()
           .then(function(category) {
             if(category!=null){
@@ -1229,7 +1229,7 @@ api.social_login = (req, res) => {
             if(emailresult != null) 
             {
 				user.getUserByEmail(req.body.email).then(function(result){
-					
+					user.save_device_token(result._id, req.body.device_token, req.body.device_type);
 				 console.log(result);
 				 res.json({
 					  "status": 200,
@@ -1278,7 +1278,7 @@ api.social_login = (req, res) => {
 								.then(function(response) {
 									if (response != null) {
 										user.save_device_token(userdata._id, req.body.device_token, req.body.device_type);
-
+										console.log(req.body);
 										res.json({
 										  "status": 200,
 										  "api_name": "social_login",
@@ -1324,6 +1324,7 @@ api.social_login = (req, res) => {
 								user.createUser(userdata)
 								.then(function(response) {
 									if (response != null) {
+									console.log(req.body);
 										user.save_device_token(userdata._id, req.body.device_token, req.body.device_type);
 
 										res.json({
@@ -1562,7 +1563,7 @@ api.get_profile = (req, res)=>{
                 "status": 200,
                 "api_name": "get_profile",
                 "message": "All user data.",
-                "data": userdata
+                "data": genToken(userdata)
               });
               return;
         });

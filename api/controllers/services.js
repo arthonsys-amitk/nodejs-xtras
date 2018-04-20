@@ -685,7 +685,7 @@ api.add_appointments = (req, res)=>{
 									appointment_data.providerdata = providerdata;
 									services.insert_appointment(appointment_data)
 									.then(function(aptresult){
-
+										send_add_appointment_push_notification(aptresult.ops[0]);
 										res.json({
 											"status": 200,
 											"api_name": "add_appointments",
