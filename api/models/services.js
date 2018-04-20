@@ -478,43 +478,52 @@ exportFuns.addRatingtoAppointments = (result, user_id) => {
 								} else {
 									record.coupon_code = "";
 								}
-								if(svcrecord.rating !=null && svcrecord.rating != undefined )
-									record.rating = parseFloat(svcrecord.rating).toFixed(2);
-								else
+								if(svcrecord == null) {
 									record.rating = "0.00";
-								
-								if(svcrecord.cancel_rsh_policy !=null && svcrecord.cancel_rsh_policy != undefined )
-									record.cancel_rsh_policy = svcrecord.cancel_rsh_policy;
-								else
 									record.cancel_rsh_policy = "";
-								
-								if(svcrecord.cancel_fee !=null && svcrecord.cancel_fee != undefined )
-									record.cancel_fee = svcrecord.cancel_fee;
-								else
 									record.cancel_fee = "";
-								
-								if(svcrecord.reschedule_fee !=null && svcrecord.reschedule_fee != undefined )
-									record.reschedule_fee = svcrecord.reschedule_fee;
-								else
 									record.reschedule_fee = "";
-								
-								if(svcrecord.legal_policy !=null && svcrecord.legal_policy != undefined )
-									record.legal_policy = svcrecord.legal_policy;
-								else
 									record.legal_policy = "";
-								
-								
-								if(svcrecord.cancel_hours !=null && svcrecord.cancel_hours != undefined )
-									record.cancel_hours = svcrecord.cancel_hours;
-								else
 									record.cancel_hours = "";
-								
-								if(svcrecord.reschedule_hours !=null && svcrecord.reschedule_hours != undefined )
-									record.reschedule_hours = svcrecord.reschedule_hours;
-								else
 									record.reschedule_hours = "";
-								
-								
+								} else {
+									if(svcrecord.rating !=null && svcrecord.rating != undefined )
+										record.rating = parseFloat(svcrecord.rating).toFixed(2);
+									else
+										record.rating = "0.00";
+									
+									if(svcrecord.cancel_rsh_policy !=null && svcrecord.cancel_rsh_policy != undefined )
+										record.cancel_rsh_policy = svcrecord.cancel_rsh_policy;
+									else
+										record.cancel_rsh_policy = "";
+									
+									if(svcrecord.cancel_fee !=null && svcrecord.cancel_fee != undefined )
+										record.cancel_fee = svcrecord.cancel_fee;
+									else
+										record.cancel_fee = "";
+									
+									if(svcrecord.reschedule_fee !=null && svcrecord.reschedule_fee != undefined )
+										record.reschedule_fee = svcrecord.reschedule_fee;
+									else
+										record.reschedule_fee = "";
+									
+									if(svcrecord.legal_policy !=null && svcrecord.legal_policy != undefined )
+										record.legal_policy = svcrecord.legal_policy;
+									else
+										record.legal_policy = "";
+									
+									
+									if(svcrecord.cancel_hours !=null && svcrecord.cancel_hours != undefined )
+										record.cancel_hours = svcrecord.cancel_hours;
+									else
+										record.cancel_hours = "";
+									
+									if(svcrecord.reschedule_hours !=null && svcrecord.reschedule_hours != undefined )
+										record.reschedule_hours = svcrecord.reschedule_hours;
+									else
+										record.reschedule_hours = "";										
+								}
+																
 								var apptmt_date = record.appointment_date.split("-").reverse().join("-");
 								record.appointment_time = sendmail.convertToSmallTime(record.appointment_time);
 								
