@@ -14,7 +14,7 @@
   <!-- Ionicons -->
   <link rel="stylesheet" href="/bower_components/Ionicons/css/ionicons.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="/dist/css/AdminLTE.min.css">
+  <link rel="stylesheet" href="/dist/css/AdminLTE.min.css">  
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href="/dist/css/skins/_all-skins.min.css">
@@ -44,6 +44,9 @@
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -114,6 +117,14 @@
 
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
+			<%
+			var user_profile_image = "";
+			if(user_data == null || user_data == undefined || user_data == "") {
+				user_profile_image = "http://" + hostname + "/uploads/default/default_user.jpg";
+			} else {
+				user_profile_image = user_data.user_image;
+			}
+			%>
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <img src="<%=user_data.user_image%>" class="user-image" alt="User Image">
               <span class="hidden-xs"><%=user_data.fullname; %></span>
@@ -121,7 +132,8 @@
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
-                <img src="<%=user_data.user_image%>" class="img-circle" alt="User Image">
+				
+                <img src="<%=user_profile_image%>" class="img-circle" alt="User Image">
 
                 <p>
 				  <%

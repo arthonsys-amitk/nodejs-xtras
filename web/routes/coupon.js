@@ -5,3 +5,4 @@ var express = require('express'),
     router = module.exports = express.Router();
 
 router.get('/',coupon.web.get_coupon);
+router.get('/edit/:coupon_id',coupon.web.edit);

@@ -93,8 +93,6 @@ web.edit=(req,res)=>{
 				var qrycount = req.session.resqueries.length;
 				var resqueries = req.session.resqueries;
 			}
-			console.log("hostname");
-			console.log(hostname);
 			res.render('admin/users/edit_user',{"user_data":req.session.user_data,'user':user_details, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "hostname" : hostname });
 		})
    	}
@@ -107,39 +105,108 @@ web.update_profile = (req, res)=>{
 		res.redirect('/admin');
 	}else
 	{
-		geocoder.geocode(req.body.address + req.body.city +  req.body.state + req.body.country, function(err, result){
-		var latitude = result[0].latitude;
-		var longitude = result[0].longitude;
-		var zipcode= result[0].zipcode;
-		req.session.alert_data = { alert_type: "success", alert_msg: "Successfully Updated." };
-		user.update_profile(req.body,req.files,latitude,longitude,zipcode).then(function(update_result){
-			if(update_result==1)
-			{
-				req.session.flash_msg={"msg":"Profile updated Successfully","type":"success"};
-				req.session.alert_data = { alert_type: "success", alert_msg: "Profile updated Successfully" };
-				res.locals.flashmessages = req.session.alert_data;
-				user.get_user_by_user_id(req.session.user_data._id).then(function(result){
-					res.redirect('/admin/user');
-				});
-			} else {
-				if(update_result==2){
-					req.session.alert_data = { alert_type: "danger", alert_msg: "Invaild Address" };
-					req.session.flash_msg={"msg":"Invaild Address","type":"danger"};				
+		
+			geocoder.geocode(req.body.address + req.body.city +  req.body.state + req.body.country, function(err, result){
+				var latitude = 0;
+				var longitude = 0;
+				var zipcode= req.body.zip_code;
+				if(result != [] && result.length > 0 && result) {
+					latitude = result[0].latitude;
+					longitude = result[0].longitude;
+					if(req.body.zip_code) {
+						zipcode= req.body.zip_code;
+					} else {
+						zipcode= result[0].zipcode;
+					}
 				} else {
-					req.session.alert_data = { alert_type: "danger", alert_msg: "Profile could not be updated." };
-					req.session.flash_msg={"msg":"Profile could not be updated","type":"danger"};
+					
 				}
-				res.locals.flashmessages = req.session.alert_data;
-				user.get_user_by_user_id(req.session.user_data._id).then(function(result){
-					res.redirect('/admin/user');
+				req.session.alert_data = { alert_type: "success", alert_msg: "Successfully Updated." };
+				user.update_profile(req.body,req.files,latitude,longitude,zipcode).then(function(update_result){
+					if(update_result==1)
+					{
+						req.session.flash_msg={"msg":"Profile updated Successfully","type":"success"};
+						req.session.alert_data = { alert_type: "success", alert_msg: "Profile updated Successfully" };
+						res.locals.flashmessages = req.session.alert_data;
+						user.get_user_by_user_id(req.session.user_data._id).then(function(result){
+							res.redirect('/admin/user');
+						});
+					} else {
+						if(update_result==2){
+							req.session.alert_data = { alert_type: "danger", alert_msg: "Invaild Address" };
+							req.session.flash_msg={"msg":"Invaild Address","type":"danger"};				
+						} else {
+							req.session.alert_data = { alert_type: "danger", alert_msg: "Profile could not be updated." };
+							req.session.flash_msg={"msg":"Profile could not be updated","type":"danger"};
+						}
+						res.locals.flashmessages = req.session.alert_data;
+						user.get_user_by_user_id(req.session.user_data._id).then(function(result){
+							res.redirect('/admin/user');
+						});
+					}
 				});
-			}
-		});
-	});
+			});
+		
 	}
 };
 
 /***************************End Update profile**************************** */
+
+web.create_user = (req, res)=>{
+	var hostname = req.session.hostname || req.headers.host;
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true){
+		res.redirect('/admin');
+	} else {
+		res.locals.flashmessages = req.session.alert_data;
+		req.session.alert_data = null;
+
+		if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+			var qrycount = 0;
+			var resqueries = null;
+		} else {
+			var qrycount = req.session.resqueries.length;
+			var resqueries = req.session.resqueries;
+		}
+		res.render('admin/users/add_user',{ "user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "hostname" : hostname });
+	}
+};
+
+
+web.add_user = (req, res)=>{
+	var hostname = req.session.hostname || req.headers.host;
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true){
+		res.redirect('/admin');
+	} else {
+		if(req.body.password != req.body.confirm_password) {
+			req.session.flash_msg = {"msg":"Password mismatch", "type":"success"};
+			req.session.alert_data = { alert_type: "success", alert_msg: req.session.flash_msg.msg };
+			res.locals.flashmessages = req.session.alert_data;
+			res.redirect('/admin/user');
+		}
+		
+		geocoder.geocode(req.body.address + req.body.city +  req.body.state + req.body.country, function(err, result){
+			var latitude = 0;
+			var longitude = 0;
+			var zipcode= req.body.zip_code;				
+			if(result != [] && result && result.length > 0) {
+				latitude = result[0].latitude;
+				longitude = result[0].longitude;
+				if(req.body.zip_code) {
+					zipcode= req.body.zip_code;
+				} else {
+					zipcode= result[0].zipcode;
+				}
+			}
+			user.add_user(req.body, req.files, latitude, longitude, zipcode)
+			.then(function(result){
+				req.session.flash_msg={"msg":"User added successfully","type":"success"};
+				req.session.alert_data = { alert_type: "success", alert_msg: "User added successfully" };
+				res.locals.flashmessages = req.session.alert_data;
+				res.redirect('/admin/user');
+			});
+		});
+	}
+};
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

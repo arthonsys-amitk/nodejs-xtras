@@ -42,9 +42,35 @@ web.get_coupon=(req,res)=>{
 
 		});
    	}
-}
+};
 
+//edit coupon
+web.edit = (req,res) => {
+	var hostname = req.session.hostname || req.headers.host;
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
+	{
+	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true) {
+	        res.locals.flashmessages = req.session.alert_data;
+	        req.session.alert_data = null;
+	    }
+		res.redirect('/admin');
+	} else	{
+		res.locals.flashmessages = req.session.alert_data;
+		req.session.alert_data = null;
 
+		var coupon_id = req.params.coupon_id;		
+		coupon.get_coupon_by_coupon_id(coupon_id).then(function(coupon_details){
+			if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+				var qrycount = 0;
+				var resqueries = null;
+			} else {
+				var qrycount = req.session.resqueries.length;
+				var resqueries = req.session.resqueries;
+			}
+			res.render('admin/coupon/edit_coupon',{"user_data":req.session.user_data, "coupon": coupon_details, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "hostname" : hostname });
+		});
+	}
+};
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

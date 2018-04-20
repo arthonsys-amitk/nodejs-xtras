@@ -181,7 +181,6 @@ web.update_password = (req, res)=>{
 	login.check_user_old_password(req.body.user_id,crypto.encrypt(_.trim(req.body.old_password))).then(function(user_result){
 		if(user_result!=''){
 			login.updatePassword(req.body.user_id,crypto.encrypt(_.trim(req.body.new_password))).then(function(new_password_result){
-				console.log(new_password_result);
 				if(new_password_result!=0){
 					res.send('Password changed');
 				}else{

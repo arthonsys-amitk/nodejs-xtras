@@ -28,6 +28,7 @@ var express = require('express'),
 
 app.use(express.static('public'));
 app.use(express.static('assets'));
+app.use(express.static('assets/dist'));
 app.use(flash());
 app.use(fileUpload());
 

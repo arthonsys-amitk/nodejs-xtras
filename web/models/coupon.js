@@ -37,4 +37,18 @@ exportFuns.get_coupon_count = ()=>{
   });
 };
 
+//get coupon by coupon id
+exportFuns.get_coupon_by_coupon_id = (coupon_id)=> {
+	let db = new Mongo;
+	let searchPattern = { _id : db.makeID("" + coupon_id)};
+  return db.connect(config.mongoURI)
+  .then(function(){
+	  return db.findOne('coupon', searchPattern);
+  })
+  .then(function(coupon){
+    db.close();
+    return coupon;
+  });
+};
+
 module.exports = exportFuns;

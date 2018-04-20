@@ -33,7 +33,7 @@
                   <td><%=count%></td>
                   <td><%=coupon[i].coupon_code%></td>
                   <td><%=coupon[i].percent%></td>
-                  <td> <a class="btn btn-xs btn-info" href="/admin/user/edit/<%=coupon[i]._id%>" style="margin-right: 10px;">Edit / View</a><a class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want to delete ?');" href="/admin/user/delete/<%=coupon[i]._id%>">Delete</a></td>
+                  <td> <a class="btn btn-xs btn-info" href="/admin/coupon/edit/<%=coupon[i]._id%>" style="margin-right: 10px;">Edit / View</a><a class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want to delete ?');" href="/admin/coupon/delete/<%=coupon[i]._id%>">Delete</a></td>
                 </tr>
                 <% count++; } %>
                 </tbody>

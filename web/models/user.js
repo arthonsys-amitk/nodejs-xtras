@@ -2,7 +2,8 @@
 
 var exportFuns = {},
     config     = require('../../config'),
-    Mongo      = require('../../mongo');
+    Mongo      = require('../../mongo'),
+	{crypto} = require('../../api/helpers');
 
 
 const Promise = require("bluebird");
@@ -47,7 +48,7 @@ exportFuns.delete_user = (user_id)=>{
 
 // check user id is exist
 exportFuns.get_user_by_user_id = (user_id) => {
-console.log(user_id);
+
     let db = new Mongo;
 
     let searchPattern = {
@@ -68,6 +69,10 @@ console.log(user_id);
 // update profile
 exportFuns.update_profile = (user_data,file,latitude,longitude,zipcode)=>{
     let db = new Mongo;
+	if(user_data.is_active != null && user_data.is_active != "undefined" && user_data.is_active == "on")
+		user_data.is_active = "1";
+	else
+		user_data.is_active = "0";
   	// nodejs geocoder for latitude, longitude
     let update_data={
     				  'address':user_data.address,
@@ -78,14 +83,16 @@ exportFuns.update_profile = (user_data,file,latitude,longitude,zipcode)=>{
     				  'country':user_data.country,
     				  'latitude':latitude,
     				  'longitude':longitude,
-    				  'zip_code':zipcode
+    				  'zip_code':zipcode,
+					  'is_active' : user_data.is_active,
+					  'modified_time' : new Date()
     				}; 	
  	 
 	    if (typeof file.profile!="undefined")
 	    {
-		    let sampleFile = file.profile;
-		    var file_name=user_data.fullname+Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
-		    sampleFile.mv('public/uploads/users/'+file_name, function(err) {
+		    let imageFile = file.profile;
+		    var file_name = user_data.fullname+Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
+		    imageFile.mv('public/uploads/users/'+file_name, function(err) {
 		    if (err){
 		      console.log(err);
 		    }else{
@@ -122,5 +129,62 @@ exportFuns.get_user_count = ()=>{
   });
 };
 
+// update profile
+exportFuns.add_user = (user_data,file, latitude, longitude, zipcode)=>{
+	let db = new Mongo;
+	if(user_data.is_active != null && user_data.is_active != "undefined" && user_data.is_active == "on")
+		user_data.is_active = "1";
+	
+  	// nodejs geocoder for latitude, longitude
+    let insert_data={   				  
+    				  'fullname':user_data.fullname,
+    				  'email':user_data.email,
+    				  'phone':user_data.phone,
+    				  'phone_1':"",
+    				  'phone_2':"",
+					  'address':user_data.address,
+					  'address_1':"",
+					  'address_2':"",
+    				  'city':user_data.city,
+    				  'state':user_data.state,
+    				  'country':user_data.country,
+    				  'latitude':latitude,
+    				  'longitude':longitude,
+    				  'zip_code':zipcode,
+					  'is_active' : user_data.is_active,
+					  'password' : crypto.encrypt(user_data.password),
+					  'user_role' : 2,
+					  'alternate_email' : "",
+					  'facebook_login_id' : "",
+					  'google_login_id' : "",
+					  'social_login_data_status' : 0,
+					  'otp_status' : 0,
+					  'is_deleted' : 0,
+					  'created_time' : new Date(),
+					  'modified_time' : new Date()
+    				};
+ 	 
+		if(typeof file.profile!="undefined") {
+			let imageFile = file.profile;
+			var file_name = user_data.fullname+Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
+			imageFile.mv('public/uploads/users/'+file_name, function(err) {
+				if (err){
+				  console.log(err);
+				} else {
+					insert_data.user_image = config.base_url+'/uploads/users/'+file_name;						
+				}
+			});			
+		} else {
+			insert_data.user_image = "";
+		}
+	    return db.connect(config.mongoURI)
+		.then(function(){
+			return db.insert('users', insert_data);
+		})
+	    .then(function(user){
+			db.close();
+			return user.ops[0];
+	    });
+};
 
 module.exports = exportFuns;

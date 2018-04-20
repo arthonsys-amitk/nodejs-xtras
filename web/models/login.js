@@ -25,7 +25,7 @@ exportFuns.getUserByEmail = (email)=>{
 
 // check user id is exist
 exportFuns.check_userid_exist = (user_id) => {
-console.log(user_id);
+
     let db = new Mongo;
 
     let searchPattern = {
@@ -52,11 +52,11 @@ exportFuns.check_userid_exist_for_admin = (user_id) => {
         user_role: 1,
         is_deleted: 0
     };
-    console.log(searchPattern);
+    
     return db.connect(config.mongoURI)
     .then(function() {
         return db.find('users', searchPattern).then(function(result){
-            console.log(result);
+            
         });
     })
     .then(function(user) {
@@ -345,7 +345,7 @@ exportFuns.updatePassword = (user_id, updated_password)=>{
 exportFuns.update_profile = (user_data,file)=>{
     let db = new Mongo;
     let update_data={'address':user_data.address,'fullname':user_data.fullname,'phone':user_data.phone}
-    console.log(file.profile);
+    
     if (typeof file.profile!="undefined")
     {
     let sampleFile = file.profile;
@@ -550,13 +550,13 @@ exportFuns.add_faq = (email,query) => {
 };
 // Get coupon by service id
 exportFuns.get_coupon_by_service_id = (service_id) => {
-    console.log(service_id);
+    
     let db = new Mongo;
     let searchPattern = {
         service_ids:service_id,
         expiry_date: { $gte: new Date() }         
     };
-    console.log(searchPattern);
+    
     return db.connect(config.mongoURI)
     .then(function() {
          return db.find('coupon', searchPattern);
