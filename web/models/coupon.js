@@ -7,6 +7,8 @@ var exportFuns = {},
 
 const Promise = require("bluebird");
 
+var dateFormat = require('dateformat');
+
 //All user
 exportFuns.get_coupons = ()=>{
   let searchPattern = {
@@ -49,6 +51,31 @@ exportFuns.get_coupon_by_coupon_id = (coupon_id)=> {
     db.close();
     return coupon;
   });
+};
+
+//insert coupon
+exportFuns.add_coupon = (coupon_data)=> {
+	let db = new Mongo;
+	if(coupon_data.multiple_use != null && coupon_data.multiple_use != "undefined" && coupon_data.multiple_use == "on")
+		coupon_data.multiple_use = 1;
+	else
+		coupon_data.multiple_use = 0;
+	
+	coupon_data.expiry_date = dateFormat(coupon_data.expiry_date, "dd-mm-yyyy");
+		
+	coupon_data.created_at = new Date();
+	coupon_data.is_deleted = 0;
+	coupon_data.service_ids = []; //temporarily empty now
+	
+	delete coupon_data.btnsubmit;
+	return db.connect(config.mongoURI)
+	.then(function(){
+		return db.insert('coupon', coupon_data);
+	})
+	.then(function(coupon){
+		db.close();
+		return coupon;
+	});
 };
 
 module.exports = exportFuns;

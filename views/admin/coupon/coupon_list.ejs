@@ -24,6 +24,7 @@
                   <th>#</th>
                   <th>Coupon name</th>
                   <th>Discount</th>
+                  <th>Expiry Date</th>
                   <th>Action</th>
                 </tr>
                 </thead>
@@ -33,6 +34,7 @@
                   <td><%=count%></td>
                   <td><%=coupon[i].coupon_code%></td>
                   <td><%=coupon[i].percent%></td>
+                  <td><%=coupon[i].expiry_date%></td>
                   <td> <a class="btn btn-xs btn-info" href="/admin/coupon/edit/<%=coupon[i]._id%>" style="margin-right: 10px;">Edit / View</a><a class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want to delete ?');" href="/admin/coupon/delete/<%=coupon[i]._id%>">Delete</a></td>
                 </tr>
                 <% count++; } %>
@@ -42,6 +44,7 @@
                   <th>#</th>
                   <th>Coupon name</th>
                   <th>Discount</th>
+				  <th>Expiry Date</th>
                   <th>Action</th>
                 </tr>
                 </tfoot>

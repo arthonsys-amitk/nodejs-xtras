@@ -15,10 +15,12 @@ var options = {
                 formatter: null
               };
 var geocoder = NodeGeocoder(options);	
+var dateFormat = require('dateformat');
+
 var exportFuns = {},
     web = {};
 
-// Display all users
+// Display all coupons
 web.get_coupon=(req,res)=>{
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
 	{
@@ -67,11 +69,61 @@ web.edit = (req,res) => {
 				var qrycount = req.session.resqueries.length;
 				var resqueries = req.session.resqueries;
 			}
+						
 			res.render('admin/coupon/edit_coupon',{"user_data":req.session.user_data, "coupon": coupon_details, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "hostname" : hostname });
 		});
 	}
 };
 
+//display form for creating coupon
+web.create = (req,res) => {
+	var hostname = req.session.hostname || req.headers.host;
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
+	{
+	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true) {
+	        res.locals.flashmessages = req.session.alert_data;
+	        req.session.alert_data = null;
+	    }
+		res.redirect('/admin');
+	} else	{
+		if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+			var qrycount = 0;
+			var resqueries = null;
+		} else {
+			var qrycount = req.session.resqueries.length;
+			var resqueries = req.session.resqueries;
+		}
+		res.render('admin/coupon/create',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "hostname" : hostname });
+	}
+};
+
+//display form for creating coupon
+web.add_coupon = (req,res) => {
+	var hostname = req.session.hostname || req.headers.host;
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
+	{
+	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true) {
+	        res.locals.flashmessages = req.session.alert_data;
+	        req.session.alert_data = null;
+	    }
+		res.redirect('/admin');
+	} else	{
+		if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+			var qrycount = 0;
+			var resqueries = null;
+		} else {
+			var qrycount = req.session.resqueries.length;
+			var resqueries = req.session.resqueries;
+		}
+		coupon.add_coupon(req.body)
+		.then(function(rescoupon){
+			req.session.flash_msg = {"msg": "Coupon created successfully","type":"success"};
+			req.session.alert_data = { alert_type: "success", alert_msg: req.session.flash_msg.msg };
+			res.locals.flashmessages = req.session.alert_data;
+			res.redirect('/admin/coupon');
+		});
+	}
+};
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 exportFuns.web = web;

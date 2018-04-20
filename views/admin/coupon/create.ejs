@@ -5,96 +5,87 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Update Coupon
+        Add Coupon
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
         <li><a href="/admin/coupon">Coupon</a></li>
-        <li class="active">Edit Coupon</li>
+        <li class="active">Add Coupon</li>
       </ol>
     </section>
     <!-- Main content -->
     <section class="content">
 
       <div class="row">
-		<% if (locals.flashmessages) { %>
-		<div class="alert alert-<%=flashmessages.alert_type%> alert-dismissible">
-		  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-		  <%=flashmessages.alert_msg%>
-		</div>
-		<% } %>
-        <div class="col-md-3"> 
-          <!-- Profile Image -->
+        <div class="col-md-3">
+ <% if (locals.flashmessages) { %>
+    <div class="alert alert-<%=flashmessages.alert_type%> alert-dismissible">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+      <%=flashmessages.alert_msg%>
+    </div>
+    <% } %>
+          
           <div class="box box-primary">
             <div class="box-body box-profile">				
-              <h4 class=" text-center">Coupon Id: <%=coupon._id%></h4>
+              <h5 class="profile-username text-center">New Coupon</h5>
             </div>
           </div>  
         </div>
         <!-- /.col -->
         <div class="col-md-9">
           <div class="alert alert-success" id="success_alert" style="display: none;">
-  <strong>Success!</strong>
-</div>
+			  <strong>Success!</strong>
+ 		  </div>
 
           <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
-              <li class="active"><a href="#activity" data-toggle="tab">Update Coupon</a></li>
+              <li class="active"><a href="#activity" data-toggle="tab">Coupon Details</a></li>
             </ul>
             <div class="tab-content">
               <div class="active tab-pane" id="activity">
-                <form class="form-horizontal" method="post" action="/admin/coupon/update_coupon">
+                <form class="form-horizontal" method="post" action="/admin/coupon/add_coupon">
                   <div class="form-group">
                     <label for="coupon_code" class="col-sm-2 control-label">Coupon Code</label>
 
                     <div class="col-sm-10">
-                      <input type="text" value="<%=coupon.coupon_code; %>" name="coupon_code" class="form-control" id="coupon_code" placeholder="Enter Coupon Code">
+                      <input type="text" value="" name="coupon_code" class="form-control" id="coupon_code" placeholder="Enter Coupon Code" data-validation="length alphanumeric" data-validation-length="min4">
                     </div>
                   </div>
-                  <div class="form-group">                    
-						<label class="col-sm-2 control-label">Expiry Date:</label>
+                  <div class="form-group">
+                    <label for="expiry_date" class="col-sm-2 control-label">Expiry Date</label>
 
-						<div class="input-group date col-sm-10" style="padding-left: 15px; padding-right: 15px;">
-						  <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-						  <input class="form-control pull-right" id="expiry_date" name="expiry_date" type="text" value="<%=coupon.expiry_date||"" %>" />
-						</div>
-						<!-- /.input group -->					
+                    <div class="input-group date col-sm-10" style="padding-left: 15px; padding-right: 15px;">
+						<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+						<input class="form-control pull-right" id="expiry_date" name="expiry_date" type="text" />
+                    </div>
                   </div>
-                  
-				  <div class="form-group">
+                  <div class="form-group">
                     <label for="multiple_use" class="col-sm-2 control-label">Multiple Use</label>
 
                     <div class="col-sm-10">
-						<%
-						if(coupon.multiple_use == "1" || coupon.multiple_use == 1)
-							checked = "checked";
-						else
-							checked = "";
-						%>
-						<label class="switch" style="margin-left: 10px;">
-						  <input type="checkbox" id="multiple_use" name="multiple_use" <%=checked%> style="position: relative; top: 7px;" />
+						<label class="switch" >
+						  <input type="checkbox" id="multiple_use" name="multiple_use" style="position: relative; top: 7px;" />
 						  <span class="slider round"></span>
 						</label>
                     </div>
                   </div>
-				  
 				  <div class="form-group">
                     <label for="percent" class="col-sm-2 control-label">Percent</label>
 
                     <div class="col-sm-10">
-                      <input type="number" value="<%=coupon.percent; %>" name="percent" class="form-control" id="percent" placeholder="Discount Percent" />
+                      <input type="number" value="" name="percent" class="form-control" id="percent" placeholder="Discount Percent" />
                     </div>
                   </div>
-				  
+				                    
                   <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                      <input type="hidden" id="coupon_id" name="coupon_id" value="<%=coupon._id; %>">
-                      <button type="submit" id="submit" class="btn btn-success">Submit</button>
+                      <button type="submit" id="btnsubmit" name="btnsubmit" class="btn btn-success">Submit</button>
                     </div>
                   </div>
                 </form>
               </div>
-                            
+              
+              <!-- /.tab-pane -->
             </div>
             <!-- /.tab-content -->
           </div>
@@ -111,9 +102,10 @@
   //Date picker
   jQuery(document).ready(function(){
 	 jQuery('#expiry_date').datepicker({
-      autoclose: true
+      dateFormat: 'yy-mm-dd',
+	  autoclose: true
 	 })
-  });
-   
+  });   
   </script>
+  
   <%-include('../footer') %> 
