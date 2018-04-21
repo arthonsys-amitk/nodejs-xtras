@@ -11,7 +11,11 @@ const Promise = require("bluebird");
 //All user
 exportFuns.all_user = ()=>{
   let searchPattern = {
-    is_deleted : 0
+    $and : [
+				{ $or : [ {"user_role" : "2"},{"user_role" : 2 } ] },
+				{ $or : [ {"is_deleted" : "0"},{"is_deleted" : 0 } ] },
+				{ $or : [ {"is_active" : "1"},{"is_active" : 1 } ] },
+			]
   };
 
   let db = new Mongo;
@@ -142,9 +146,17 @@ exportFuns.update_admin_password = (user_id, new_password) => {
 exportFuns.get_user_count = ()=>{
   
   let db = new Mongo;
+  
+  let searchPattern = {
+	  $and : [
+				{ $or : [ {"user_role" : "2"},{"user_role" : 2 } ] },
+				{ $or : [ {"is_deleted" : "0"},{"is_deleted" : 0 } ] },
+				{ $or : [ {"is_active" : "1"},{"is_active" : 1 } ] },
+			]
+  };
   return db.connect(config.mongoURI)
   .then(function(){
-    return db.find('users', {user_role: 2});
+    return db.find('users', searchPattern);
   })
   .then(function(user){
     db.close();
