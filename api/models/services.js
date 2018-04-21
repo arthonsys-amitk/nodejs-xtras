@@ -806,7 +806,11 @@ exportFuns.get_payment_details = (appointment_id, user_id) => {
 		return exportFuns.getCouponById(appointment_data.coupon_id)
 		.then(function(coupondata){
 			var pdataresult = {};
-			var percent_discount = (coupondata.percent != null) ? coupondata.percent: 0;
+			if(coupondata == null) {
+				var percent_discount = 0;
+			} else {
+				var percent_discount = (coupondata.percent != null) ? coupondata.percent: 0;
+			}
 			var pdata = exportFuns.get_total_payment_amount(appointment_data, percent_discount);
 			pdataresult.total_price = pdata[0];
 			pdataresult.discount = pdata[1];
