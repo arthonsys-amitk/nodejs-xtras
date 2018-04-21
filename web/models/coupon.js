@@ -56,6 +56,7 @@ exportFuns.get_coupon_by_coupon_id = (coupon_id)=> {
 //insert coupon
 exportFuns.add_coupon = (coupon_data)=> {
 	let db = new Mongo;
+	
 	if(coupon_data.multiple_use != null && coupon_data.multiple_use != "undefined" && coupon_data.multiple_use == "on")
 		coupon_data.multiple_use = 1;
 	else
@@ -65,12 +66,40 @@ exportFuns.add_coupon = (coupon_data)=> {
 		
 	coupon_data.created_at = new Date();
 	coupon_data.is_deleted = 0;
-	coupon_data.service_ids = []; //temporarily empty now
+	if(coupon_data.service_ids == null || coupon_data.service_ids.length == 0) {
+		coupon_data.service_ids = [];
+	}
 	
 	delete coupon_data.btnsubmit;
 	return db.connect(config.mongoURI)
 	.then(function(){
 		return db.insert('coupon', coupon_data);
+	})
+	.then(function(coupon){
+		db.close();
+		return coupon;
+	});
+};
+
+//update coupon
+exportFuns.update_coupon = (coupon_data)=> {
+	let db = new Mongo;
+	
+	if(coupon_data.multiple_use != null && coupon_data.multiple_use != "undefined" && coupon_data.multiple_use == "on")
+		coupon_data.multiple_use = 1;
+	else
+		coupon_data.multiple_use = 0;
+	
+	coupon_data.expiry_date = dateFormat(coupon_data.expiry_date, "dd-mm-yyyy");
+	coupon_data.updated_at = new Date();
+	
+	let searchPattern = {
+		_id : db.makeID("" + coupon_data.coupon_id)
+	};
+	delete coupon_data.coupon_id;
+	return db.connect(config.mongoURI)
+	.then(function(){
+		return db.update('coupon', searchPattern, coupon_data);
 	})
 	.then(function(coupon){
 		db.close();

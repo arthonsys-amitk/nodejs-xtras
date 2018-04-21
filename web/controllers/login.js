@@ -119,7 +119,7 @@ web.dashboard = (req, res)=>{
 							svccount = (svccount == null || svccount == "")? 0 : ((svccount < 10) ? ("0" + svccount): svccount);
 							var qrycount = (resqueries == null || resqueries == "")? 0 : resqueries.length;
 							couponcount = (couponcount == null || couponcount == "")? 0 : ((couponcount < 10) ? ("0" + couponcount): couponcount);
-							res.render('admin/dashboard',{"user_data":req.session.user_data, "num_users": usercount, "num_services": svccount, "num_queries" : qrycount, "num_coupons" : couponcount, "resqueries" : resqueries, "member_since" : req.session.member_since});
+							res.render('admin/dashboard',{"user_data":req.session.user_data, "num_users": usercount, "num_services": svccount, "num_queries" : qrycount, "num_coupons" : couponcount, "resqueries" : resqueries, "member_since" : req.session.member_since, "hostname" : req.session.hostname});
 						});
 					});
 				});			
@@ -188,7 +188,7 @@ web.update_password = (req, res)=>{
 				}
 			});
 		}else{
-			res.send('Old password not match');
+			res.send('Old password did not match');
 		}
 
 	});

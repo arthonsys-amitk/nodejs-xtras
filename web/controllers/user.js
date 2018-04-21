@@ -8,6 +8,7 @@ var _      = require('lodash'),
     {crypto} = require('../helpers'),
     userquery_model = require('../models/userquery'),
     {sendmail} = require('../helpers');
+
 var NodeGeocoder = require('node-geocoder');
 var options = {
                 provider: 'google',
@@ -118,13 +119,10 @@ web.update_profile = (req, res)=>{
 					} else {
 						zipcode= result[0].zipcode;
 					}
-				} else {
-					
 				}
 				req.session.alert_data = { alert_type: "success", alert_msg: "Successfully Updated." };
 				user.update_profile(req.body,req.files,latitude,longitude,zipcode).then(function(update_result){
-					if(update_result==1)
-					{
+					if(update_result == 1) {
 						req.session.flash_msg={"msg":"Profile updated Successfully","type":"success"};
 						req.session.alert_data = { alert_type: "success", alert_msg: "Profile updated Successfully" };
 						res.locals.flashmessages = req.session.alert_data;
@@ -151,6 +149,60 @@ web.update_profile = (req, res)=>{
 };
 
 /***************************End Update profile**************************** */
+
+//update admin password
+web.update_admin_password = (req, res) => {
+	var hostname = req.session.hostname || req.headers.host;
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true){
+		res.redirect('/admin');
+	} else {
+		res.locals.flashmessages = req.session.alert_data;
+		req.session.alert_data = null;
+
+		if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+			var qrycount = 0;
+			var resqueries = null;
+		} else {
+			var qrycount = req.session.resqueries.length;
+			var resqueries = req.session.resqueries;
+		}
+		var old_password = req.body.old_password;
+		var new_password = req.body.new_password;
+		var confirm_password = req.body.confirm_password;
+		if(old_password == new_password) {
+			req.session.alert_data = { alert_type: "danger", alert_msg: "New password cannot be same as the old password" };
+			res.locals.flashmessages = req.session.alert_data;
+			res.redirect('/admin/profile');
+		}
+		if(new_password != confirm_password) {
+			req.session.alert_data = { alert_type: "danger", alert_msg: "New password does not match re-typed password" };
+			res.locals.flashmessages = req.session.alert_data;
+			res.redirect('/admin/profile');
+		}
+		user.check_old_password(req.session.user_data._id, crypto.encrypt(_.trim(old_password)))
+		.then(function(auth_user){
+			if(auth_user == null || auth_user == '') {
+				req.session.alert_data = { alert_type: "danger", alert_msg: "Incorrect Password." };
+				res.locals.flashmessages = req.session.alert_data;
+				res.redirect('/admin/profile');
+			} else {
+				user.update_admin_password(req.session.user_data._id, new_password).then(function(response) {
+					if(response == null) {
+						req.session.alert_data = { alert_type: "danger", alert_msg: "Password could not be changed" };
+						res.locals.flashmessages = req.session.alert_data;
+						res.redirect('/admin/profile');
+
+					} else {
+						req.session.alert_data = { alert_type: "success", alert_msg: "Password changed successfully." };
+						res.locals.flashmessages = req.session.alert_data;
+						res.redirect('/admin/profile');
+					}
+				});
+			}
+		});		
+	}
+};
+
 
 web.create_user = (req, res)=>{
 	var hostname = req.session.hostname || req.headers.host;

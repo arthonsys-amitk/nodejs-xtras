@@ -88,15 +88,16 @@ exportFuns.update_profile = (user_data,file,latitude,longitude,zipcode)=>{
 					  'modified_time' : new Date()
     				}; 	
  	 
-	    if (typeof file.profile!="undefined")
-	    {
+	    console.log("profiletype:" + typeof file.profile);
+		if (typeof file.profile != "undefined") {
 		    let imageFile = file.profile;
 		    var file_name = user_data.fullname+Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
 		    imageFile.mv('public/uploads/users/'+file_name, function(err) {
 		    if (err){
 		      console.log(err);
+			  update_data.user_image = "";
 		    }else{
-		        update_data.user_image=config.base_url+'/uploads/users/'+file_name;
+		        update_data.user_image = config.base_url+'/uploads/users/'+file_name;
 		    }
 		    });
 		    
@@ -106,6 +107,7 @@ exportFuns.update_profile = (user_data,file,latitude,longitude,zipcode)=>{
 
 	    return db.connect(config.mongoURI)
 	    .then(function(){
+			console.log("img:" + update_data.user_image);
 	      return db.update('users', condition, update_data);
 	    })
 	    .then(function(numUpdated){
@@ -115,18 +117,53 @@ exportFuns.update_profile = (user_data,file,latitude,longitude,zipcode)=>{
 	
 };
 
+//update admin password
+
+exportFuns.update_admin_password = (user_id, new_password) => {
+	  let db = new Mongo;
+	  let searchPattern = {
+		  _id: db.makeID(user_id)
+	  };
+	  let update_data = {
+    				  'password': crypto.encrypt(new_password),
+					  'modified_time' : new Date()
+    				};
+	  return db.connect(config.mongoURI)
+	  .then(function(){
+		return db.update('users', searchPattern, update_data);
+	  })
+	  .then(function(result){
+		db.close();
+		return result;
+	  });
+};
+
 //get_user_count
 exportFuns.get_user_count = ()=>{
   
   let db = new Mongo;
   return db.connect(config.mongoURI)
   .then(function(){
-    return db.find('users', {});
+    return db.find('users', {user_role: 2});
   })
   .then(function(user){
     db.close();
 	return user.length;
   });
+};
+
+//check old password
+exportFuns.check_old_password = (user_id, old_password) => {
+	let db = new Mongo;
+    let searchPattern = {_id : db.makeID(user_id),password:old_password};
+    return db.connect(config.mongoURI)
+    .then(function(){		
+      return db.find('users',searchPattern);
+    })
+    .then(function(result){
+      db.close();
+      return result;
+    });
 };
 
 // update profile
