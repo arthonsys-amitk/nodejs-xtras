@@ -87,6 +87,41 @@ web.edit = (req,res) => {
 	}
 };
 
+//delete coupon
+web.delete = (req,res) => {
+	var hostname = req.session.hostname || req.headers.host;
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
+	{
+	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true) {
+	        res.locals.flashmessages = req.session.alert_data;
+	        req.session.alert_data = null;
+	    }
+		res.redirect('/admin');
+	} else	{
+		if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+			var qrycount = 0;
+			var resqueries = null;
+		} else {
+			var qrycount = req.session.resqueries.length;
+			var resqueries = req.session.resqueries;
+		}
+		
+		coupon.delete_coupon(req.params.coupon_id)
+		.then(function(result_delete) {
+			if(result_delete) {
+				req.session.flash_msg = {"msg": "Coupon deleted successfully","type":"success"};
+				req.session.alert_data = { alert_type: "success", alert_msg: req.session.flash_msg.msg };
+				res.locals.flashmessages = req.session.alert_data;
+			} else {
+				req.session.flash_msg = {"msg": "Coupon could not be deleted","type":"danger"};
+				req.session.alert_data = { alert_type: "danger", alert_msg: req.session.flash_msg.msg };
+				res.locals.flashmessages = req.session.alert_data;				
+			}
+			res.redirect('/admin/coupon');
+		});
+	}
+};
+
 //display form for creating coupon
 web.create = (req,res) => {
 	var hostname = req.session.hostname || req.headers.host;

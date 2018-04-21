@@ -31,7 +31,7 @@ exportFuns.get_coupon_count = ()=>{
   let db = new Mongo;
   return db.connect(config.mongoURI)
   .then(function(){
-    return db.find('coupon', {});
+    return db.find('coupon', {is_deleted : 0});
   })
   .then(function(coupon){
     db.close();
@@ -78,6 +78,28 @@ exportFuns.add_coupon = (coupon_data)=> {
 	.then(function(coupon){
 		db.close();
 		return coupon;
+	});
+};
+
+//delete coupon
+exportFuns.delete_coupon = (coupon_id)=> {
+	let db = new Mongo;
+	
+	let searchPattern = {
+		_id : db.makeID("" + coupon_id)
+	};
+	
+	let updateData = {
+		is_deleted: 1
+	};
+	
+	return db.connect(config.mongoURI)
+	.then(function(){
+		return db.update('coupon', searchPattern, updateData);
+	})
+	.then(function(result){
+		db.close();
+		return result;
 	});
 };
 
