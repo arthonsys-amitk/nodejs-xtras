@@ -251,12 +251,15 @@ exportFuns.save_device_token = (user_id, device_token, device_type) => {
 
     return db.connect(config.mongoURI)
     .then(function() {
-
-        return db.insert('user_device_tokens', insertPattern)
-        .then(function(result) {
-            return result.ops[0];
-        });
+		return db.findOne('user_device_tokens', insertPattern).then(function(device_result) {
+		if(device_result==null){
+			return db.insert('user_device_tokens', insertPattern)
+			.then(function(result) {
+				return result.ops[0];
+			});
+		}
     });
+});
 }
 exportFuns.verify_and_remove_otp = (user_id, user_email) => {
 

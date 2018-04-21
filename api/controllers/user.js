@@ -1228,9 +1228,11 @@ api.social_login = (req, res) => {
 
             if(emailresult != null) 
             {
-				user.getUserByEmail(req.body.email).then(function(result){
-					user.save_device_token(result._id, req.body.device_token, req.body.device_type);
-				 console.log(result);
+				
+			  user.getUserByEmail(req.body.email).then(function(result){
+			 
+				user.save_device_token(result._id, req.body.device_token, req.body.device_type);
+				
 				 res.json({
 					  "status": 200,
 					  "api_name": "social_login",
@@ -1241,6 +1243,7 @@ api.social_login = (req, res) => {
 				})				
 			
             } else {
+			 
 				 if(req.body.login_type == "facebook") {
 					 var user_img_url = ((req.body.image_url == null || !req.body.image_url)? ('http://' + req.headers.host + '/uploads/default/default_user.jpg'): req.body.image_url);
 					 var user_full_name = (req.body.name == null? '': req.body.name);
@@ -1289,6 +1292,7 @@ api.social_login = (req, res) => {
 									}
 								});
 				 } else if(req.body.login_type == "google") {
+				 
 					var user_img_url = ((req.body.image_url == null || !req.body.image_url)? ('http://' + req.headers.host + '/uploads/default/default_user.jpg'): req.body.image_url);
 					var user_full_name = (req.body.name == null? '': req.body.name);
 					var userdata = {

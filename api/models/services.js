@@ -879,5 +879,17 @@ exportFuns.get_total_payment_amount = (appointment_data, percent) => {
 	payment_data.push(discount);
 	return payment_data;
 };
+exportFuns.get_payment_data=()=>{
+	let db = new Mongo;
+   
+    return db.connect(config.mongoURI)
+    .then(function() {
+        return db.find('settings');
+    })
+    .then(function(settings) {
+        db.close();
+        return settings;
+    });
+}
   
 module.exports = exportFuns;

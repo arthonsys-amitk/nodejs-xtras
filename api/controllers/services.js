@@ -752,7 +752,7 @@ function send_add_appointment_push_notification(data){
 	var cunsumer_messagePattern = 
                 { 
 					
-					title: 'New appointment added',
+					title: 'New appointment received',
 					body: '#'+data._id,
 					customData:{
 								type: "customer"
@@ -763,14 +763,14 @@ function send_add_appointment_push_notification(data){
 	{ 
 
 	
-			title: 'New appointment received',
+			title: 'New appointment added',
 			body:'#'+data._id,
 			customData:{
 						type: "provider"
 					}
 	}; 
-	all_function.send_device_token_using_user_id(data.consumer_id,cunsumer_messagePattern);
-	all_function.send_device_token_using_user_id(data.provider_id,provider_messagePattern);
+	all_function.send_device_token_using_user_id(data.consumer_id,provider_messagePattern);
+	all_function.send_device_token_using_user_id(data.provider_id,cunsumer_messagePattern);
 }
 /**
  * @api {post} /reschedule_appointment RescheduleAppointment
@@ -1024,7 +1024,7 @@ api.get_appointments = (req, res)=>{
 */
 api.cancel_appointment = (req, res)=>{
    if(Object.keys(req.body).length >= 2) {
-
+	services.get_appointment_by_id(req.body.appointment_id).then(function(appointment_data){
 		services.cancel_appointment(req.body.appointment_id, req.body.user_id)
 		.then(function(result){
 			
@@ -1036,7 +1036,9 @@ api.cancel_appointment = (req, res)=>{
 						"data": "" + result
 					});
 				} else {
-					send_cancel_appointment_push_notification(req.body.user_id,req.body.appointment_id)					
+				    console.log(appointment_data.provider_id);
+					send_cancel_appointment_push_notification(appintment_data.consumer_id,req.body.appointment_id)					
+					send_cancel_appointment_push_notification(appointment_data.provider_id,req.body.appointment_id)					
 					res.json({
 						"status": 200,
 						"api_name": "cancel_appointment",
@@ -1045,6 +1047,7 @@ api.cancel_appointment = (req, res)=>{
 					});
 				}
 				return;
+			});
 		})
 
 	}else
@@ -1062,9 +1065,11 @@ function send_cancel_appointment_push_notification(user_id,appointment_id){
 	let type='';
 	services.get_appointment_by_id(appointment_id).then(function(data){
 		if(user_id==data.consumer_id){
-			type="provider";
-		}else{
 			type="customer";
+			user_id=data.provider_id;
+		}else{
+			type="provider";
+			user_id=data.consumer_id;
 		}
 	var cunsumer_messagePattern = 
                 { 
@@ -1075,7 +1080,7 @@ function send_cancel_appointment_push_notification(user_id,appointment_id){
 							
 				}; 
 	
-	all_function.send_device_token_using_user_id(data.consumer_id,cunsumer_messagePattern);
+	all_function.send_device_token_using_user_id(user_id,cunsumer_messagePattern);
 	});
 }
 function send_confirm_appointment_push_notification(appointment_id){
@@ -1087,7 +1092,7 @@ function send_confirm_appointment_push_notification(appointment_id){
 					
 					title: 'Your appointment has been Confirmed',
 					body: '#'+appointment_id,
-					customData:{type:"customer"}
+					customData:{type:"provider"}
 							
 				}; 
 	
@@ -1452,6 +1457,67 @@ api.get_posts = (req, res)=> {
          });
          return;
 	}
+}
+/**
+ * @api {post} /get_payment_data Get payment data
+ * @apiGroup Post
+ * @apiSuccessExample {json} Success
+ *    {
+    "status": 200,
+    "api_name": "get_payment_data",
+    "message": "all payments credientials.",
+    "data": [
+			{
+				"_id": "5abe1dc758c77712747b3cec",
+				"key": "Privacy and Policy",
+				"value": "<p><strong>Lorem Ipsum</strong> is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>"
+			},
+			{
+				"_id": "5ad83f035f7b5e0f1140389b",
+				"key": "push_notifications",
+				"value": "1"
+			},
+			{
+				"_id": "5adb2b015f7b5e0f11c8fb98",
+				"key": "stripe_email",
+				"value": "amit.kothari@arthonsys.com"
+			},
+			{
+				"_id": "5adb2b305f7b5e0f11c91e0d",
+				"key": "stripe_secret_key",
+				"value": "sk_test_h9KrhKisKCFuap3TFnCCE0rR"
+			},
+			{
+				"_id": "5adb2b5d5f7b5e0f11c93da5",
+				"key": "stripe_publishable_key",
+				"value": "pk_test_WnT3yvNqosa9kspJumdt3YUq"
+			},
+			{
+				"_id": "5adb2b7c5f7b5e0f11c9554e",
+				"key": "stripe_mode",
+				"value": "sandbox"
+			}
+    ]
+}
+ * @apiErrorExample {json} Failed
+ *    HTTP/1.1 400 Failed
+      {
+          "status": 400,
+          "api_name": "get_posts",
+          "message": "Invalid request parameters.",
+          "data": {}
+      }
+*/
+api.get_payment_data= (req, res)=> {
+	services.get_payment_data().then(function(result){
+		res.json({
+			"status": 400,
+			"api_name": "get_payment_data",
+			"message": "all payments credientials.",
+			"data": result
+		});
+		return;
+	})
 }
  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
