@@ -31,7 +31,7 @@
               <div class="tab-pane" id="settings" style="padding-top: 30px; padding-bottom: 30px; padding-left: 10px;">
                 <form class="form-horizontal" name="frmnotification"  id="frmnotification" method="post" action="/admin/notification_update">
                   <div class="form-group">
-                    <label for="inputName" required class="col-sm-2 control-label" style="padding-top: 0px;">Enable Push Notifications </label>
+                    <label for="inputName" required class="col-sm-3 control-label" style="padding-top: 0px;">Enable Push Notifications </label>
 					<%
 						if(notifications_enabled == "1")
 							checked = "checked";
@@ -45,7 +45,7 @@
 				  </div>
                   
                   <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
+                    <div class="col-sm-offset-3 col-sm-9">
                        <input type="hidden" id="settings_id" name="settings_id" value="<%=notifications_id%>">
                       <button type="submit" class="btn btn-danger" name="btnSettings" id="btnSettings">Submit</button>
                     </div>
