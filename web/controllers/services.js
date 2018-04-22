@@ -45,7 +45,42 @@ web.list_services=(req,res)=>{
 			res.render('admin/services/list',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "services_list" : services_result});
 		});
    	}
-}
+};
+
+// Edit service
+web.edit = (req, res) => {
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
+	{
+	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
+	    {
+	        res.locals.flashmessages = req.session.alert_data;
+	        req.session.alert_data = null;
+	    }
+		res.redirect('/admin');
+	} else {
+		if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true) {
+            res.locals.flashmessages = req.session.alert_data;
+            req.session.alert_data = null;
+        }
+	}
+	services.get_service_details(req.params.service_id)
+	.then(function(res_service){
+		if(res_service == null || res_service == undefined || res_service == "") {
+			req.session.flash_msg = {"msg": "Service details could not be fetched", "type": "danger"};
+			req.session.alert_data = { alert_type: "danger", alert_msg: req.session.flash_msg.msg };
+			res.redirect('/admin/list_services');
+		} else {
+			if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+				var qrycount = 0;
+				var resqueries = null;
+			} else {
+				var qrycount = req.session.resqueries.length;
+				var resqueries = req.session.resqueries;
+			}
+			res.render('admin/services/edit_services',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "service" : res_service});
+		}
+	});
+};
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
