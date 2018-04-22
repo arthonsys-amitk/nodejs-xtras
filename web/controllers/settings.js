@@ -87,30 +87,67 @@ web.notification_update=(req,res)=>{
 
 //payment_settings
 web.payment_settings = (req,res) => {
-	settings.get_payment_settings()
-	.then(function(payment_config){
-		var stripe_email = "merchant@mailinator.com";
-		var stripe_secret_key = "sk_test_xxxxxxxxxxxxxxxxx";
-		var stripe_publishable_key = "pk_test_xxxxxxxxxxxxxxxxx";
-		var stripe_mode = "sandbox"; //sandbox/production
-		if(payment_config != null && payment_config.length > 0) {
-			for(var i = 0; i < payment_config.length; i++) {
-				if(payment_config[i].key == "stripe_email") {	stripe_email = payment_config[i].value;		}
-				if(payment_config[i].key == "stripe_secret_key") {	stripe_secret_key = payment_config[i].value;		}
-				if(payment_config[i].key == "stripe_publishable_key") {	stripe_publishable_key = payment_config[i].value;		}
-				if(payment_config[i].key == "stripe_mode") {	stripe_mode = payment_config[i].value;		}
-			}
-		}
-		if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
-			var qrycount = 0;
-			var resqueries = null;
-		} else {
-			var qrycount = req.session.resqueries.length;
-			var resqueries = req.session.resqueries;
-		}
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true )
+	{
+	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
+	    {
+	        res.locals.flashmessages = req.session.alert_data;
+	        req.session.alert_data = null;
+	    }
+		res.redirect('/admin');
+	} else {
+		var hostname = req.session.hostname || req.headers.host;
 		res.locals.flashmessages = req.session.alert_data;
-		res.render('admin/settings/payment_settings',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "stripe_email" : stripe_email, "stripe_secret_key" : stripe_secret_key, "stripe_publishable_key" : stripe_publishable_key, "stripe_mode" : stripe_mode });
-	});
+		req.session.alert_data = null;
+		settings.get_payment_settings()
+		.then(function(payment_config){
+			var stripe_email = "merchant@mailinator.com";
+			var stripe_secret_key = "sk_test_xxxxxxxxxxxxxxxxx";
+			var stripe_publishable_key = "pk_test_xxxxxxxxxxxxxxxxx";
+			var stripe_mode = "sandbox"; //sandbox/production
+			if(payment_config != null && payment_config.length > 0) {
+				for(var i = 0; i < payment_config.length; i++) {
+					if(payment_config[i].key == "stripe_email") {	stripe_email = payment_config[i].value;		}
+					if(payment_config[i].key == "stripe_secret_key") {	stripe_secret_key = payment_config[i].value;		}
+					if(payment_config[i].key == "stripe_publishable_key") {	stripe_publishable_key = payment_config[i].value;		}
+					if(payment_config[i].key == "stripe_mode") {	stripe_mode = payment_config[i].value;		}
+				}
+			}
+			if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+				var qrycount = 0;
+				var resqueries = null;
+			} else {
+				var qrycount = req.session.resqueries.length;
+				var resqueries = req.session.resqueries;
+			}
+			res.render('admin/settings/payment_settings',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "stripe_email" : stripe_email, "stripe_secret_key" : stripe_secret_key, "stripe_publishable_key" : stripe_publishable_key, "stripe_mode" : stripe_mode, "hostname" : hostname });
+		});
+	}
+};
+
+//update payment settings
+web.update_payment_settings = (req,res) => {
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true )
+	{
+	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
+	    {
+	        res.locals.flashmessages = req.session.alert_data;
+	        req.session.alert_data = null;
+	    }
+		res.redirect('/admin');
+	} else {
+		settings.update_payment_settings(req.body)
+		.then(function(update_result){
+			if(update_result) {
+				req.session.flash_msg = {"msg": "Payment settings updated successfully", "type":"success"};
+				req.session.alert_data = { alert_type: "success", alert_msg: req.session.flash_msg.msg };
+			} else {
+				req.session.flash_msg = {"msg": "Payment settings were not updated", "type":"danger"};
+				req.session.alert_data = { alert_type: "danger", alert_msg: req.session.flash_msg.msg };
+			}
+			res.redirect('/admin/payment_settings');
+		});		
+	}
 };
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

@@ -17,13 +17,13 @@
     <section class="content">
 
       <div class="row">
-        <div class="col-md-3">
- <% if (locals.flashmessages) { %>
-    <div class="alert alert-<%=flashmessages.alert_type%> alert-dismissible">
-      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-      <%=flashmessages.alert_msg%>
-    </div>
-    <% } %>
+		<% if (locals.flashmessages) { %>
+			<div class="alert alert-<%=flashmessages.alert_type%> alert-dismissible">
+			  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+			  <%=flashmessages.alert_msg%>
+			</div>
+		 <% } %>
+        <div class="col-md-3">		 
           <!-- Profile Image -->
           <div class="box box-primary">
             <div class="box-body box-profile">          
@@ -43,26 +43,26 @@
             </ul>
             <div class="tab-content">
               <div class="active tab-pane" id="activity">
-                <form class="form-horizontal" method="post" action="/admin/settings/update">
+                <form class="form-horizontal" method="post" action="/admin/update_payment_settings">
                   <div class="form-group">
                     <label for="stripe_email" class="col-sm-4 control-label">Email (in Stripe Account)</label>
 
                     <div class="col-sm-8">
-                      <input type="text" value="" name="stripe_email" class="form-control" id="stripe_email" placeholder="Email in Stripe Account" />
+                      <input type="text" value="<%=stripe_email%>" name="stripe_email" class="form-control" id="stripe_email" placeholder="Email in Stripe Account" />
                     </div>
                   </div>
                   <div class="form-group">
                     <label for="stripe_secret_key" class="col-sm-4 control-label">Stripe Secret Key</label>
 
                     <div class="col-sm-8">
-                      <input type="text" value="" name="stripe_secret_key" class="form-control" id="stripe_secret_key" placeholder="Stripe Secret Key"  />
+                      <input type="text" value="<%=stripe_secret_key%>" name="stripe_secret_key" class="form-control" id="stripe_secret_key" placeholder="Stripe Secret Key"  />
                     </div>
                   </div>
                   <div class="form-group">
                     <label for="stripe_publishable_key" class="col-sm-4 control-label">Stripe Publishable Key</label>
 
                     <div class="col-sm-8">
-                      <input type="text" value="" name="stripe_publishable_key" class="form-control" id="stripe_publishable_key" placeholder="Stripe Publishable Key" />
+                      <input type="text" value="<%=stripe_publishable_key%>" name="stripe_publishable_key" class="form-control" id="stripe_publishable_key" placeholder="Stripe Publishable Key" />
                     </div>
                   </div>
 				  <div class="form-group">
@@ -70,8 +70,12 @@
 
                     <div class="col-sm-8">
                       <select id="stripe_mode" name="stripe_mode" class="form-control">
-						<option value="sandbox">SandBox</option>
-						<option value="production">Production</option>
+						<%
+							sandbox = (stripe_mode == "sandbox")? "selected" : "";
+							production = (stripe_mode == "production")? "selected" : "";
+						%>
+						<option value="sandbox" <%=sandbox%>>SandBox</option>
+						<option value="production" <%=production%>>Production</option>
 					  </select>
                     </div>
                   </div>
