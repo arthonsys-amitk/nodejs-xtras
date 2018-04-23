@@ -1024,10 +1024,13 @@ api.get_appointments = (req, res)=>{
 */
 api.cancel_appointment = (req, res)=>{
    if(Object.keys(req.body).length >= 2) {
-	services.get_appointment_by_id(req.body.appointment_id).then(function(appointment_data){
+	
 		services.cancel_appointment(req.body.appointment_id, req.body.user_id)
 		.then(function(result){
-			
+		//	console.log(req.body.appointment_id);
+
+			services.get_appointment_by_id(req.body.appointment_id).then(function(appointment_data){
+				//console.log(appointment_data);
 				if(!result || result == null) {
 					res.json({
 						"status": 400,
@@ -1036,8 +1039,9 @@ api.cancel_appointment = (req, res)=>{
 						"data": "" + result
 					});
 				} else {
-				    console.log(appointment_data.provider_id);
-					send_cancel_appointment_push_notification(appintment_data.consumer_id,req.body.appointment_id)					
+					console.log("appointment_data::id=");
+					console.log(appointment_data.provider_id);
+					send_cancel_appointment_push_notification(appointment_data.consumer_id,req.body.appointment_id)					
 					send_cancel_appointment_push_notification(appointment_data.provider_id,req.body.appointment_id)					
 					res.json({
 						"status": 200,
@@ -1046,8 +1050,8 @@ api.cancel_appointment = (req, res)=>{
 						"data": "" + result
 					});
 				}
-				return;
-			});
+				return; 
+			}); 
 		})
 
 	}else
@@ -1064,6 +1068,8 @@ api.cancel_appointment = (req, res)=>{
 function send_cancel_appointment_push_notification(user_id,appointment_id){
 	let type='';
 	services.get_appointment_by_id(appointment_id).then(function(data){
+		console.log("data::consumer_id=");
+		console.log(data.consumer_id);
 		if(user_id==data.consumer_id){
 			type="customer";
 			user_id=data.provider_id;
@@ -1096,7 +1102,7 @@ function send_confirm_appointment_push_notification(appointment_id){
 							
 				}; 
 	
-	all_function.send_device_token_using_user_id(data.consumer_id,cunsumer_messagePattern);
+	all_function.send_device_token_using_user_id(data[0].consumer_id,cunsumer_messagePattern);
 	});
 }
 /**
