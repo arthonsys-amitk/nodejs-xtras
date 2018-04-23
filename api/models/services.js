@@ -567,8 +567,10 @@ exportFuns.addRatingtoAppointments = (result, user_id) => {
 								
 								var currency = "$";
 								if(record.consumer_id == user_id) { //providers	
-									if(record.providerdata.country != null && record.providerdata.country != undefined && record.providerdata.country == "Canada") {
-										currency = "C$";
+									if(record.providerdata != null) {
+										if(record.providerdata.country != null && record.providerdata.country != undefined && record.providerdata.country == "Canada") {
+											currency = "C$";
+										}
 									}
 									record.currency = currency;
 								
@@ -576,8 +578,10 @@ exportFuns.addRatingtoAppointments = (result, user_id) => {
 									delete record.providerdata;
 									delete record.consumerdata;								
 								} else { //consumers
-									if(record.consumerdata.country != null && record.consumerdata.country != undefined && record.consumerdata.country == "Canada") {
-										currency = "C$";
+									if(record.consumerdata != null) {
+										if(record.consumerdata.country != null && record.consumerdata.country != undefined && record.consumerdata.country == "Canada") {
+											currency = "C$";
+										}
 									}
 									record.currency = currency;
 									
