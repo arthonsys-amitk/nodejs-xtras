@@ -1592,8 +1592,6 @@ api.make_stripe_payment = (req, res)=> {
 	} else {
 		services.make_stripe_payment(token, amount, currency, user_id)
 		.then(function(res_payment) {
-			console.log("res_payment");
-			console.log(res_payment);
 			res.json({
 				"status": 200,
 				"api_name": "make_stripe_payment",

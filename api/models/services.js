@@ -909,7 +909,7 @@ exportFuns.make_stripe_payment = (token, amount, currency, user_id) => {
 		.then(function(res_key){
 			var secret_key = res_key.value;
 			if(secret_key) {
-				console.log("secret key:" + secret_key);
+				//console.log("secret key:" + secret_key);
 				var stripe = require("stripe")("" + secret_key);
 				var currency_code = (currency == "C$")? "cad" : "usd";
 				var charge = stripe.charges.create({
@@ -920,10 +920,16 @@ exportFuns.make_stripe_payment = (token, amount, currency, user_id) => {
 				}, function(err, charge) {
 					if (err && err.type === 'StripeCardError') {
 						console.log(JSON.stringify(err, null, 2));
-						return 0;
+						return exportFuns.record_payment_details(token, amount, currency, user_id, err)
+						.then(function(res_record){							
+							return 0;
+						});
 					}
-					console.log(charge);
-					return 1;
+					//console.log(charge);
+					return exportFuns.record_payment_details(token, amount, currency, user_id, charge)
+					.then(function(res_record){							
+						return 1;
+					});
 				});
 			} else {
 				return null;
@@ -940,13 +946,21 @@ exportFuns.make_stripe_payment = (token, amount, currency, user_id) => {
 exportFuns.record_payment_details = (token, amount, currency, user_id, payment_info) => {
 	let db = new Mongo;
    
+    let payment_details = {
+		user_id: user_id,
+		currency : currency,
+		amount: amount,
+		token: token,
+		payment_details: payment_info,
+		created_at: new Date()
+	};
     return db.connect(config.mongoURI)
     .then(function() {
-        return db.find('settings');
+        return db.insert('payments', payment_details);
     })
-    .then(function(settings) {
+    .then(function(respayments) {
         db.close();
-        return settings;
+        return respayments;
     });
 };
 
