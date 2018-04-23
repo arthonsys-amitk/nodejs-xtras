@@ -51,7 +51,6 @@
 <!-- validation -->
 <script src="/dist/js/validator.js"></script>
 
-<script src="/dist/js/custom.js"></script>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyDcO6PQqxwvHRKYu5lwBTXqJlEPbEGyBXc"></script>
 
 <!-- bootstrap time picker -->
@@ -59,11 +58,17 @@
   
 <!-- iCheck 1.0.1 -->
 <script src="/plugins/iCheck/icheck.min.js"></script>
+<!--form validation -->
+
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+<script src="/dist/js/custom.js"></script>
 
 <!-- InputMask -->
 <script src="/plugins/input-mask/jquery.inputmask.js"></script>
 <script src="/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
 <script src="/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+<!-- CK Editor -->
+<script src="/bower_components/ckeditor/ckeditor.js"></script>
 
 <!-- FastClick -->
 <script src="/bower_components/fastclick/lib/fastclick.js"></script>
@@ -104,7 +109,8 @@
 		  checkboxClass: 'icheckbox_minimal-blue',
 		  radioClass   : 'iradio_minimal-blue'
 		});
-		jQuery('[data-mask]').inputmask();
+		jQuery('[data-mask]').inputmask();	
+        CKEDITOR.replace('content');
 	});
 </script>
 </body>

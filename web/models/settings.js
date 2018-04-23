@@ -101,5 +101,38 @@ exportFuns.update_payment_settings = (req)=>{
     return res_settings;
   });
 };
+//update privacy policy
+exportFuns.privacy_policy = (req)=>{
+  let searchPattern1 = { key : "Privacy and Policy"};
 
+  
+  let updatePattern1 = { value : _.trim(req.content)};
+  
+  
+ 
+ let db = new Mongo;
+ return db.connect(config.mongoURI)
+ .then(function(){
+   return db.update('settings', searchPattern1, updatePattern1)
+ 
+  })
+ .then(function(privacy_policy){
+   db.close();
+   return privacy_policy;
+ });
+};
+//update Get privacy policy
+exportFuns.get_privacy_policy = ()=>{
+  let searchPattern1 = { key : "Privacy and Policy"};
+  let db = new Mongo;
+  return db.connect(config.mongoURI)
+  .then(function(){
+    return db.find('settings', searchPattern1)
+  
+    })
+  .then(function(privacy_policy){
+    db.close();
+    return privacy_policy;
+  });
+};
 module.exports = exportFuns;

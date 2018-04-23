@@ -132,7 +132,7 @@
 						<div class="form-group">
 						  <label class="col-sm-2 control-label">Weekday Start Time</label>
 
-						  <div class="input-group">
+						  <div class="input-group" style="max-width: 81%; padding-left: 15px;">
 							<div class="input-group-addon">
 							  <i class="fa fa-clock-o"></i>
 							</div>
@@ -142,8 +142,126 @@
 						</div>
 				 </div>
 				  
+				  <div class="bootstrap-timepicker">
+						<div class="form-group">
+						  <label class="col-sm-2 control-label">Weekday Stop Time</label>
+
+						  <div class="input-group" style="max-width: 81%; padding-left: 15px;">
+							<div class="input-group-addon">
+							  <i class="fa fa-clock-o"></i>
+							</div>
+							<input type="text" class="form-control timepicker" id="weekday_stop_time" name="weekday_stop_time" value="<%=service.weekday_stop_time%>">
+							
+						  </div>
+						</div>
+				 </div>
+				 
+				  <div class="bootstrap-timepicker">
+						<div class="form-group">
+						  <label class="col-sm-2 control-label">Weekend Start Time</label>
+
+						  <div class="input-group" style="max-width: 81%; padding-left: 15px;">
+							<div class="input-group-addon">
+							  <i class="fa fa-clock-o"></i>
+							</div>
+							<input type="text" class="form-control timepicker" id="weekend_start_time" name="weekend_start_time" value="<%=service.weekend_start_time%>">
+							
+						  </div>
+						</div>
+				 </div>
+				 
+				  <div class="bootstrap-timepicker">
+						<div class="form-group">
+						  <label class="col-sm-2 control-label">Weekend Stop Time</label>
+
+						  <div class="input-group" style="max-width: 81%; padding-left: 15px;">
+							<div class="input-group-addon">
+							  <i class="fa fa-clock-o"></i>
+							</div>
+							<input type="text" class="form-control timepicker" id="weekend_stop_time" name="weekend_stop_time" value="<%=service.weekend_stop_time%>">
+							
+						  </div>
+						</div>
+				 </div>
+				  
+				  <div class="form-group">
+					<label for="service_availability" class="col-sm-2 control-label">Service Availability</label>
+
+					<div class="col-sm-10">
+					  <select class="form-control" id="service_availability" name="service_availability" multiple>
+							<option value="">--Select --</option>
+							<option value="available_monday" >Monday</option>
+							<option value="available_tuesday" >Tuesday</option>
+							<option value="available_wednesday" >Wednesday</option>
+							<option value="available_thursday" >Thursday</option>
+							<option value="available_friday" >Friday</option>
+							<option value="available_saturday" >Saturday</option>
+							<option value="available_sunday" >Sunday</option>							
+					  </select>
+					</div>
+				  </div>
+				  
+				  <div class="form-group">
+                    <label for="is_active" class="col-sm-2 control-label">Active</label>
+
+                    <div class="col-sm-10">
+						<%
+						if(service.is_active == "1" || service.is_active == 1)
+							checked = "checked";
+						else
+							checked = "";
+						%>
+						<label class="switch" style="margin-left: 10px;">
+						  <input type="checkbox" id="is_active" name="is_active" <%=checked%> style="position: relative; top: 7px;" />
+						  <span class="slider round"></span>
+						</label>
+                    </div>
+                  </div>
+				  
+				  <div class="form-group">
+                    <label for="cancel_hours" class="col-sm-2 control-label">Prior Cancellation Hours</label>
+
+                    <div class="col-sm-10">
+                      <input type="number" value="<%=service.cancel_hours %>" name="cancel_hours" class="form-control" id="cancel_hours" placeholder="Prior Cancellation Hours" />
+                    </div>
+                  </div>
+				  
+				  <div class="form-group">
+                    <label for="cancel_fee" class="col-sm-2 control-label">Cancellation Fee</label>
+
+                    <div class="col-sm-10">
+                      <input type="number" value="<%=service.cancel_fee %>" name="cancel_fee" class="form-control" id="cancel_hours" placeholder="Cancellation Fee" />
+                    </div>
+                  </div>
 				  
                   <div class="form-group">
+                    <label for="reschedule_hours" class="col-sm-2 control-label">Prior Reschedule Hours</label>
+
+                    <div class="col-sm-10">
+                      <input type="number" value="<%=service.reschedule_hours %>" name="reschedule_hours" class="form-control" id="reschedule_hours" placeholder="Prior Reschedule Hours" />
+                    </div>
+                  </div>
+				  
+				  <div class="form-group">
+                    <label for="reschedule_fee" class="col-sm-2 control-label">Reschedule Fee</label>
+
+                    <div class="col-sm-10">
+                      <input type="number" value="<%=service.reschedule_fee %>" name="reschedule_fee" class="form-control" id="reschedule_fee" placeholder="Reschedule Fee" />
+                    </div>
+                  </div>
+				  
+				  <div class="form-group">
+                    <label for="cancel_rsh_policy" class="col-sm-2 control-label">Cancellation/ Reschedule Policy</label>
+
+                    <div class="col-sm-10 " >
+                      <input type="file" value="<%=service.cancel_rsh_policy %>" name="cancel_rsh_policy" class="form-control" id="cancel_rsh_policy" style="padding-left: 0px; padding-top: 0px;"/>
+					  <% if(service.cancel_rsh_policy) { %>
+						<a href="<%=service.cancel_rsh_policy%>" target="_blank">View Policy</a>
+					  <% } %>
+                    </div>
+                  </div>
+				  
+				  <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                       <input type="hidden" id="service_id" name="service_id" value="<%=service._id; %>">
                       <button type="submit" id="submit" class="btn btn-success">Submit</button>
@@ -174,8 +292,17 @@
 	 });
 	 //Timepicker
      jQuery("#weekday_start_time").timepicker({
-      showInputs: false
-    })
+       showInputs: false
+	 });
+	 jQuery("#weekday_stop_time").timepicker({
+       showInputs: false
+	 });
+	 jQuery("#weekend_start_time").timepicker({
+       showInputs: false
+	 });
+	 jQuery("#weekend_stop_time").timepicker({
+       showInputs: false
+	 });
   });
    
   </script>

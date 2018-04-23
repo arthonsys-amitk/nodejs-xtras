@@ -149,6 +149,58 @@ web.update_payment_settings = (req,res) => {
 		});		
 	}
 };
+//update privacy policy
+web.privacy_policy = (req,res) => {
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true )
+	{
+	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
+	    {
+	        res.locals.flashmessages = req.session.alert_data;
+	        req.session.alert_data = null;
+	    }
+		res.redirect('/admin');
+	} else {
+		settings.privacy_policy(req.body)
+		.then(function(update_result){
+			if(update_result) {
+				req.session.flash_msg = {"msg": "Privacy policy updated successfully", "type":"success"};
+				req.session.alert_data = { alert_type: "success", alert_msg: req.session.flash_msg.msg };
+			} else {
+				req.session.flash_msg = {"msg": "Privacy policy were not updated", "type":"danger"};
+				req.session.alert_data = { alert_type: "danger", alert_msg: req.session.flash_msg.msg };
+			}
+			res.redirect('/admin/privacy_policy');
+		});		
+	}
+};
+web.get_privacy_policy= (req,res) => {
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true )
+	{
+	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
+	    {
+	        res.locals.flashmessages = req.session.alert_data;
+	        req.session.alert_data = null;
+	    }
+		res.redirect('/admin');
+	} else {
+		var hostname = req.session.hostname || req.headers.host;
+		res.locals.flashmessages = req.session.alert_data;
+		req.session.alert_data = null;
+		settings.get_privacy_policy()
+		.then(function(result){
+			
+			if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+				var qrycount = 0;
+				var resqueries = null;
+			} else {
+				var qrycount = req.session.resqueries.length;
+				var resqueries = req.session.resqueries;
+			}
+			console.log(result);
+			res.render('admin/settings/privacy_policy',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since,'privacy_policy_data':result});
+		});
+	}
+};
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 exportFuns.web = web;
