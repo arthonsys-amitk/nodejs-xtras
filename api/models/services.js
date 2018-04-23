@@ -894,6 +894,60 @@ exportFuns.get_payment_data=()=>{
         db.close();
         return settings;
     });
-}
-  
+};
+
+//stripe payment
+exportFuns.make_stripe_payment = (token, amount, currency, user_id) => {
+	let db = new Mongo;
+    let searchPattern = {
+		key : "stripe_secret_key"
+	};
+	
+    return db.connect(config.mongoURI)
+    .then(function() {
+        return db.findOne('settings', searchPattern)
+		.then(function(res_key){
+			var secret_key = res_key.value;
+			if(secret_key) {
+				console.log("secret key:" + secret_key);
+				var stripe = require("stripe")("" + secret_key);
+				var currency_code = (currency == "C$")? "cad" : "usd";
+				var charge = stripe.charges.create({
+					amount: amount, // amount in cents, again
+					currency: currency_code,
+					card: token,
+					description: "Payment from userid:" + user_id
+				}, function(err, charge) {
+					if (err && err.type === 'StripeCardError') {
+						console.log(JSON.stringify(err, null, 2));
+						return 0;
+					}
+					console.log(charge);
+					return 1;
+				});
+			} else {
+				return null;
+			}
+		});
+    })
+    .then(function(settings) {
+        db.close();
+        return settings;
+    });
+};
+
+//record payment details
+exportFuns.record_payment_details = (token, amount, currency, user_id, payment_info) => {
+	let db = new Mongo;
+   
+    return db.connect(config.mongoURI)
+    .then(function() {
+        return db.find('settings');
+    })
+    .then(function(settings) {
+        db.close();
+        return settings;
+    });
+};
+
 module.exports = exportFuns;

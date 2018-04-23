@@ -16,4 +16,5 @@ router.post('/reschedule_appointment', services.api.reschedule_appointment);
 router.post('/add_review', services.api.add_review);
 router.post('/get_posts', services.api.get_posts);
 router.post('/get_payment_data', services.api.get_payment_data);
+router.post('/make_stripe_payment', services.api.make_stripe_payment);
 

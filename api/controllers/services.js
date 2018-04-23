@@ -1513,11 +1513,96 @@ api.get_payment_data= (req, res)=> {
 		res.json({
 			"status": 400,
 			"api_name": "get_payment_data",
-			"message": "all payments credientials.",
+			"message": "all payments credentials.",
 			"data": result
 		});
 		return;
 	})
+}
+
+/**
+ * @api {post} /make_stripe_payment Make Stripe Payment
+ * @apiGroup Post
+ * @apiparam {String} stripe_token Stripe Token
+ * @apiparam {Float}  amount Payment Amount
+ * @apiparam {String} currency Currency ($ or C$)
+ * @apiparam {String} user_id ID of the User making the payment
+ * @apiSuccessExample {json} Success
+ *    {
+    "status": 200,
+    "api_name": "make_stripe_payment",
+    "message": "Payment is successful",
+    "data": {}
+}
+ * @apiErrorExample {json} Failed
+ *    HTTP/1.1 400 Failed
+      {
+          "status": 400,
+          "api_name": "make_stripe_payment",
+          "message": "Some parameters are missing",
+          "data": {}
+      }
+*/
+api.make_stripe_payment = (req, res)=> {
+	var token = req.body.stripe_token;
+	var amount = req.body.amount;
+	var currency = req.body.currency;
+	var user_id = req.body.user_id;
+	if(Object.keys(req.body).length < 4 ) {
+		res.json({
+			"status": 400,
+			"api_name": "make_stripe_payment",
+			"message": "Some parameters are missing",
+			"data": {}
+		});
+		return;
+	}
+	if(token == null || token == undefined || token == "") {
+		res.json({
+			"status": 400,
+			"api_name": "make_stripe_payment",
+			"message": "Invalid token",
+			"data": {}
+		});
+		return;
+	} else if(amount <= 0 || amount == null || amount == ""){
+		res.json({
+			"status": 400,
+			"api_name": "make_stripe_payment",
+			"message": "Payment amount should be more than zero",
+			"data": {}
+		});
+		return;
+	} else if(currency == null || currency == undefined || currency == "" || (currency != "$" && currency != "C$")) {
+		res.json({
+			"status": 400,
+			"api_name": "make_stripe_payment",
+			"message": "Invalid Currency. Currency can be $ or C$ only.",
+			"data": {}
+		});
+		return;
+	} else if(user_id == null || user_id == undefined || user_id == "") {
+		res.json({
+			"status": 400,
+			"api_name": "make_stripe_payment",
+			"message": "Invalid User ID",
+			"data": {}
+		});
+		return;
+	} else {
+		services.make_stripe_payment(token, amount, currency, user_id)
+		.then(function(res_payment) {
+			console.log("res_payment");
+			console.log(res_payment);
+			res.json({
+				"status": 200,
+				"api_name": "make_stripe_payment",
+				"message": "Payment is successful",
+				"data": {}
+			});
+			return;
+		});
+	}
 }
  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
