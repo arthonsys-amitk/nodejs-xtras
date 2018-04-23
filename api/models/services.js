@@ -816,7 +816,7 @@ exportFuns.get_payment_details = (appointment_id, user_id) => {
 				var percent_discount = (coupondata.percent != null) ? coupondata.percent: 0;
 			}
 			var pdata = exportFuns.get_total_payment_amount(appointment_data, percent_discount);
-			pdataresult.total_price = pdata[0];
+			pdataresult.total_price = "" + pdata[0];
 			pdataresult.discount = pdata[1];
 			
 			pdataresult.provider_name = (user_id == appointment_data.consumer_id)? appointment_data.providerdata.fullname : appointment_data.consumerdata.fullname;
@@ -897,7 +897,7 @@ exportFuns.get_payment_data=()=>{
 };
 
 //stripe payment
-exportFuns.make_stripe_payment = (token, amount, currency, user_id) => {
+exportFuns.make_stripe_payment = (token, amount, currency, user_id, appointment_id) => {
 	let db = new Mongo;
     let searchPattern = {
 		key : "stripe_secret_key"
@@ -920,13 +920,13 @@ exportFuns.make_stripe_payment = (token, amount, currency, user_id) => {
 				}, function(err, charge) {
 					if (err && err.type === 'StripeCardError') {
 						console.log(JSON.stringify(err, null, 2));
-						return exportFuns.record_payment_details(token, amount, currency, user_id, err)
+						return exportFuns.record_payment_details(token, amount, currency, user_id, appointment_id, err)
 						.then(function(res_record){							
 							return 0;
 						});
 					}
 					//console.log(charge);
-					return exportFuns.record_payment_details(token, amount, currency, user_id, charge)
+					return exportFuns.record_payment_details(token, amount, currency, user_id, appointment_id, charge)
 					.then(function(res_record){							
 						return 1;
 					});
@@ -943,7 +943,7 @@ exportFuns.make_stripe_payment = (token, amount, currency, user_id) => {
 };
 
 //record payment details
-exportFuns.record_payment_details = (token, amount, currency, user_id, payment_info) => {
+exportFuns.record_payment_details = (token, amount, currency, user_id, appointment_id, payment_info) => {
 	let db = new Mongo;
    
     let payment_details = {
@@ -952,6 +952,7 @@ exportFuns.record_payment_details = (token, amount, currency, user_id, payment_i
 		amount: amount,
 		token: token,
 		payment_details: payment_info,
+		appointment_id: appointment_id,
 		created_at: new Date()
 	};
     return db.connect(config.mongoURI)

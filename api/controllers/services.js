@@ -1527,6 +1527,7 @@ api.get_payment_data= (req, res)=> {
  * @apiparam {Float}  amount Payment Amount
  * @apiparam {String} currency Currency ($ or C$)
  * @apiparam {String} user_id ID of the User making the payment
+ * @apiparam {String} appointment_id Appointment ID
  * @apiSuccessExample {json} Success
  *    {
     "status": 200,
@@ -1548,7 +1549,8 @@ api.make_stripe_payment = (req, res)=> {
 	var amount = req.body.amount;
 	var currency = req.body.currency;
 	var user_id = req.body.user_id;
-	if(Object.keys(req.body).length < 4 ) {
+	var appointment_id = req.body.appointment_id;
+	if(Object.keys(req.body).length < 5 ) {
 		res.json({
 			"status": 400,
 			"api_name": "make_stripe_payment",
@@ -1590,7 +1592,7 @@ api.make_stripe_payment = (req, res)=> {
 		});
 		return;
 	} else {
-		services.make_stripe_payment(token, amount, currency, user_id)
+		services.make_stripe_payment(token, amount, currency, user_id, appointment_id)
 		.then(function(res_payment) {
 			res.json({
 				"status": 200,
