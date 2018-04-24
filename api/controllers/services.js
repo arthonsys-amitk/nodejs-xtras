@@ -660,7 +660,8 @@ api.add_appointments = (req, res)=>{
 		//services.insert_appointment(appointment_data)        
                 if(req.body.coupon_id != null && req.body.coupon_id != undefined && req.body.coupon_id) {
 					//coupon id is provided
-					return services.getCouponById(req.body.coupon_id)
+					//return services.getCouponById(req.body.coupon_id) //below change suggested by Rohit sir
+					return services.getCouponByCode(req.body.coupon_id) //coupon_id contains coupon code now : 24Apr18
 					.then(function(coupondata) {
 						return user.getUser(req.body.consumer_id)
 						.then(function(consumerdata){
@@ -671,7 +672,16 @@ api.add_appointments = (req, res)=>{
 									var total_payment = "0.00";
 									//console.log(coupondata.percent + ", exp:" + coupondata.expiry_date);
 									//console.log(coupondata.service_ids);
-									if((new Date(coupondata.expiry_date) <= new Date()) && (!coupondata.is_deleted)) {
+									var invalid_service = 1;
+									if(coupondata != null && coupondata.service_ids != null && coupondata.service_ids != "" && coupondata.service_ids != undefined && coupondata.service_ids != []) {
+										if(coupondata.service_ids.indexOf("" + appointment_data.service_id) > -1) {
+											invalid_service = 0;
+										} else {
+											invalid_service = 1;
+										}
+									}
+									
+									if((!invalid_service) && (new Date(coupondata.expiry_date) >= new Date()) && (!coupondata.is_deleted)) {
 										//coupon is valid
 										payment_data = services.get_total_payment_amount(appointment_data, coupondata.percent);
 									} else {

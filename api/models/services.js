@@ -5,6 +5,7 @@ var exportFuns = {},
     {sendmail} = require('../helpers'),
 	{user} = require('../models'),
 	user_model = require('./user'),
+	_      = require('lodash'),
     Mongo      = require('../../mongo');
 
 const Promise = require("bluebird");
@@ -803,11 +804,31 @@ exportFuns.getCouponById = (coupon_id)=>{
   });
 };
 
+
+//get coupon by code
+exportFuns.getCouponByCode = (coupon_code)=>{
+  let db = new Mongo;
+  //let oid = db.makeID(coupon_id);
+  let oid = "" + coupon_code;
+  let searchPattern = {
+    "coupon_code": {$regex : oid, $options: "i"},
+  };
+
+  return db.connect(config.mongoURI)
+  .then(function(){
+    return db.findOne('coupon', searchPattern);
+  })
+  .then(function(coupondata){
+    return coupondata;
+  });
+};
+
 //get payment details
 exportFuns.get_payment_details = (appointment_id, user_id) => {
 	return exportFuns.get_appointment_by_id(appointment_id)
 	.then(function(appointment_data){
-		return exportFuns.getCouponById(appointment_data.coupon_id)
+		//return exportFuns.getCouponById(appointment_data.coupon_id) //changed to below on 24Apr18 as suggested
+		return exportFuns.getCouponByCode(appointment_data.coupon_id)
 		.then(function(coupondata){
 			var pdataresult = {};
 			if(coupondata == null) {
@@ -833,10 +854,14 @@ exportFuns.get_total_payment_amount = (appointment_data, percent) => {
 	var total_price = 0;
 	if(appointment_data.service_area_and_pricing != null && appointment_data.service_area_and_pricing != undefined && appointment_data.service_area_and_pricing != "") {
 		//if(typeof appointment_data.service_area_and_pricing === 'string') {
-			var svc_area = JSON.parse(JSON.stringify(appointment_data.service_area_and_pricing));
+			if(typeof appointment_data.service_area_and_pricing == "string") {
+				var svc_area = JSON.parse(appointment_data.service_area_and_pricing);
+			} else {
+				var svc_area = JSON.parse(JSON.stringify(appointment_data.service_area_and_pricing));
+			}
 			for(var i = 0; i < svc_area.length; i++) {
 				if(svc_area[i].price != null && svc_area[i].price != undefined && svc_area[i].price != "" && svc_area[i].price) {
-					total_price = total_price + svc_area[i].price;
+					total_price = parseFloat(total_price) + parseFloat(svc_area[i].price);
 				}
 			}
 		//}
@@ -844,21 +869,33 @@ exportFuns.get_total_payment_amount = (appointment_data, percent) => {
 	
 	if(appointment_data.service_grass_snow_height != null && appointment_data.service_grass_snow_height != undefined && appointment_data.service_grass_snow_height != "") {
 		//if(typeof appointment_data.service_grass_snow_height === 'string') {
-			var svc_grass = JSON.parse(JSON.stringify(appointment_data.service_grass_snow_height));
+			if(typeof appointment_data.service_grass_snow_height == "string") {
+				var svc_grass = JSON.parse(appointment_data.service_grass_snow_height);
+			} else {
+				var svc_grass = JSON.parse(JSON.stringify(appointment_data.service_grass_snow_height));
+			}
 			for(var i = 0; i < svc_grass.length; i++) {
 				if(svc_grass[i].price != null && svc_grass[i].price != undefined && svc_grass[i].price != "" && svc_grass[i].price) {
-					total_price = total_price + svc_grass[i].price;
+					total_price = parseFloat(total_price) + parseFloat(svc_grass[i].price);
 				}
 			}
 		//}
 	}
 	
 	if(appointment_data.service_addons != null && appointment_data.service_addons != undefined && appointment_data.service_addons != "") {
-		//if(typeof appointment_data.service_addons === 'string') {
+		appointment_data.service_addons = _.trim(appointment_data.service_addons);
+		if(typeof appointment_data.service_addons == "string") {
+			var svc_addon = JSON.parse(appointment_data.service_addons)
+		} else {
 			var svc_addon = JSON.parse(JSON.stringify(appointment_data.service_addons));
+		}
+		//if(typeof appointment_data.service_addons === 'string') {
+			
 			for(var i = 0; i < svc_addon.length; i++) {
+				console.log("price for row:" + i);
+				console.log(svc_addon[i].price);
 				if(svc_addon[i].price != null && svc_addon[i].price != undefined && svc_addon[i].price != "" && svc_addon[i].price) {
-					total_price = total_price + svc_addon[i].price;
+					total_price = parseFloat(total_price) + parseFloat(svc_addon[i].price);
 				}
 			}
 		//}
@@ -866,21 +903,28 @@ exportFuns.get_total_payment_amount = (appointment_data, percent) => {
 	
 	if(appointment_data.service_options != null && appointment_data.service_options != undefined && appointment_data.service_options != "") {
 		//if(typeof appointment_data.service_options === 'object') {
-			var svc_option = JSON.parse(JSON.stringify(appointment_data.service_options));
+			if(typeof appointment_data.service_options == "string") {
+				var svc_option = JSON.parse(appointment_data.service_options);
+			} else {
+				var svc_option = JSON.parse(JSON.stringify(appointment_data.service_options));
+			}
+			console.log("svc_option");
+			console.log(svc_option);
 			for(var i = 0; i < svc_option.length; i++) {
 				if(svc_option[i].price != null && svc_option[i].price != undefined && svc_option[i].price != "" && svc_option[i].price) {
-					total_price = total_price + svc_option[i].price;
+					total_price = parseFloat(total_price) + parseFloat(svc_option[i].price);
 				}
 			}
 		//}
 	}
+	
 	var discount = 0;
 	if(percent > 0) {
 		discount = parseFloat((total_price * percent) /100).toFixed(2);
 		total_price = parseFloat(total_price - discount).toFixed(2);
 	}
-	payment_data.push(total_price);
-	payment_data.push(discount);
+	payment_data.push(parseFloat(total_price).toFixed(2));
+	payment_data.push(parseFloat(discount).toFixed(2));
 	return payment_data;
 };
 exportFuns.get_payment_data=()=>{
