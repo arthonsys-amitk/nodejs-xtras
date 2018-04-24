@@ -160,7 +160,8 @@ var expiresIn = (numDays)=>{
 				"service_uploads": [],
 				"parent_category_id": "",
 				"parent_category_name": "",
-				"min_price": "11.00"
+				"min_price": "11.00",
+				"has_coupon" : "1"
 			}
 		],
 		"num_pages": "1"
@@ -195,97 +196,171 @@ api.search_services = (req, res)=>{
 	  if(fulladdress && search_keyword) {
 		  search.zipcodesearch(search_keyword, fulladdress, type, limit, page)
 		  .then(function(result){
-			  var arr_services = [];
-			  var ctr = 0;
-			  for(ctr = 0; ctr < result.length; ctr++) {
-				var valid = search.checkServiceDistance(result[ctr], fulladdress);
-				if(valid) {
-					result[ctr].rating = parseFloat(result[ctr].rating).toFixed(2);
-					result[ctr].min_price = parseFloat(services.getMinServicePrice(result[ctr])).toFixed(2);
-					result[ctr].service_addons = sendmail.getAsJsonObject(result[ctr].service_addons);
-					result[ctr].service_options = sendmail.getAsJsonObject(result[ctr].service_options);
-					result[ctr].service_area_and_pricing = sendmail.getAsJsonObject(result[ctr].service_area_and_pricing);
-					result[ctr].service_grass_snow_height = sendmail.getAsJsonObject(result[ctr].service_grass_snow_height);
-					arr_services.push(result[ctr]);
-				}
-			  }
-			var num_records = arr_services.length;
-			if(num_records && page_size) {
-				num_pages = Math.ceil(num_records / page_size);
-			} else {
-				if(!num_pages) num_pages = 1;
-			}
-			res.json({
-			  "status": 200,
-			  "api_name": "search_services",
-			  "message": "Search results fetched successfully",
-			  "data": arr_services,
-			  "num_pages" : "" + num_pages 
-			});
-			return;
+			  services.get_all_coupons()
+			  .then(function(res_coupons){
+				  var coupon_service_ids = [];
+					//get all service_ids of all coupons in coupon_service_ids array
+					if(res_coupons != null && res_coupons != undefined) {
+						for(var i = 0; i < res_coupons.length; i++) {
+							if(res_coupons[i].service_ids != null && res_coupons[i].service_ids != undefined && res_coupons[i].service_ids != []) {
+								for(var j = 0; j < res_coupons[i].service_ids.length; j++) {
+									if(coupon_service_ids.indexOf(res_coupons[i].service_ids[j]) == -1) {
+										coupon_service_ids.push(res_coupons[i].service_ids[j]);
+									}
+								}
+							}
+						}
+					}
+					
+					
+					var arr_services = [];
+					  var ctr = 0;
+					  for(ctr = 0; ctr < result.length; ctr++) {
+						var valid = search.checkServiceDistance(result[ctr], fulladdress);
+						if(valid) {							
+							result[ctr].has_coupon = "0";
+							if(coupon_service_ids != null && coupon_service_ids != undefined && coupon_service_ids != []) {
+								if(coupon_service_ids.indexOf("" + result[ctr]._id) > -1) {
+									result[ctr].has_coupon = "1";
+								}
+							}
+							result[ctr].rating = parseFloat(result[ctr].rating).toFixed(2);
+							result[ctr].min_price = parseFloat(services.getMinServicePrice(result[ctr])).toFixed(2);
+							result[ctr].service_addons = sendmail.getAsJsonObject(result[ctr].service_addons);
+							result[ctr].service_options = sendmail.getAsJsonObject(result[ctr].service_options);
+							result[ctr].service_area_and_pricing = sendmail.getAsJsonObject(result[ctr].service_area_and_pricing);
+							result[ctr].service_grass_snow_height = sendmail.getAsJsonObject(result[ctr].service_grass_snow_height);
+							arr_services.push(result[ctr]);
+						}
+					  }
+					var num_records = arr_services.length;
+					if(num_records && page_size) {
+						num_pages = Math.ceil(num_records / page_size);
+					} else {
+						if(!num_pages) num_pages = 1;
+					}
+					res.json({
+					  "status": 200,
+					  "api_name": "search_services",
+					  "message": "Search results fetched successfully",
+					  "data": arr_services,
+					  "num_pages" : "" + num_pages 
+					});
+					return;
+			  });
+			  
+					  
 		  });
 	  } else if(search_lat && search_long && search_keyword) {		  
 		  search.locationsearch(search_keyword, search_lat, search_long, type, limit, page)
 		  .then(function(result){
-			  var arr_services = [];
-			  var ctr = 0;
-			  for(ctr = 0; ctr < result.length; ctr++) {
-				var valid = search.checkServiceDistanceByLocation(result[ctr], search_lat, search_long);
-				if(valid) {
-					result[ctr].rating = parseFloat(result[ctr].rating).toFixed(2);
-					result[ctr].min_price = parseFloat(services.getMinServicePrice(result[ctr])).toFixed(2);
-					result[ctr].service_addons = sendmail.getAsJsonObject(result[ctr].service_addons);
-					result[ctr].service_options = sendmail.getAsJsonObject(result[ctr].service_options);
-					result[ctr].service_area_and_pricing = sendmail.getAsJsonObject(result[ctr].service_area_and_pricing);
-					result[ctr].service_grass_snow_height = sendmail.getAsJsonObject(result[ctr].service_grass_snow_height);
-					arr_services.push(result[ctr]);
-				}
-			  }
-			var num_records = arr_services.length;
-			if(num_records && page_size) {
-				num_pages = Math.ceil(num_records / page_size);
-			} else {
-				if(!num_pages) num_pages = 1;
-			}
-			res.json({
-			  "status": 200,
-			  "api_name": "search_services",
-			  "message": "Search results fetched successfully",
-			  "data": arr_services,
-			  "num_pages" : "" + num_pages 
-			});
-			return;
+			  services.get_all_coupons()
+			  .then(function(res_coupons){
+				  var coupon_service_ids = [];
+					//get all service_ids of all coupons in coupon_service_ids array
+					if(res_coupons != null && res_coupons != undefined) {
+						for(var i = 0; i < res_coupons.length; i++) {
+							if(res_coupons[i].service_ids != null && res_coupons[i].service_ids != undefined && res_coupons[i].service_ids != []) {
+								for(var j = 0; j < res_coupons[i].service_ids.length; j++) {
+									if(coupon_service_ids.indexOf(res_coupons[i].service_ids[j]) == -1) {
+										coupon_service_ids.push(res_coupons[i].service_ids[j]);
+									}
+								}
+							}
+						}
+					}
+									  
+					  var arr_services = [];
+					  var ctr = 0;
+					  for(ctr = 0; ctr < result.length; ctr++) {
+						var valid = search.checkServiceDistanceByLocation(result[ctr], search_lat, search_long);
+						if(valid) {
+							result[ctr].has_coupon = "0";
+							if(coupon_service_ids != null && coupon_service_ids != undefined && coupon_service_ids != []) {
+								if(coupon_service_ids.indexOf("" + result[ctr]._id) > -1) {
+									result[ctr].has_coupon = "1";
+								}
+							}
+							result[ctr].rating = parseFloat(result[ctr].rating).toFixed(2);
+							result[ctr].min_price = parseFloat(services.getMinServicePrice(result[ctr])).toFixed(2);
+							result[ctr].service_addons = sendmail.getAsJsonObject(result[ctr].service_addons);
+							result[ctr].service_options = sendmail.getAsJsonObject(result[ctr].service_options);
+							result[ctr].service_area_and_pricing = sendmail.getAsJsonObject(result[ctr].service_area_and_pricing);
+							result[ctr].service_grass_snow_height = sendmail.getAsJsonObject(result[ctr].service_grass_snow_height);
+							arr_services.push(result[ctr]);
+						}
+					  }
+					var num_records = arr_services.length;
+					if(num_records && page_size) {
+						num_pages = Math.ceil(num_records / page_size);
+					} else {
+						if(!num_pages) num_pages = 1;
+					}
+					res.json({
+					  "status": 200,
+					  "api_name": "search_services",
+					  "message": "Search results fetched successfully",
+					  "data": arr_services,
+					  "num_pages" : "" + num_pages 
+					});
+					return;
+			  });
+						  
 		  });
 	  } else if(city && country && search_keyword) {
 		  search.addresssearch(search_keyword, address, city, province, zipcode, country, type, limit, page)
 		  .then(function(result){
-			  var arr_services = [];
-			  for(var ctr = 0; ctr < result.length; ctr++) {
-				var valid = search.checkServiceDistanceByAddress(result[ctr], address, city, province, zipcode, country);
-				if(valid) {
-					result[ctr].rating = parseFloat(result[ctr].rating).toFixed(2);
-					result[ctr].min_price = parseFloat(services.getMinServicePrice(result[ctr])).toFixed(2);
-					result[ctr].service_addons = sendmail.getAsJsonObject(result[ctr].service_addons);
-					result[ctr].service_options = sendmail.getAsJsonObject(result[ctr].service_options);
-					result[ctr].service_area_and_pricing = sendmail.getAsJsonObject(result[ctr].service_area_and_pricing);
-					result[ctr].service_grass_snow_height = sendmail.getAsJsonObject(result[ctr].service_grass_snow_height);
-					arr_services.push(result[ctr]);
-				}
-			  }
-			  var num_records = arr_services.length;
-			  if(num_records && page_size) {
-					num_pages = Math.ceil(num_records / page_size);
-			  } else {
-				if(!num_pages) num_pages = 1;
-			  }
-			  res.json({
-				  "status": 200,
-				  "api_name": "search_services",
-				  "message": "Search results fetched successfully",
-				  "data": arr_services,
-				  "num_pages" : "" + num_pages 
+			  services.get_all_coupons()
+			  .then(function(res_coupons){
+				  var coupon_service_ids = [];
+					//get all service_ids of all coupons in coupon_service_ids array
+					if(res_coupons != null && res_coupons != undefined) {
+						for(var i = 0; i < res_coupons.length; i++) {
+							if(res_coupons[i].service_ids != null && res_coupons[i].service_ids != undefined && res_coupons[i].service_ids != []) {
+								for(var j = 0; j < res_coupons[i].service_ids.length; j++) {
+									if(coupon_service_ids.indexOf(res_coupons[i].service_ids[j]) == -1) {
+										coupon_service_ids.push(res_coupons[i].service_ids[j]);
+									}
+								}
+							}
+						}
+					}
+				  
+				  var arr_services = [];
+				  for(var ctr = 0; ctr < result.length; ctr++) {
+					var valid = search.checkServiceDistanceByAddress(result[ctr], address, city, province, zipcode, country);
+					if(valid) {
+						result[ctr].has_coupon = "0";
+						if(coupon_service_ids != null && coupon_service_ids != undefined && coupon_service_ids != []) {
+							if(coupon_service_ids.indexOf("" + result[ctr]._id) > -1) {
+								result[ctr].has_coupon = "1";
+							}
+						}
+						result[ctr].rating = parseFloat(result[ctr].rating).toFixed(2);
+						result[ctr].min_price = parseFloat(services.getMinServicePrice(result[ctr])).toFixed(2);
+						result[ctr].service_addons = sendmail.getAsJsonObject(result[ctr].service_addons);
+						result[ctr].service_options = sendmail.getAsJsonObject(result[ctr].service_options);
+						result[ctr].service_area_and_pricing = sendmail.getAsJsonObject(result[ctr].service_area_and_pricing);
+						result[ctr].service_grass_snow_height = sendmail.getAsJsonObject(result[ctr].service_grass_snow_height);
+						arr_services.push(result[ctr]);
+					}
+				  }
+				  var num_records = arr_services.length;
+				  if(num_records && page_size) {
+						num_pages = Math.ceil(num_records / page_size);
+				  } else {
+					if(!num_pages) num_pages = 1;
+				  }
+				  res.json({
+					  "status": 200,
+					  "api_name": "search_services",
+					  "message": "Search results fetched successfully",
+					  "data": arr_services,
+					  "num_pages" : "" + num_pages 
+				  });
+				  return;
 			  });
-			  return;
+			  
 		  });
 	  }
   } else {

@@ -965,4 +965,21 @@ exportFuns.record_payment_details = (token, amount, currency, user_id, appointme
     });
 };
 
+//get all coupons
+exportFuns.get_all_coupons = () => {
+	let db = new Mongo;
+   
+    let searchPattern = {
+		$or : [ {"is_deleted" : 0},{"is_deleted" : "0"} ]
+	};
+    return db.connect(config.mongoURI)
+    .then(function() {
+        return db.find('coupon', searchPattern);
+    })
+    .then(function(coupons) {
+        db.close();
+        return coupons;
+    });
+};
+
 module.exports = exportFuns;

@@ -1407,7 +1407,8 @@ api.get_payment_details = (req, res) => {
 				],
 				"parent_category_id" : "",
 				"parent_category_name": "",
-				"min_price": "0.00"
+				"min_price": "0.00",
+				"has_coupon" : "1"
 			}
 		]
 	}
@@ -1446,13 +1447,39 @@ api.get_posts = (req, res)=> {
 			if(type == "price")
 				posts.sort(function(a,b) { return parseFloat(a.min_price) - parseFloat(b.min_price) } );
 			
-			res.json({
+			services.get_all_coupons()
+			.then(function(res_coupons){
+				var coupon_service_ids = [];
+				//get all service_ids of all coupons in coupon_service_ids array
+				if(res_coupons != null && res_coupons != undefined) {
+					for(var i = 0; i < res_coupons.length; i++) {
+						if(res_coupons[i].service_ids != null && res_coupons[i].service_ids != undefined && res_coupons[i].service_ids != []) {
+							for(var j = 0; j < res_coupons[i].service_ids.length; j++) {
+								if(coupon_service_ids.indexOf(res_coupons[i].service_ids[j]) == -1) {
+									coupon_service_ids.push(res_coupons[i].service_ids[j]);
+								}
+							}
+						}
+					}
+				}
+				
+				//check if service id of post is in coupon service_id array
+				for(var i = 0; i < posts.length; i++) {
+					posts[i].has_coupon = "0";
+					if(coupon_service_ids != null && coupon_service_ids != undefined && coupon_service_ids != []) {
+						if(coupon_service_ids.indexOf("" + posts[i]._id) > -1) {
+							posts[i].has_coupon = "1";
+						}
+					}
+				}
+				res.json({
 				  "status": 200,
 				  "api_name": "get_posts",
 				  "message": "Posts records retrieved successfully",
 				  "data": posts
 				});
-			return;
+				return;
+			});
 		});
 	} else {
 		res.json({
