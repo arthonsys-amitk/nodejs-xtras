@@ -15,6 +15,7 @@ var options = {
                 formatter: null
               };
 var geocoder = NodeGeocoder(options);	
+var dateFormat = require('dateformat');
 var exportFuns = {},
     web = {};
 
@@ -80,6 +81,40 @@ web.edit = (req, res) => {
 			res.render('admin/services/edit_services',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "service" : res_service});
 		}
 	});
+};
+
+//transaction list
+web.transaction_list = (req, res) => {
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
+	{
+	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
+	    {
+	        res.locals.flashmessages = req.session.alert_data;
+	        req.session.alert_data = null;
+	    }
+		res.redirect('/admin');
+	} else {
+		if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true) {
+            res.locals.flashmessages = req.session.alert_data;
+            req.session.alert_data = null;
+        }
+		services.get_transaction_list()
+		.then(function(res_transactions){
+			var transaction_recs = res_transactions[0];
+			var user_recs = res_transactions[1];
+			if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+				var qrycount = 0;
+				var resqueries = null;
+			} else {
+				var qrycount = req.session.resqueries.length;
+				var resqueries = req.session.resqueries;
+			}
+			for(var i = 0; i < transaction_recs.length; i++) {
+				transaction_recs[i].created_at = dateFormat(new Date(transaction_recs[i].created_at), "dd-mm-yyyy hh:MM TT");
+			}
+			res.render('admin/services/transaction_list',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "transactions" : res_transactions});
+		});
+	}
 };
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

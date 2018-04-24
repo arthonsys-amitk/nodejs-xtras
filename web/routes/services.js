@@ -6,4 +6,5 @@ var express = require('express'),
 
 router.get('/list_services', services.web.list_services);
 router.get('/services/edit/:service_id', services.web.edit);
+router.get('/transaction_list', services.web.transaction_list);
 

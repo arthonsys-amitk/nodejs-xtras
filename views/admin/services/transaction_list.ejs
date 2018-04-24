@@ -1,0 +1,80 @@
+<%-include('../header') %> 
+<%-include('../sidebar') %> 
+<div class="content-wrapper">
+   
+    <section class="content-header">
+      <h1>
+       Transactions
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        <li class="active">Payment</li>
+        <li class="active">View Transactions</li>
+      </ol>
+    </section>
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+			<% if (locals.flashmessages) { %>
+				<div class="alert alert-<%=flashmessages.alert_type%> alert-dismissible">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+					<%=flashmessages.alert_msg%>
+				</div>
+			<% } %>
+          <div class="box">
+            
+           
+            <div class="box-body">
+              <table id="example2" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th>#</th>
+                  <th>User ID</th>
+                  <th>Amount</th>
+                  <th>Appointment ID</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% var count=1; for(var i = 0; i < transactions.length; i++){%>
+					<%
+						var transaction_status = "Failed";
+						if(transactions[i].payment_details != null && transactions[i].payment_details != undefined && transactions[i].payment_details.status != undefined && transactions[i].payment_details.status != null) {
+							transaction_status = transactions[i].payment_details.status;
+						}
+					%>
+                <tr>
+                  <td><%=count%></td>
+                  <td><%=transactions[i].user_id%></td>
+                  <td><%=transactions[i].currency%> <%=parseFloat(transactions[i].amount / 100).toFixed(2)%></td>
+                  <td><%=transactions[i].appointment_id%></td>
+                  <td><%=transaction_status%></td>
+                  <td><%=transactions[i].created_at%></td>
+                  <td><a class="btn btn-xs btn-info" href="/admin/view_transaction/<%=transactions[i]._id%>" style="margin-right: 10px;">View Details</a></td>
+                </tr>
+                <% count++; } %>
+                </tbody>
+                <tfoot>
+                <tr>
+                  <th>#</th>
+                  <th>User ID</th>
+                  <th>Amount</th>
+                  <th>Appointment ID</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                </tr>
+                </tfoot>
+              </table>
+            </div>
+          
+          </div>
+         
+        </div>
+      
+      </div>
+      
+    </section>
+    
+  </div>  
+    <%-include('../footer') %> 

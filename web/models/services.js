@@ -86,4 +86,36 @@ exportFuns.get_user_list = () => {
 	});
 };
 
+//get all transactions
+exportFuns.get_transaction_list = () => {
+	let db = new Mongo;
+	return db.connect(config.mongoURI)
+	.then(function(){
+		return db.find('payments', {}, {_id : -1});
+	})
+	.then(function(res_transactions){
+		var arr_user_ids = [];
+		for(var i = 0; i < res_transactions.length; i++) {
+			if(arr_user_ids.indexOf(res_transactions[i].user_id) == -1) {
+				arr_user_ids.push(db.makeID(res_transactions[i].user_id));
+			}
+		}
+		let searchPattern = { "_id" : { $in : arr_user_ids}};
+		return db.find("users", searchPattern)
+		.then(function(res_users) {
+			var result = [];
+			result.push(res_transactions);
+			result.push(res_users);
+			return result;
+		});
+	})
+	.then(function(response){
+		db.close();
+		return response;
+	})
+	.then(function(res){
+		return res;
+	});
+};
+
 module.exports = exportFuns;
