@@ -675,7 +675,18 @@ api.add_appointments = (req, res)=>{
 										//coupon is valid
 										payment_data = services.get_total_payment_amount(appointment_data, coupondata.percent);
 									} else {
-										payment_data = services.get_total_payment_amount(appointment_data, 0);
+										//payment_data = services.get_total_payment_amount(appointment_data, 0); //changed as suggested by Rohit sir
+										res.json({
+											"status": 400,
+											"api_name": "add_appointments",
+											"message": "Invalid Coupon Code.",
+											"data": appointment_data,
+											"consumerdata" : consumerdata,
+											"providerdata" : providerdata,
+											//"discount" : discount,
+											//"payment_amount" : total_payment
+										});
+										return;
 									}
 									if(payment_data.length) {
 										total_payment = payment_data[0];
