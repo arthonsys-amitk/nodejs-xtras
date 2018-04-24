@@ -909,7 +909,6 @@ exportFuns.make_stripe_payment = (token, amount, currency, user_id, appointment_
 		.then(function(res_key){
 			var secret_key = res_key.value;
 			if(secret_key) {
-				//console.log("secret key:" + secret_key);
 				var stripe = require("stripe")("" + secret_key);
 				var currency_code = (currency == "C$")? "cad" : "usd";
 				var charge = stripe.charges.create({
@@ -918,7 +917,8 @@ exportFuns.make_stripe_payment = (token, amount, currency, user_id, appointment_
 					card: token,
 					description: "Payment from userid:" + user_id
 				}, function(err, charge) {
-					if (err && err.type === 'StripeCardError') {
+					//if (err && (err.type === 'StripeCardError' || err.type === 'StripeInvalidRequestError')) {
+					if (err) {
 						console.log(JSON.stringify(err, null, 2));
 						return exportFuns.record_payment_details(token, amount, currency, user_id, appointment_id, err)
 						.then(function(res_record){							
