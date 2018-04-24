@@ -1515,14 +1515,17 @@ api.get_coupon_by_service_id = (req, res)=>{
         {
             user.get_coupon_by_service_id(req.body.service_id)
             .then(function(result) {
-            if(result!=null){
-                res.json({
-                    "status": 200,
-                    "api_name": "get_coupon_by_service_id",
-                    "message": "Coupon found.",
-                    "data":result
-                });
-                return;
+				console.log(result);
+            if(result != null && result != [] && result.length > 0){
+                
+					res.json({
+						"status": 200,
+						"api_name": "get_coupon_by_service_id",
+						"message": "Coupon found.",
+						"data":result
+					});
+					return;
+				
             }else{
                 res.json({
                     "status": 400,
