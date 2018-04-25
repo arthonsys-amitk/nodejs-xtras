@@ -106,6 +106,17 @@ web.update_profile = (req, res)=>{
 		res.redirect('/admin');
 	}else
 	{
+        user.check_phone_exist(req.body.user_id,req.body.phone).then(function(single_user){
+			if(single_user!=null)
+			{
+				req.session.alert_data = { alert_type: "danger", alert_msg: "Phone number already exist" };
+				req.session.flash_msg={"msg":"Phone number already exist","type":"danger"};			
+				user.get_user_by_user_id(req.session.user_data._id).then(function(result){
+					res.redirect('/admin/user/edit/'+req.body.user_id);
+					
+				});
+			}
+			else{
 		
 			geocoder.geocode(req.body.address + req.body.city +  req.body.state + req.body.country, function(err, result){
 				var latitude = 0;
@@ -127,7 +138,7 @@ web.update_profile = (req, res)=>{
 						req.session.alert_data = { alert_type: "success", alert_msg: "Profile updated Successfully" };
 						res.locals.flashmessages = req.session.alert_data;
 						user.get_user_by_user_id(req.session.user_data._id).then(function(result){
-							res.redirect('/admin/user');
+							res.redirect('/admin/user/edit/'+req.body.user_id);
 						});
 					} else {
 						if(update_result==2){
@@ -139,12 +150,14 @@ web.update_profile = (req, res)=>{
 						}
 						res.locals.flashmessages = req.session.alert_data;
 						user.get_user_by_user_id(req.session.user_data._id).then(function(result){
-							res.redirect('/admin/user');
+							res.redirect('/admin/user/edit/'+req.body.user_id);
 						});
 					}
 				});
 			});
+            }
 		
+    });
 	}
 };
 
@@ -203,7 +216,41 @@ web.update_admin_password = (req, res) => {
 	}
 };
 
+//update admin password
+web.update_password = (req, res) => {
+	var hostname = req.session.hostname || req.headers.host;
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true){
+		res.redirect('/admin');
+	} else {
+		res.locals.flashmessages = req.session.alert_data;
+		req.session.alert_data = null;
 
+		if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+			var qrycount = 0;
+			var resqueries = null;
+		} else {
+			var qrycount = req.session.resqueries.length;
+			var resqueries = req.session.resqueries;
+		}
+		var new_password = req.body.new_password;
+		console.log(req.body.user_id);
+		user.update_admin_password(req.body.user_id, new_password).then(function(response) {
+			   console.log(response);
+					if(response == null) {
+						req.session.alert_data = { alert_type: "danger", alert_msg: "Password could not be changed" };
+						res.locals.flashmessages = req.session.alert_data;
+						res.redirect('/admin/user/edit/'+req.body.user_id);
+						
+					} else {
+						
+						req.session.alert_data = { alert_type: "success", alert_msg: "Password changed successfully." };
+						res.locals.flashmessages = req.session.alert_data;
+						res.redirect('/admin/user/edit/'+req.body.user_id);
+					}
+		});
+			
+	}
+};
 web.create_user = (req, res)=>{
 	var hostname = req.session.hostname || req.headers.host;
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true){

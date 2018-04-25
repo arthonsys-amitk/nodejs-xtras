@@ -78,7 +78,7 @@
 
   function myFunctionName() {
             var flag=0;
-            var street=$('#street').val();
+            var street=$('#address').val();
             var city=$('#city').val();
             var state=$('#state').val();
             var country=$('#country').val();
@@ -99,7 +99,7 @@
               }
        
             })
-          //return false;   
+          return true;  
         };
 </script>
 <script>
@@ -112,6 +112,9 @@
 		jQuery('[data-mask]').inputmask();	
         CKEDITOR.replace('content');
 	});
+ $('#expiry_date').datepicker({
+      format: 'yyyy-mm-dd'
+	 })
 </script>
 </body>
 </html>

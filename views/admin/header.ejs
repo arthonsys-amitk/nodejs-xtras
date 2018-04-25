@@ -146,10 +146,11 @@
 
                 <p>
 				  <%
-					var user_since = new Date(user_data.created_time);					
+					          var dt = new Date(user_data.created_time);		
+          var datestring = ("0" + dt.getDate()).slice(-2) + "-" + ("0"+(dt.getMonth()+1)).slice(-2) + "-" + dt.getFullYear() + " " + ("0" + dt.getHours()).slice(-2) + ":" + ("0" + dt.getMinutes()).slice(-2);			
 				  %>
                   <%=user_data.fullname; %>
-                  <small>Member since <%=member_since%></small>
+                  <small>Member since <%=datestring%></small>
                 </p>
               </li>
               

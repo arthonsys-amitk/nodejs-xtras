@@ -11,3 +11,4 @@ router.post('/update_profile',user.web.update_profile);
 router.get('/create_user',user.web.create_user);
 router.post('/add_user',user.web.add_user);
 router.post('/update_admin_password',user.web.update_admin_password);
+router.post('/update_password',user.web.update_password);

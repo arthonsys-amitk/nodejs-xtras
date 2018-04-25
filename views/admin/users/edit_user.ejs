@@ -33,7 +33,7 @@
 						user_profile_image = "http://" + hostname + "/uploads/default/default_user.jpg";
 					}
 				%>
-              <img class="profile-user-img img-responsive img-circle" src="<%=user_profile_image%>" alt="User profile picture">
+              <img id="myImg" class="profile-user-img img-responsive img-circle" src="<%=user_profile_image%>" alt="User profile picture">
               <h3 class="profile-username text-center"><%=user.fullname; %></h3>
             </div>
           </div>  
@@ -148,14 +148,7 @@
               
 
               <div class="tab-pane" id="settings">
-                <form class="form-horizontal" name="registration"  id="update_password" method="post" action="">
-                  <div class="form-group">
-                    <label for="inputName"  class="col-sm-2 control-label">Old password</label>
-
-                    <div class="col-sm-10">
-                      <input type="password" required name="old_password" class="form-control" id="old_password" placeholder="Old password">
-                    </div>
-                  </div>
+                <form class="form-horizontal" name="registration"  id="update_password" method="post" action="/admin/user/update_password">
                   <div class="form-group">
                     <label for="inputNewpassword"  class="col-sm-2 control-label">New Password</label>
 
@@ -163,11 +156,18 @@
                       <input type="password" id="new_password" required name="new_password" class="form-control" placeholder="New password">
                     </div>
                   </div>
+				   <div class="form-group">
+                    <label for="inputName"  class="col-sm-2 control-label">Confirm password</label>
+
+                    <div class="col-sm-10">
+                      <input type="password" required name="confirm_password" class="form-control" id="confirm_password" placeholder="confirm password">
+                    </div>
+                  </div>
                   
                   <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                        <input type="hidden" id="user_id" name="user_id" value="<%=user._id; %>">
-                      <button type="submit" onclick="on_click_check()" class="btn btn-danger">Submit</button>
+                      <button type="submit" class="btn btn-danger">Submit</button>
                     </div>
                   </div>
                 </form>

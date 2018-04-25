@@ -70,6 +70,27 @@ exportFuns.get_user_by_user_id = (user_id) => {
         return user;
     });
 };
+// get data user not particular user
+exportFuns.check_phone_exist = (user_id,phone) => {
+
+	let db = new Mongo;
+
+	let searchPattern = {
+			_id: { $ne: db.makeID(user_id) },
+			phone:phone,
+			user_role: 2,
+			is_deleted: 0
+	};
+
+	return db.connect(config.mongoURI)
+	.then(function() {
+			return db.findOne('users', searchPattern);
+	})
+	.then(function(user) {
+			db.close();
+			return user;
+	});
+};
 // update profile
 exportFuns.update_profile = (user_data,file,latitude,longitude,zipcode)=>{
     let db = new Mongo;
