@@ -40,7 +40,7 @@ exportFuns.get_service_details = (service_id) => {
 	  let searchPattern = { _id : db.makeID("" + service_id) };
 	  return db.connect(config.mongoURI)
 	  .then(function(){
-		return db.findOne('services', {});
+		return db.findOne('services', searchPattern);
 	  })
 	  .then(function(resservice){
 		  return exportFuns.get_category_list()
@@ -60,6 +60,29 @@ exportFuns.get_service_details = (service_id) => {
 		  });		
 	  });
 };
+
+//create post/service
+exportFuns.create_service = () => {
+	  let db = new Mongo;
+	  return db.connect(config.mongoURI)
+	  .then(function(){
+		return exportFuns.get_category_list();		
+	  })
+	  .then(function(res_categories){
+		return exportFuns.get_user_list()
+		  .then(function(res_users){
+			  var resservice = {};
+			  resservice.all_categories = res_categories;
+			  resservice.all_users = res_users;
+			  return resservice;
+		  });
+	  })
+	  .then(function(resultset){
+			db.close();
+			return resultset;
+	  });
+};
+
 
 //get all categories
 exportFuns.get_category_list = () => {
@@ -143,6 +166,19 @@ exportFuns.get_transaction_details = (payment_id) => {
 	.then(function(res_transaction){
 		db.close();
 		return res_transaction;
+	});
+};
+
+//post service
+exportFuns.post_service = (servicedata) => {
+	let db = new Mongo;
+	return db.connect(config.mongoURI)
+	.then(function(){
+		return db.insert('services', servicedata);
+	})
+	.then(function(result){
+		db.close();
+		return result;
 	});
 };
 

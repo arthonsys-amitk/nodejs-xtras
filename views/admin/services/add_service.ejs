@@ -5,12 +5,12 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Update Service
+        Add Service
       </h1>
       <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="/list/services">Services</a></li>
-        <li class="active">Update Service</li>
+        <li><a href="/admin/dashboard/"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="/list_services">Services</a></li>
+        <li class="active">Add Service</li>
       </ol>
     </section>
     <!-- Main content -->
@@ -27,7 +27,7 @@
           <!-- Profile Image -->
           <div class="box box-primary">
             <div class="box-body box-profile">				
-              <h4 class=" text-center">Service ID: <%=service._id%></h4>
+              <h4 class=" text-center">New Service</h4>
             </div>
           </div>  
         </div>
@@ -43,7 +43,7 @@
             </ul>
             <div class="tab-content">
               <div class="active tab-pane" id="activity">
-                <form class="form-horizontal" method="post" action="/admin/services/update_service">
+                <form class="form-horizontal" method="post" action="/admin/services/post_service">
                   <div class="form-group">
                     <label for="coupon_code" class="col-sm-4 control-label">Service Category</label>
 
@@ -52,13 +52,9 @@
 						<option value="">--Select Category--</option>
 					  <%
 						if(service.all_categories != null && service.all_categories != undefined ) {
-							for(var i = 0; i < service.all_categories.length; i++) {
-								var selected = "";
-								if(service.service_category_id == service.all_categories[i]._id) {
-									selected = "selected";
-								}
+							for(var i = 0; i < service.all_categories.length; i++) {							
 							%>
-							<option value="<%=service.all_categories[i]._id%>" <%=selected%>><%=service.all_categories[i].category_name%></option>
+							<option value="<%=service.all_categories[i]._id%>" ><%=service.all_categories[i].category_name%></option>
 							<%
 							}
 						}
@@ -70,7 +66,7 @@
 						<label class="col-sm-4 control-label">Service Name</label>
 
 						<div class="col-sm-6">
-						  <input type="text" value="<%=service.service_name%>" name="service_name" class="form-control" id="service_name" placeholder="Enter Service Name">
+						  <input type="text" value="" name="service_name" class="form-control" id="service_name" placeholder="Enter Service Name">
 						</div>
                   </div>
                   
@@ -79,8 +75,6 @@
 						<label class="col-sm-4 control-label">Service Type</label>							
 						<div class="col-sm-6">
 							<%
-								var individual = "";
-								var business = "";
 								if(service.service_type == "individual") {
 									individual = "selected";
 								} else {
@@ -88,8 +82,8 @@
 								}
 							%>
 						  <select id="service_type" name="service_type" class="form-control">
-								<option value="individual" <%=individual%>>Individual</option>
-								<option value="business" <%=business%>>Business</option>
+								<option value="individual" >Individual</option>
+								<option value="business" >Business</option>
 						  </select>
 						</div>
                   </div>
@@ -106,24 +100,15 @@
 						<label class="col-sm-4 control-label">Service Radius</label>
 
 						<div class="col-sm-6">
-						  <input type="text" value="<%=service.service_radius%>" name="service_radius" class="form-control" id="service_radius" placeholder="Enter Service Radius">
+						  <input type="number" value="" name="service_radius" class="form-control" id="service_radius" placeholder="Enter Service Radius">
 						</div>
                   </div>
 				  <div class="form-group">                    
 						  <label class="col-sm-4 control-label">Radius Units</label>
 						  <div class="col-sm-6">
 						  <select id="service_radius_units" name="service_radius_units" class="form-control">
-							<%
-								var kms = "";
-								var miles = "";
-								if(service.service_radius_units == "Km" || service.service_radius_units == "Kms" ) {
-									kms = "selected";
-								} else {
-									miles = "selected";
-								}
-							%>
-							<option value="Km" <%=kms%>>Km</option>
-							<option value="Miles" <%=miles%>>Miles</option>
+							<option value="Km" >Km</option>
+							<option value="Miles" >Miles</option>
 						  </select>
 						  </div>
                   </div>
@@ -137,7 +122,7 @@
 								<div class="input-group-addon">
 								  <i class="fa fa-clock-o"></i>
 								</div>
-								<input type="text" class="form-control timepicker" id="weekday_start_time" name="weekday_start_time" value="<%=service.weekday_start_time%>">
+								<input type="text" class="form-control timepicker" id="weekday_start_time" name="weekday_start_time" >
 								
 							  </div>
 						  </div>
@@ -153,7 +138,7 @@
 								<div class="input-group-addon">
 								  <i class="fa fa-clock-o"></i>
 								</div>
-								<input type="text" class="form-control timepicker" id="weekday_stop_time" name="weekday_stop_time" value="<%=service.weekday_stop_time%>">
+								<input type="text" class="form-control timepicker" id="weekday_stop_time" name="weekday_stop_time" >
 								
 							  </div>
 						  </div>
@@ -169,7 +154,7 @@
 								<div class="input-group-addon">
 								  <i class="fa fa-clock-o"></i>
 								</div>
-								<input type="text" class="form-control timepicker" id="weekend_start_time" name="weekend_start_time" value="<%=service.weekend_start_time%>">
+								<input type="text" class="form-control timepicker" id="weekend_start_time" name="weekend_start_time" >
 								
 							  </div>
 						  </div>
@@ -185,7 +170,7 @@
 								<div class="input-group-addon">
 								  <i class="fa fa-clock-o"></i>
 								</div>
-								<input type="text" class="form-control timepicker" id="weekend_stop_time" name="weekend_stop_time" value="<%=service.weekend_stop_time%>">
+								<input type="text" class="form-control timepicker" id="weekend_stop_time" name="weekend_stop_time" >
 								
 							  </div>
 						  </div>
@@ -213,14 +198,8 @@
                     <label for="is_active" class="col-sm-4 control-label">Active</label>
 
                     <div class="col-sm-6">
-						<%
-						if(service.is_active == "1" || service.is_active == 1)
-							checked = "checked";
-						else
-							checked = "";
-						%>
 						<label class="switch" style="margin-left: 10px;">
-						  <input type="checkbox" id="is_active" name="is_active" <%=checked%> style="position: relative; top: 7px;" />
+						  <input type="checkbox" id="is_active" name="is_active" style="position: relative; top: 7px;" />
 						  <span class="slider round"></span>
 						</label>
                     </div>
@@ -230,7 +209,7 @@
                     <label for="cancel_hours" class="col-sm-4 control-label">Prior Cancellation Hours</label>
 
                     <div class="col-sm-6">
-                      <input type="number" value="<%=service.cancel_hours %>" name="cancel_hours" class="form-control" id="cancel_hours" placeholder="Prior Cancellation Hours" />
+                      <input type="number" value="" name="cancel_hours" class="form-control" id="cancel_hours" placeholder="Prior Cancellation Hours" />
                     </div>
                   </div>
 				  
@@ -238,7 +217,7 @@
                     <label for="cancel_fee" class="col-sm-4 control-label">Cancellation Fee</label>
 
                     <div class="col-sm-6">
-                      <input type="number" value="<%=service.cancel_fee %>" name="cancel_fee" class="form-control" id="cancel_hours" placeholder="Cancellation Fee" />
+                      <input type="number" value="" name="cancel_fee" class="form-control" id="cancel_hours" placeholder="Cancellation Fee" />
                     </div>
                   </div>
 				  
@@ -246,7 +225,7 @@
                     <label for="reschedule_hours" class="col-sm-4 control-label">Prior Reschedule Hours</label>
 
                     <div class="col-sm-6">
-                      <input type="number" value="<%=service.reschedule_hours %>" name="reschedule_hours" class="form-control" id="reschedule_hours" placeholder="Prior Reschedule Hours" />
+                      <input type="number" value="" name="reschedule_hours" class="form-control" id="reschedule_hours" placeholder="Prior Reschedule Hours" />
                     </div>
                   </div>
 				  
@@ -254,7 +233,7 @@
                     <label for="reschedule_fee" class="col-sm-4 control-label">Reschedule Fee</label>
 
                     <div class="col-sm-6">
-                      <input type="number" value="<%=service.reschedule_fee %>" name="reschedule_fee" class="form-control" id="reschedule_fee" placeholder="Reschedule Fee" />
+                      <input type="number" value="" name="reschedule_fee" class="form-control" id="reschedule_fee" placeholder="Reschedule Fee" />
                     </div>
                   </div>
 				  
@@ -262,10 +241,7 @@
                     <label for="cancel_rsh_policy" class="col-sm-4 control-label">Cancellation/ Reschedule Policy</label>
 
                     <div class="col-sm-6 " >
-                      <input type="file" value="<%=service.cancel_rsh_policy %>" name="cancel_rsh_policy" class="form-control" id="cancel_rsh_policy" style="padding-left: 0px; padding-top: 0px;"/>
-					  <% if(service.cancel_rsh_policy) { %>
-						<a href="<%=service.cancel_rsh_policy%>" target="_blank">View Policy</a>
-					  <% } %>
+                      <input type="file" value="" name="cancel_rsh_policy" class="form-control" id="cancel_rsh_policy" style="padding-left: 0px; padding-top: 0px;"/>					  
                     </div>
                   </div>
 				  
@@ -273,10 +249,7 @@
                     <label for="legal_policy" class="col-sm-4 control-label">Legal Policy</label>
 
                     <div class="col-sm-6 " >
-                      <input type="file" value="<%=service.legal_policy %>" name="legal_policy" class="form-control" id="legal_policy" style="padding-left: 0px; padding-top: 0px;"/>
-					  <% if(service.legal_policy) { %>
-						<a href="<%=service.legal_policy%>" target="_blank">View Policy</a>
-					  <% } %>
+                      <input type="file" value="" name="legal_policy" class="form-control" id="legal_policy" style="padding-left: 0px; padding-top: 0px;"/>
                     </div>
                   </div>
 				  
@@ -284,7 +257,7 @@
                     <label for="address" class="col-sm-4 control-label">Address</label>
 
                     <div class="col-sm-6 " >
-                      <input type="text" value="<%=service.address %>" name="address" class="form-control" id="address" />
+                      <input type="text" value="" name="address" class="form-control" id="address" />
                     </div>
                   </div>
 				  
@@ -292,7 +265,7 @@
                     <label for="city" class="col-sm-4 control-label">City</label>
 
                     <div class="col-sm-6 " >
-                      <input type="text" value="<%=service.city %>" name="city" class="form-control" id="city" />
+                      <input type="text" value="" name="city" class="form-control" id="city" />
                     </div>
                   </div>
 				  
@@ -300,7 +273,7 @@
                     <label for="province" class="col-sm-4 control-label">Province/State</label>
 
                     <div class="col-sm-6 " >
-                      <input type="text" value="<%=service.province %>" name="province" class="form-control" id="province" />
+                      <input type="text" value="" name="province" class="form-control" id="province" />
                     </div>
                   </div>
 				  
@@ -571,15 +544,9 @@
 						<label for="currency" class="col-sm-4 control-label">Currency</label>
 
 						<div class="col-sm-6">
-							<%
-							var usd = "";
-							var cad = "";
-							if(service.currency == "$") usd = "selected";
-							if(service.currency == "C$") cad = "selected";
-							%>
 						  <select id="currency" name="currency" class="form-control">
-							<option value="$" <%=usd%>>USD</option>
-							<option value="C$" <%=cad%>>CAD</option>
+							<option value="$" >USD</option>
+							<option value="C$" >CAD</option>
 						  </select>
 						</div>
                   </div>
@@ -593,13 +560,8 @@
 					  <%
 						if(service.all_users != null && service.all_users != undefined ) {
 							for(var i = 0; i < service.all_users.length; i++) {
-								var selected = "";
-								var iteration_user_id = "" + service.all_users[i]._id;
-								if(service.userdata._id == ("" + iteration_user_id)) {
-									selected = "selected";
-								}
 							%>
-							<option value="<%=service.all_users[i]._id%>" <%=selected%>><%=service.all_users[i].fullname%></option>
+							<option value="<%=service.all_users[i]._id%>" ><%=service.all_users[i].fullname%></option>
 							<%
 							}
 						}
@@ -709,12 +671,8 @@
 					  <%
 						if(service.all_categories != null && service.all_categories != undefined ) {
 							for(var i = 0; i < service.all_categories.length; i++) {
-								var selected = "";
-								if(service.parent_category_id == service.all_categories[i]._id) {
-									selected = "selected";
-								}
 							%>
-							<option value="<%=service.all_categories[i]._id%>" <%=selected%>><%=service.all_categories[i].category_name%></option>
+							<option value="<%=service.all_categories[i]._id%>" ><%=service.all_categories[i].category_name%></option>
 							<%
 							}
 						}
@@ -725,9 +683,8 @@
 				  
 				  <div class="form-group">
                     <div class="col-sm-offset-3 col-sm-6">
-                      <input type="hidden" id="service_id" name="service_id" value="<%=service._id; %>">
                       <button type="submit" id="submit" class="btn btn-success">Submit</button>
-                      <button type="button" id="btndelete" class="btn btn-danger">Delete</button>
+                      <button type="button" id="btncancel" class="btn btn-danger" onclick="javascript: window.location='/admin/list_services/';">Cancel</button>
                     </div>
                   </div>
                 </form>

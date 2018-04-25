@@ -161,6 +161,64 @@ web.view_transaction = (req, res) => {
 		});
 	}
 };
+
+//show add service/post form
+web.create_service = (req, res) => {
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
+	{
+	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
+	    {
+	        res.locals.flashmessages = req.session.alert_data;
+	        req.session.alert_data = null;
+	    }
+		res.redirect('/admin');
+	} else {
+		if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true) {
+            res.locals.flashmessages = req.session.alert_data;
+            req.session.alert_data = null;
+        }
+		services.create_service()
+		.then(function(res_service){
+			if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+				var qrycount = 0;
+				var resqueries = null;
+			} else {
+				var qrycount = req.session.resqueries.length;
+				var resqueries = req.session.resqueries;
+			}
+			if(res_service != null && res_service != undefined && res_service != {} ) {
+				res.render('admin/services/add_service',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "service" : res_service});
+			}
+		});
+	}
+};
+
+//add service/post 
+web.post_service = (req, res) => {
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
+	{
+	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
+	    {
+	        res.locals.flashmessages = req.session.alert_data;
+	        req.session.alert_data = null;
+	    }
+		res.redirect('/admin');
+	} else {
+		if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true) {
+            res.locals.flashmessages = req.session.alert_data;
+            req.session.alert_data = null;
+        }
+		console.log("received data:");
+		console.log(req.body);
+		return;
+		services.post_service(req.body)
+		.then(function(res_service){
+			req.session.alert_data = { alert_type: "success", alert_msg: "Service added successfully" };
+			res.redirect('/admin/list_services');
+		});
+	}
+};
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 exportFuns.web = web;
