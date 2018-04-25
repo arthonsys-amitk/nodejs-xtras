@@ -284,7 +284,7 @@
                     <label for="address" class="col-sm-4 control-label">Address</label>
 
                     <div class="col-sm-6 " >
-                      <input type="text" value="<%=service.address %>" name="address" class="form-control" id="address" style="padding-left: 0px; padding-top: 0px;"/>
+                      <input type="text" value="<%=service.address %>" name="address" class="form-control" id="address" />
                     </div>
                   </div>
 				  
@@ -292,7 +292,7 @@
                     <label for="city" class="col-sm-4 control-label">City</label>
 
                     <div class="col-sm-6 " >
-                      <input type="text" value="<%=service.city %>" name="city" class="form-control" id="city" style="padding-left: 0px; padding-top: 0px;"/>
+                      <input type="text" value="<%=service.city %>" name="city" class="form-control" id="city" />
                     </div>
                   </div>
 				  
@@ -300,7 +300,7 @@
                     <label for="province" class="col-sm-4 control-label">Province/State</label>
 
                     <div class="col-sm-6 " >
-                      <input type="text" value="<%=service.province %>" name="province" class="form-control" id="province" style="padding-left: 0px; padding-top: 0px;"/>
+                      <input type="text" value="<%=service.province %>" name="province" class="form-control" id="province" />
                     </div>
                   </div>
 				  
@@ -611,7 +611,7 @@
 				  <div class="form-group">
                     <label for="service_area_and_pricing" class="col-sm-4 control-label">Service Area & Pricing</label>
 
-                    <div class="col-sm-6">
+                    <div class="col-sm-6" id="area_pricing_box">
                       <div id="area_row_1">
 						  <div class="col-sm-3" style="padding-left: 0px;">
 								<label for="area_from_sqft" class="col-sm-4 control-label" style="padding: 0px;" >From(sqft)</label>
@@ -623,14 +623,81 @@
 						  </div>
 						  <div class="col-sm-3" style="padding-left: 0px;">
 								<label for="area_price" class="col-sm-4 control-label" style="padding: 0px;" >Price</label>
-								<input type="text" class="form-control" name="price" value="" />
+								<input type="text" class="form-control" name="area_price" value="" />
 						  </div>
 						  <div class="col-sm-3" style="padding-left: 0px;">
-								<br/><button type="button" id="btndelete1" class="btn btn-danger" title="Remove">X</button>
+								<br/>
+								<button type="button" id="btnareaaddmore" class="btn " title="Add More" onclick="javascript: addArea(); return false;"><i class="fa fa-plus"></i></button>
 						  </div>
 					  </div>
 					  
-                    </div>					
+                    </div>
+                  </div>
+				  
+				  <div class="form-group">
+                    <label for="service_grass_snow_height" class="col-sm-4 control-label">Snow/Grass Height</label>
+
+                    <div class="col-sm-6" id="grass_pricing_box">
+                      <div id="grass_row_1">
+						  <div class="col-sm-3" style="padding-left: 0px;">
+								<label for="grass_from_sqft" class="col-sm-4 control-label" style="padding: 0px;" >From(sqft)</label>
+								<input type="text" class="form-control" name="grass_from_sqft" value="" />
+						  </div>
+						  <div class="col-sm-3" style="padding-left: 0px;">
+								<label for="grass_to_sqft" class="col-sm-4 control-label" style="padding: 0px;" >To(sqft)</label>
+								<input type="text" class="form-control" name="grass_to_sqft" value="" />
+						  </div>
+						  <div class="col-sm-3" style="padding-left: 0px;">
+								<label for="grass_price" class="col-sm-4 control-label" style="padding: 0px;" >Price</label>
+								<input type="text" class="form-control" name="grass_price" value="" />
+						  </div>
+						  <div class="col-sm-3" style="padding-left: 0px;">
+								<br/><button type="button" id="btngrassdelete1" class="btn btn-danger" title="Remove">X</button>
+								<button type="button" id="btngrassaddmore" class="btn " title="Add More"><i class="fa fa-plus"></i></button>
+						  </div>
+					  </div>
+					  
+                    </div>
+                  </div>
+				  
+				  <div class="form-group">
+                    <label for="service_addons" class="col-sm-4 control-label">Add Ons/Special Equipment</label>
+
+                    <div class="col-sm-6" id="area_pricing_box">
+                      <div id="addon_row_1">
+						  <div class="col-sm-3" style="padding-left: 0px;">
+								<label for="addon_name" class="col-sm-4 control-label" style="padding: 0px;" >Name</label>
+								<input type="text" class="form-control" name="addon_name" value="" />
+						  </div>
+						  <div class="col-sm-3" style="padding-left: 0px;">
+								<label for="addon_price" class="col-sm-4 control-label" style="padding: 0px;" >Price</label>
+								<input type="text" class="form-control" name="addon_price" value="" />
+						  </div>
+						  <div class="col-sm-3" style="padding-left: 0px;">&nbsp;</div>
+						  <div class="col-sm-3" style="padding-left: 0px;">
+								<br/><button type="button" id="btnaddondelete1" class="btn btn-danger" title="Remove">X</button>
+								<button type="button" id="btnaddonaddmore" class="btn " title="Add More"><i class="fa fa-plus"></i></button>
+						  </div>
+					  </div>
+					  
+                    </div>
+                  </div>
+				  
+				  <div class="form-group">
+					<label class="col-sm-4 control-label">Uploads</label>
+                    <div id="file_uploads" class="col-sm-6">
+						<div>
+							<div class="col-sm-3" style="padding-left: 0px;"><button class="btn" title="Upload file" onclick="javascript: upload1.click(); return false;"><i class="fa fa-plus"></i></button>
+							<input type="file"  name="fileupload" style="opacity: 0;" id="upload1" />
+							</div>
+							<div class="col-sm-3" style="padding-left: 0px;"><button class="btn" title="Upload file" onclick="javascript: upload1.click(); return false;"><i class="fa fa-plus"></i></button>
+							<input type="file"  name="fileupload" style="opacity: 0;" id="upload2" /></div>
+							<div class="col-sm-3" style="padding-left: 0px;"><button class="btn" title="Upload file" onclick="javascript: upload1.click(); return false;"><i class="fa fa-plus"></i></button>
+							<input type="file"  name="fileupload" style="opacity: 0;" id="upload3" /></div>
+							<div class="col-sm-3" style="padding-left: 0px;"><button class="btn" title="Upload file" onclick="javascript: upload1.click(); return false;"><i class="fa fa-plus"></i></button>
+							<input type="file"  name="fileupload" style="opacity: 0;" id="upload4" /></div>
+						</div>
+					</div>
                   </div>
 				  
 				  <div class="form-group">
@@ -702,5 +769,19 @@
 	 
   });
    
+  </script>
+  <script>
+   var areactr = 1;
+   function addArea() {
+	 var rowctr = areactr + 1;
+     var strareahtml = "<div id='area_row_" + rowctr + "'><div class='col-sm-3' style='padding-left: 0px;'><label for='area_from_sqft' class='col-sm-4 control-label' style='padding: 0px;' >From(sqft)</label><input type='text' class='form-control' name='area_from_sqft' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label for='area_to_sqft' class='col-sm-4 control-label' style='padding: 0px;' >To(sqft)</label><input type='text' class='form-control' name='area_to_sqft' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label for='area_price' class='col-sm-4 control-label' style='padding: 0px;' >Price</label><input type='text' class='form-control' name='area_price' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><br/><button type='button' id='btnareadelete"+ rowctr +"' class='btn btn-danger' title='Remove' onclick='javascript: removeArea(" + rowctr + ");'>X</button></div></div>";
+	 jQuery("#area_pricing_box").append(strareahtml);
+	 areactr = areactr + 1;
+   }
+   
+   function removeArea(rownum) {
+		jQuery("#area_row_" + rownum).remove();
+		return false;
+   }
   </script>
   <%-include('../footer') %> 
