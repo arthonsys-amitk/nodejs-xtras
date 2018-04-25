@@ -8,19 +8,20 @@
       </h1>
       <ol class="breadcrumb">
         <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        <li class="active">Payment</li>
+        <li class="active">All coupons</li>
+		<li class="active">Payment</li>
         <li class="active">View Transactions</li>
       </ol>
     </section>
     <section class="content">
       <div class="row">
+		<% if (locals.flashmessages) { %>
+		<div class="alert alert-<%=flashmessages.alert_type%> alert-dismissible">
+		  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+		  <%=flashmessages.alert_msg%>
+		</div>
+		<% } %>
         <div class="col-xs-12">
-			<% if (locals.flashmessages) { %>
-				<div class="alert alert-<%=flashmessages.alert_type%> alert-dismissible">
-					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-					<%=flashmessages.alert_msg%>
-				</div>
-			<% } %>
           <div class="box">
             
            
@@ -34,6 +35,7 @@
                   <th>Appointment ID</th>
                   <th>Status</th>
                   <th>Date</th>
+                  <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -43,17 +45,33 @@
 						if(transactions[i].payment_details != null && transactions[i].payment_details != undefined && transactions[i].payment_details.status != undefined && transactions[i].payment_details.status != null) {
 							transaction_status = transactions[i].payment_details.status;
 						}
+						
+						var username = "";
+						if(transactions[i].user_id != null && transactions[i].user_id != undefined) {
+							if(users != null && users != undefined && users.length > 0) {
+								var idx = arr_user_ids.indexOf(""+ transactions[i].user_id);
+								if(idx != -1) {
+									username = users[idx].fullname;
+								}
+							}
+						}
+						transaction_status = transaction_status.charAt(0).toUpperCase() + transaction_status.slice(1);
+						if(transaction_status == "Succeeded")
+							var transaction_status_html = "<span style='background: #00ff00; padding: 4px;'>" + transaction_status + "</span>";
+						else
+							var transaction_status_html = "<span style='background: #ff0000; padding: 4px;'>" + transaction_status + "</span>";
 					%>
                 <tr>
                   <td><%=count%></td>
-                  <td><%=transactions[i].user_id%></td>
+                  <td><%=username%></td>
                   <td><%=transactions[i].currency%> <%=parseFloat(transactions[i].amount / 100).toFixed(2)%></td>
                   <td><%=transactions[i].appointment_id%></td>
-                  <td><%=transaction_status%></td>
+                  <td><%-transaction_status_html%></td>
                   <td><%=transactions[i].created_at%></td>
                   <td><a class="btn btn-xs btn-info" href="/admin/view_transaction/<%=transactions[i]._id%>" style="margin-right: 10px;">View Details</a></td>
                 </tr>
-                <% count++; } %>
+				<% count++; } %>
+                
                 </tbody>
                 <tfoot>
                 <tr>
@@ -63,6 +81,7 @@
                   <th>Appointment ID</th>
                   <th>Status</th>
                   <th>Date</th>
+				  <th>Action</th>
                 </tr>
                 </tfoot>
               </table>

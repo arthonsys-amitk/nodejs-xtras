@@ -2,6 +2,7 @@
 
 var exportFuns = {},
     config     = require('../../config'),
+	user_web_model = require('./user'),
     Mongo      = require('../../mongo');
 
 
@@ -103,9 +104,14 @@ exportFuns.get_transaction_list = () => {
 		let searchPattern = { "_id" : { $in : arr_user_ids}};
 		return db.find("users", searchPattern)
 		.then(function(res_users) {
+			var user_ids = [];
+			for(var i = 0; i < res_users.length; i++) {
+				user_ids.push("" + res_users[i]._id);
+			}
 			var result = [];
 			result.push(res_transactions);
 			result.push(res_users);
+			result.push(user_ids);
 			return result;
 		});
 	})
@@ -115,6 +121,28 @@ exportFuns.get_transaction_list = () => {
 	})
 	.then(function(res){
 		return res;
+	});
+};
+
+//get transaction details
+exportFuns.get_transaction_details = (payment_id) => {
+	let db = new Mongo;
+	return db.connect(config.mongoURI)
+	.then(function(){
+		return db.findOne('payments', {_id : db.makeID(""+ payment_id)});
+	})
+	.then(function(res_transaction){
+		return user_web_model.get_user_by_user_id(res_transaction.user_id)
+		.then(function(rec_user){
+			var result = [];
+			result.push(res_transaction);
+			result.push(rec_user);
+			return result;
+		});		
+	})
+	.then(function(res_transaction){
+		db.close();
+		return res_transaction;
 	});
 };
 
