@@ -43,7 +43,7 @@
             </ul>
             <div class="tab-content">
               <div class="active tab-pane" id="activity">
-                <form class="form-horizontal" method="post" action="/admin/services/post_service">
+                <form id="frm_postservice" class="form-horizontal" method="post" enctype="multipart/form-data" action="/admin/services/post_service">
                   <div class="form-group">
                     <label for="coupon_code" class="col-sm-4 control-label">Service Category</label>
 
@@ -92,7 +92,7 @@
 						<label class="col-sm-4 control-label">Additional Details</label>
 
 						<div class="col-sm-6">
-						  <textarea name="additional_details" class="form-control" id="additional_details" placeholder="Enter Additional Details"><%=service.additional_details%></textarea>
+						  <textarea name="additional_details" class="form-control" id="additional_details" placeholder="Enter Additional Details"></textarea>
 						</div>
                   </div>
 				  
@@ -217,7 +217,7 @@
                     <label for="cancel_fee" class="col-sm-4 control-label">Cancellation Fee</label>
 
                     <div class="col-sm-6">
-                      <input type="number" value="" name="cancel_fee" class="form-control" id="cancel_hours" placeholder="Cancellation Fee" />
+                      <input type="number" value="" name="cancel_fee" class="form-control" id="cancel_fee" placeholder="Cancellation Fee" />
                     </div>
                   </div>
 				  
@@ -274,6 +274,14 @@
 
                     <div class="col-sm-6 " >
                       <input type="text" value="" name="province" class="form-control" id="province" />
+                    </div>
+                  </div>
+				  
+				  <div class="form-group">
+                    <label for="zipcode" class="col-sm-4 control-label">Zipcode</label>
+
+                    <div class="col-sm-6 " >
+                      <input type="text" value="" name="zipcode" class="form-control" id="zipcode" />
                     </div>
                   </div>
 				  
@@ -649,15 +657,15 @@
 					<label class="col-sm-4 control-label">Uploads</label>
                     <div id="file_uploads" class="col-sm-6">
 						<div>
-							<div class="col-sm-3" style="padding-left: 0px;"><button class="btn" title="Upload file" onclick="javascript: upload1.click(); return false;"><i class="fa fa-plus"></i></button>
-							<input type="file"  name="fileupload" style="opacity: 0;" id="upload1" />
+							<div class="col-sm-3" style="padding-left: 0px;"><button class="btn" title="Upload file" onclick="javascript: upload1.click(); return false;"><a class="btn btn-app"><i class="fa fa-upload"></i></a></button>
+							<input type="file"  name="fileupload1" style="opacity: 0;" id="upload1" />
 							</div>
-							<div class="col-sm-3" style="padding-left: 0px;"><button class="btn" title="Upload file" onclick="javascript: upload1.click(); return false;"><i class="fa fa-plus"></i></button>
-							<input type="file"  name="fileupload" style="opacity: 0;" id="upload2" /></div>
-							<div class="col-sm-3" style="padding-left: 0px;"><button class="btn" title="Upload file" onclick="javascript: upload1.click(); return false;"><i class="fa fa-plus"></i></button>
-							<input type="file"  name="fileupload" style="opacity: 0;" id="upload3" /></div>
-							<div class="col-sm-3" style="padding-left: 0px;"><button class="btn" title="Upload file" onclick="javascript: upload1.click(); return false;"><i class="fa fa-plus"></i></button>
-							<input type="file"  name="fileupload" style="opacity: 0;" id="upload4" /></div>
+							<div class="col-sm-3" style="padding-left: 0px;"><button class="btn" title="Upload file" onclick="javascript: upload2.click(); return false;"><a class="btn btn-app"><i class="fa fa-upload"></i></a></button>
+							<input type="file"  name="fileupload2" style="opacity: 0;" id="upload2" /></div>
+							<div class="col-sm-3" style="padding-left: 0px;"><button class="btn" title="Upload file" onclick="javascript: upload3.click(); return false;"><a class="btn btn-app"><i class="fa fa-upload"></i></a></button>
+							<input type="file"  name="fileupload3" style="opacity: 0;" id="upload3" /></div>
+							<div class="col-sm-3" style="padding-left: 0px;"><button class="btn" title="Upload file" onclick="javascript: upload4.click(); return false;"><a class="btn btn-app"><i class="fa fa-upload"></i></a></button>
+							<input type="file"  name="fileupload4" style="opacity: 0;" id="upload4" /></div>
 						</div>
 					</div>
                   </div>
@@ -678,6 +686,7 @@
 						}
 					  %>
 					  </select>
+					  <input type="hidden" name="parent_category_name" id="parent_category_name" />
                     </div>
                   </div>
 				  
@@ -724,6 +733,10 @@
 	 });
 	 jQuery("div.bootstrap-timepicker-widget.dropdown-menu").css("margin-left", "250px");
 	 
+	 jQuery("#parent_category_id").click(function(){
+		jQuery("#parent_category_name").val(jQuery("#parent_category_id option:selected").html());
+	 });
+	 	 
   });
    
   </script>
@@ -733,7 +746,7 @@
    var addonctr = 1;
    function addArea() {
 	 var rowctr = areactr + 1;
-     var strareahtml = "<div id='area_row_" + rowctr + "'><div class='col-sm-3' style='padding-left: 0px;'><label for='area_from_sqft' class='col-sm-4 control-label' style='padding: 0px;' >From(sqft)</label><input type='text' class='form-control' name='area_from_sqft' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label for='area_to_sqft' class='col-sm-4 control-label' style='padding: 0px;' >To(sqft)</label><input type='text' class='form-control' name='area_to_sqft' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label for='area_price' class='col-sm-4 control-label' style='padding: 0px;' >Price</label><input type='text' class='form-control' name='area_price' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><br/><button type='button' id='btnareadelete"+ rowctr +"' class='btn btn-danger' title='Remove' onclick='javascript: removeArea(" + rowctr + ");'>X</button></div></div>";
+     var strareahtml = "<div id='area_row_" + rowctr + "'><div class='col-sm-3' style='padding-left: 0px;'><label for='area_from_sqft' class='col-sm-4 control-label' style='padding: 0px;' >From(sqft)</label><input type='text' class='form-control' name='area_from_sqft' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label for='area_to_sqft' class='col-sm-4 control-label' style='padding: 0px;' >To(sqft)</label><input type='text' class='form-control' name='area_to_sqft' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label for='area_price' class='col-sm-4 control-label' style='padding: 0px;' >Price</label><input type='text' class='form-control' name='area_price' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><br/><button type='button' id='btnareadelete"+ rowctr +"' class='btn btn-danger' title='Remove' onclick='javascript: removeArea(" + rowctr + ");'><i class='fa fa-trash'></i></button></div></div>";
 	 jQuery("#area_pricing_box").append(strareahtml);
 	 areactr = areactr + 1;
 	 return false;
@@ -746,7 +759,7 @@
    
    function addGrassArea(){
 		var rowctr = grassctr + 1;
-		var strgrasshtml = "<div id='grass_row_" + rowctr +"'><div class='col-sm-3' style='padding-left: 0px;'><label for='grass_from_sqft' class='col-sm-4 control-label' style='padding: 0px;' >From(sqft)</label><input type='text' class='form-control' name='grass_from_sqft' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label for='grass_to_sqft' class='col-sm-4 control-label' style='padding: 0px;' >To(sqft)</label><input type='text' class='form-control' name='grass_to_sqft' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label for='grass_price' class='col-sm-4 control-label' style='padding: 0px;' >Price</label><input type='text' class='form-control' name='grass_price' value=''/></div><div class='col-sm-3' style='padding-left: 0px;'><br/><button type='button' id='btngrassdelete" + rowctr + "' class='btn btn-danger' title='Remove' onclick='javascript: removeGrassArea(" + rowctr + ")'>X</button></button></div></div>";
+		var strgrasshtml = "<div id='grass_row_" + rowctr +"'><div class='col-sm-3' style='padding-left: 0px;'><label for='grass_from_sqft' class='col-sm-4 control-label' style='padding: 0px;' >From(sqft)</label><input type='text' class='form-control' name='grass_from_sqft' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label for='grass_to_sqft' class='col-sm-4 control-label' style='padding: 0px;' >To(sqft)</label><input type='text' class='form-control' name='grass_to_sqft' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label for='grass_price' class='col-sm-4 control-label' style='padding: 0px;' >Price</label><input type='text' class='form-control' name='grass_price' value=''/></div><div class='col-sm-3' style='padding-left: 0px;'><br/><button type='button' id='btngrassdelete" + rowctr + "' class='btn btn-danger' title='Remove' onclick='javascript: removeGrassArea(" + rowctr + ")'><i class='fa fa-trash'></i></button></button></div></div>";
 		jQuery("#grass_pricing_box").append(strgrasshtml);
 		grassctr = grassctr + 1;
 		return false;
@@ -759,7 +772,7 @@
    
    function addAddon() {
 		var rowctr = addonctr + 1;
-		var straddonhtml = "<div id='addon_row_" + rowctr + "'><div class='col-sm-3' style='padding-left: 0px;'><label for='addon_name' class='col-sm-4 control-label' style='padding: 0px;' >Name</label><input type='text' class='form-control' name='addon_name' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label class='col-sm-4 control-label' style='padding: 0px;' >Price</label><input type='text' class='form-control' name='addon_price' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'>&nbsp;</div><div class='col-sm-3' style='padding-left: 0px;'><br/><button type='button' id='btnaddondelete" + rowctr + "' class='btn btn-danger' title='Remove' onclick='javascript: removeAddon(" + rowctr + ")'>X</button></div></div>";
+		var straddonhtml = "<div id='addon_row_" + rowctr + "'><div class='col-sm-3' style='padding-left: 0px;'><label for='addon_name' class='col-sm-4 control-label' style='padding: 0px;' >Name</label><input type='text' class='form-control' name='addon_name' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label class='col-sm-4 control-label' style='padding: 0px;' >Price</label><input type='text' class='form-control' name='addon_price' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'>&nbsp;</div><div class='col-sm-3' style='padding-left: 0px;'><br/><button type='button' id='btnaddondelete" + rowctr + "' class='btn btn-danger' title='Remove' onclick='javascript: removeAddon(" + rowctr + ")'><i class='fa fa-trash'></i></button></div></div>";
 		jQuery("#addon_pricing_box").append(straddonhtml);
 		addonctr = addonctr + 1;
 		return false;

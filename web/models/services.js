@@ -26,7 +26,7 @@ exportFuns.list_services = () => {
   let db = new Mongo;
   return db.connect(config.mongoURI)
   .then(function(){
-    return db.find('services', {});
+    return db.find('services', {$or : [{"is_deleted" : 0, }, {"is_deleted" : "0", }]});
   })
   .then(function(resservices){
     db.close();
@@ -174,7 +174,103 @@ exportFuns.post_service = (servicedata) => {
 	let db = new Mongo;
 	return db.connect(config.mongoURI)
 	.then(function(){
-		return db.insert('services', servicedata);
+		return user_web_model.get_user_by_user_id(servicedata.user_id)
+		.then(function(userdata){
+			servicedata.userdata = userdata;
+			return db.insert('services', servicedata);
+		})
+		.then(function(res){
+			return res;
+		});
+	})
+	.then(function(result){
+		db.close();
+		return result;
+	});
+};
+
+//update service
+exportFuns.update_service = (service_id, servicedata) => {
+	let db = new Mongo;
+	let searchPattern = {_id : db.makeID("" + service_id)};
+	return db.connect(config.mongoURI)
+	.then(function(){
+		return user_web_model.get_user_by_user_id(servicedata.user_id)
+		.then(function(userdata){
+			servicedata.userdata = userdata;
+			return db.findOne('services', searchPattern)
+			.then(function(rec_service){
+				var svc_uploads = [];
+				if(rec_service != null && rec_service.service_uploads != null  && rec_service.service_uploads.length > 0){
+					for(var i = 0; i < 4; i++) {
+						switch(i) {
+							case 0: if(rec_service.service_uploads.length >= 1) {
+										if(rec_service.service_uploads[i] && (servicedata.uploadedFile1 == "" || servicedata.uploadedFile1 == undefined )) {
+											svc_uploads.push(rec_service.service_uploads[i]);
+										} else if(servicedata.uploadedFile1) {
+											svc_uploads.push(servicedata.uploadedFile1);
+										}
+									}
+									break;
+							case 1: if(rec_service.service_uploads.length >= 2) {
+										if(rec_service.service_uploads[i] && (servicedata.uploadedFile2 == "" || servicedata.uploadedFile2 == undefined )) {
+											svc_uploads.push(rec_service.service_uploads[i]);
+										} else if(servicedata.uploadedFile2) {
+											svc_uploads.push(servicedata.uploadedFile2);
+										}
+									}
+									break;
+							case 2: if(rec_service.service_uploads.length >= 3) {
+										if(rec_service.service_uploads[i] && (servicedata.uploadedFile3 == "" || servicedata.uploadedFile3 == undefined )) {
+											svc_uploads.push(rec_service.service_uploads[i]);
+										} else if(servicedata.uploadedFile3) {
+											svc_uploads.push(servicedata.uploadedFile3);
+										}
+									}
+									break;
+							case 3: if(rec_service.service_uploads.length >= 4) {
+										if(rec_service.service_uploads[i] && (servicedata.uploadedFile4 == "" || servicedata.uploadedFile4 == undefined )) {
+											svc_uploads.push(rec_service.service_uploads[i]);
+										} else if(servicedata.uploadedFile4) {
+											svc_uploads.push(servicedata.uploadedFile4);
+										}
+									}
+									break;
+						}
+					}
+					servicedata.service_uploads = svc_uploads;
+				} else {
+					svc_uploads.push(servicedata.uploadedFile1);
+					svc_uploads.push(servicedata.uploadedFile2);
+					svc_uploads.push(servicedata.uploadedFile3);
+					svc_uploads.push(servicedata.uploadedFile4);
+					servicedata.service_uploads = svc_uploads;
+				}
+				delete servicedata.uploadedFile1;
+				delete servicedata.uploadedFile2;
+				delete servicedata.uploadedFile3;
+				delete servicedata.uploadedFile4;
+				return db.update('services', searchPattern, servicedata);
+			});			
+		})
+		.then(function(res){
+			return res;
+		});
+	})
+	.then(function(result){
+		db.close();
+		return result;
+	});
+};
+
+//delete service
+exportFuns.delete_service = (service_id) => {
+	let db = new Mongo;
+	let searchPattern = {_id: db.makeID("" + service_id)};
+	let updatePattern = {"is_deleted" : 1}
+	return db.connect(config.mongoURI)
+	.then(function(){
+		return db.update("services", searchPattern, updatePattern);
 	})
 	.then(function(result){
 		db.close();

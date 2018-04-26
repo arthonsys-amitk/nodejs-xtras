@@ -301,7 +301,8 @@ api.post_service = (req, res)=> {
 						zipcode : zipcode,
 						country : country,
 						rating: '0',
-						currency: currency
+						currency: currency,
+						is_deleted: 0
 					 };
 	
 	if(req.body.cancel_rsh_policy != '' && req.body.cancel_rsh_policy != undefined){

@@ -16,6 +16,7 @@ var options = {
               };
 var geocoder = NodeGeocoder(options);	
 var dateFormat = require('dateformat');
+const mongo = require('mongodb');
 var exportFuns = {},
     web = {};
 
@@ -193,8 +194,8 @@ web.create_service = (req, res) => {
 	}
 };
 
-//add service/post 
-web.post_service = (req, res) => {
+//show add service/post form
+web.create_service = (req, res) => {
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
 	{
 	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
@@ -208,10 +209,553 @@ web.post_service = (req, res) => {
             res.locals.flashmessages = req.session.alert_data;
             req.session.alert_data = null;
         }
-		console.log("received data:");
-		console.log(req.body);
-		return;
-		services.post_service(req.body)
+		services.create_service()
+		.then(function(res_service){
+			if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+				var qrycount = 0;
+				var resqueries = null;
+			} else {
+				var qrycount = req.session.resqueries.length;
+				var resqueries = req.session.resqueries;
+			}
+			if(res_service != null && res_service != undefined && res_service != {} ) {
+				res.render('admin/services/add_service',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "service" : res_service});
+			}
+		});
+	}
+};
+
+//add service/post 
+web.update_service = (req, res) => {
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
+	{
+	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
+	    {
+	        res.locals.flashmessages = req.session.alert_data;
+	        req.session.alert_data = null;
+	    }
+		res.redirect('/admin');
+	} else { 
+		if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true) {
+            res.locals.flashmessages = req.session.alert_data;
+            req.session.alert_data = null;
+        }
+		
+		
+		var arr_area_pricing = [];
+		if(typeof req.body.area_from_sqft == "object") {
+			//array			
+			if(typeof req.body.area_id == "object") {
+				var num_prev_elts = req.body.area_id.length;
+			} else {
+				var num_prev_elts = 1;
+			}
+			
+			for(var i = 0; i < num_prev_elts; i++) {
+				var obj_service_area = {};
+				obj_service_area._id = req.body.area_id[i];
+				obj_service_area.area_from_sqft = req.body.area_from_sqft[i];
+				obj_service_area.area_to_sqft = req.body.area_to_sqft[i];
+				obj_service_area.price = req.body.area_price[i];
+				arr_area_pricing.push(obj_service_area);
+			}
+			for(i = num_prev_elts; i < req.body.area_from_sqft.length; i++) {
+				var obj_service_area = {};
+				obj_service_area._id = new mongo.ObjectID();
+				obj_service_area.area_from_sqft = req.body.area_from_sqft[i];
+				obj_service_area.area_to_sqft = req.body.area_to_sqft[i];
+				obj_service_area.price = req.body.area_price[i];
+				arr_area_pricing.push(obj_service_area);
+			}
+			
+		} else {
+			//string
+			var obj_service_area = {};
+			obj_service_area._id = req.body.area_id;
+			obj_service_area.area_from_sqft = req.body.area_from_sqft;
+			obj_service_area.area_to_sqft = req.body.area_to_sqft;
+			obj_service_area.price = req.body.area_price;
+			arr_area_pricing.push(obj_service_area);
+		}
+		
+		var arr_grass_pricing = [];
+		if(typeof req.body.grass_from_sqft == "object") {
+			//array
+			if(typeof req.body.grass_id == "object") {
+				var num_prev_elts = req.body.grass_id.length;
+			} else {
+				var num_prev_elts = 1;
+			}
+			
+			for(var i = 0; i < num_prev_elts; i++) {
+				var obj_grass_area = {};
+				obj_grass_area._id = req.body.grass_id[i];
+				obj_grass_area.area_from_sqft = req.body.grass_from_sqft[i];
+				obj_grass_area.area_to_sqft = req.body.grass_to_sqft[i];
+				obj_grass_area.price = req.body.grass_price[i];
+				arr_grass_pricing.push(obj_grass_area);
+			}
+			for(var i = num_prev_elts; i < req.body.grass_from_sqft.length; i++) {
+				var obj_grass_area = {};
+				obj_grass_area._id = new mongo.ObjectID();
+				obj_grass_area.area_from_sqft = req.body.grass_from_sqft[i];
+				obj_grass_area.area_to_sqft = req.body.grass_to_sqft[i];
+				obj_grass_area.price = req.body.grass_price[i];
+				arr_grass_pricing.push(obj_grass_area);
+			}
+			
+		} else {
+			//string
+			var obj_grass_area = {};
+			obj_grass_area._id = req.body.grass_id;
+			obj_grass_area.area_from_sqft = req.body.grass_from_sqft;
+			obj_grass_area.area_to_sqft = req.body.grass_to_sqft;
+			obj_grass_area.price = req.body.grass_price;
+			arr_grass_pricing.push(obj_grass_area);
+		}
+		
+		
+		var arr_addon_pricing = [];
+		if(typeof req.body.addon_name == "object") {
+			//array
+			if(typeof req.body.addon_id == "object") {
+				var num_prev_elts = req.body.addon_id.length;
+			} else {
+				var num_prev_elts = 1;
+			}
+			
+			for(var i = 0; i < num_prev_elts; i++) {
+				var obj_addon = {};
+				obj_addon._id = req.body.addon_id[i];
+				obj_addon.name = req.body.addon_name[i];
+				obj_addon.price = req.body.addon_price[i];
+				arr_addon_pricing.push(obj_addon);
+			}
+			
+			for(var i = num_prev_elts; i < req.body.addon_name.length; i++) {
+				var obj_addon = {};
+				obj_addon._id = new mongo.ObjectID();
+				obj_addon.name = req.body.addon_name[i];
+				obj_addon.price = req.body.addon_price[i];
+				arr_addon_pricing.push(obj_addon);
+			}
+			
+		} else {
+			//string
+			var obj_addon = {};
+			obj_addon._id = req.body.addon_id;
+			obj_addon.name = req.body.addon_name;
+			obj_addon.price = req.body.addon_price;
+			arr_addon_pricing.push(obj_addon);
+		}
+		
+		let servicedata = {
+			service_category_id : req.body.service_category_id,
+			service_name : _.trim(req.body.service_name),
+			service_type : req.body.service_type,
+			additional_details : _.trim(req.body.additional_details),
+			service_radius: req.body.service_radius,
+			service_radius_units: req.body.service_radius_units,
+			weekday_start_time: req.body.weekday_start_time,
+			weekday_stop_time: req.body.weekday_stop_time,
+			weekend_start_time: req.body.weekend_start_time,
+			weekend_stop_time: req.body.weekend_stop_time,
+			cancel_hours: req.body.cancel_hours,
+			cancel_fee: req.body.cancel_fee,
+			reschedule_hours: req.body.reschedule_hours,
+			reschedule_fee: req.body.reschedule_fee,
+			address: _.trim(req.body.address),
+			city: _.trim(req.body.city),
+			province: _.trim(req.body.province),
+			country: req.body.country,
+			zipcode: req.body.zipcode,
+			rating: ""+ req.body.rating,
+			currency: req.body.currency,
+			is_deleted: 0,
+			user_id: req.body.user_id,
+			parent_category_id: req.body.parent_category_id,
+			parent_category_name: req.body.parent_category_name,
+			service_area_and_pricing: arr_area_pricing,
+			service_grass_snow_height: arr_grass_pricing,
+			service_addons: arr_addon_pricing,
+			service_options: [],
+		};
+		
+		
+		if(req.body.is_active == null || req.body.is_active == undefined || req.body.is_active == "") {
+			servicedata.is_active = 0;
+		} else {
+			servicedata.is_active = 1;
+		}
+		
+		var availability = req.body.service_availability;
+		servicedata.available_monday = 0;
+		servicedata.available_tuesday = 0;
+		servicedata.available_wednesday = 0;
+		servicedata.available_thursday = 0;
+		servicedata.available_friday = 0;
+		servicedata.available_saturday = 0;
+		servicedata.available_sunday = 0;
+		if(typeof availability == "object") {
+			//array
+			for(var i = 0; i < availability.length; i++) {
+				if(availability[i] == "available_monday")  { servicedata.available_monday = 1;}
+				if(availability[i] == "available_tuesday")  { servicedata.available_tuesday = 1;}
+				if(availability[i] == "available_wednesday")  { servicedata.available_wednesday = 1;}
+				if(availability[i] == "available_thursday")  { servicedata.available_thursday = 1;}
+				if(availability[i] == "available_friday")  { servicedata.available_friday = 1;}
+				if(availability[i] == "available_saturday")  { servicedata.available_saturday = 1;}
+				if(availability[i] == "available_sunday")  { servicedata.available_sunday = 1;}
+			}
+		} else {
+			switch(availability) {
+				case "available_monday" : servicedata.available_monday = 1; break;
+				case "available_tuesday" : servicedata.available_tuesday = 1; break;
+				case "available_wednesday" : servicedata.available_wednesday = 1; break;
+				case "available_thursday" : servicedata.available_thursday = 1; break;
+				case "available_friday" : servicedata.available_friday = 1; break;
+				case "available_saturday" : servicedata.available_saturday = 1; break;
+				case "available_sunday" : servicedata.available_sunday = 1; break;				
+			}
+		}
+		
+		//reschedule policy
+		if(req.files.cancel_rsh_policy != '' && req.files.cancel_rsh_policy != undefined) {
+			let cancelFile = req.files.cancel_rsh_policy;
+			var file_name = "cancelpolicy_"  + Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
+			servicedata.cancel_rsh_policy = config.base_url + '/uploads/policies/' + file_name;
+			cancelFile.mv('public/uploads/policies/' + file_name, function(err) {
+				if (err){
+				  console.log(err);
+				}
+			});
+		}
+		
+		//legal policy
+		if(req.files.legal_policy != '' && req.files.legal_policy != undefined) {
+			let legalFile = req.files.legal_policy;
+			var file_name = "legalpolicy_"  + Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
+			servicedata.legal_policy = config.base_url + '/uploads/policies/' + file_name;
+			legalFile.mv('public/uploads/policies/' + file_name, function(err) {
+				if (err){
+				  console.log(err);
+				}
+			});
+		}
+		
+		//fileupload
+		var  svc_uploads = [];
+		
+		let uploadedFile1 = req.files.fileupload1;
+		servicedata.uploadedFile1 = "";
+		if(uploadedFile1 != undefined && uploadedFile1 != null) {
+			var file_name = "service_"  + Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
+			svc_uploads.push(config.base_url + '/uploads/services/' + file_name);
+			servicedata.uploadedFile1 = config.base_url + '/uploads/services/' + file_name;
+			uploadedFile1.mv('public/uploads/services/' + file_name, function(err) {
+				if (err){
+				  console.log(err);
+				}
+			});
+		}
+		
+		let uploadedFile2 = req.files.fileupload2;
+		servicedata.uploadedFile2 = "";
+		if(uploadedFile2 != undefined && uploadedFile2 != null) {
+			var file_name = "service_"  + Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
+			svc_uploads.push(config.base_url + '/uploads/services/' + file_name);
+			servicedata.uploadedFile2 = config.base_url + '/uploads/services/' + file_name;
+			uploadedFile2.mv('public/uploads/services/' + file_name, function(err) {
+				if (err){
+				  console.log(err);
+				}
+			});
+		}
+		
+		
+		let uploadedFile3 = req.files.fileupload3;
+		servicedata.uploadedFile3 = "";
+		if(uploadedFile3 != undefined && uploadedFile3 != null) {
+			var file_name = "service_"  + Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
+			svc_uploads.push(config.base_url + '/uploads/services/' + file_name);
+			servicedata.uploadedFile3 = config.base_url + '/uploads/services/' + file_name;
+			uploadedFile3.mv('public/uploads/services/' + file_name, function(err) {
+				if (err){
+				  console.log(err);
+				}
+			});
+		}
+		
+		let uploadedFile4 = req.files.fileupload4;
+		servicedata.uploadedFile4 = "";
+		if(uploadedFile4 != undefined && uploadedFile4 != null) {
+			var file_name = "service_"  + Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
+			svc_uploads.push(config.base_url + '/uploads/services/' + file_name);
+			servicedata.uploadedFile4 = config.base_url + '/uploads/services/' + file_name;
+			uploadedFile4.mv('public/uploads/services/' + file_name, function(err) {
+				if (err){
+				  console.log(err);
+				}
+			});
+		}
+		
+		/*
+		if(svc_uploads != [] && svc_uploads.length > 0) {
+			servicedata.service_uploads = svc_uploads;
+		}
+		*/
+		
+		var service_id = req.body.service_id;
+		if(service_id == null || service_id == undefined  || service_id == "") {
+			req.session.alert_data = { alert_type: "danger", alert_msg: "Invalid request" };
+			res.redirect('/admin/list_services');
+		}
+				
+		services.update_service(service_id, servicedata)
+		.then(function(res_service){
+			if(res_service) {
+				req.session.alert_data = { alert_type: "success", alert_msg: "Service updated successfully" };
+			} else {
+				req.session.alert_data = { alert_type: "danger", alert_msg: "Service was not updated" };
+			}
+			res.redirect('/admin/list_services');
+		});
+	}
+};
+
+
+//add service/post 
+web.post_service = (req, res) => {
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
+	{
+	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
+	    {
+	        res.locals.flashmessages = req.session.alert_data;
+	        req.session.alert_data = null;
+	    }
+		res.redirect('/admin');
+	} else { 
+		if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true) {
+            res.locals.flashmessages = req.session.alert_data;
+            req.session.alert_data = null;
+        }
+		
+		
+		var arr_area_pricing = [];
+		if(typeof req.body.area_from_sqft == "object") {
+			//array
+			if(req.body.area_from_sqft.length != req.body.area_to_sqft.length || req.body.area_from_sqft.length != req.body.area_price.length) {
+				req.session.alert_data = { alert_type: "danger", alert_msg: "Invalid service area pricing values" };
+				res.redirect('/admin/list_services');
+			}
+			for(var i = 0; i < req.body.area_from_sqft.length; i++) {
+				var obj_service_area = {};
+				obj_service_area._id = new mongo.ObjectID();
+				obj_service_area.area_from_sqft = req.body.area_from_sqft[i];
+				obj_service_area.area_to_sqft = req.body.area_to_sqft[i];
+				obj_service_area.price = req.body.area_price[i];
+				arr_area_pricing.push(obj_service_area);
+			}
+			
+		} else {
+			//string
+			var obj_service_area = {};
+			obj_service_area._id = new mongo.ObjectID();
+			obj_service_area.area_from_sqft = req.body.area_from_sqft;
+			obj_service_area.area_to_sqft = req.body.area_to_sqft;
+			obj_service_area.price = req.body.area_price;
+			arr_area_pricing.push(obj_service_area);
+		}
+		
+		var arr_grass_pricing = [];
+		if(typeof req.body.grass_from_sqft == "object") {
+			//array
+			if(req.body.grass_from_sqft.length != req.body.grass_to_sqft.length || req.body.grass_from_sqft.length != req.body.grass_price.length) {
+				req.session.alert_data = { alert_type: "danger", alert_msg: "Invalid grass area pricing values" };
+				res.redirect('/admin/list_services');
+			}
+			for(var i = 0; i < req.body.grass_from_sqft.length; i++) {
+				var obj_grass_area = {};
+				obj_grass_area._id = new mongo.ObjectID();
+				obj_grass_area.area_from_sqft = req.body.grass_from_sqft[i];
+				obj_grass_area.area_to_sqft = req.body.grass_to_sqft[i];
+				obj_grass_area.price = req.body.grass_price[i];
+				arr_grass_pricing.push(obj_grass_area);
+			}
+			
+		} else {
+			//string
+			var obj_grass_area = {};
+			obj_grass_area._id = new mongo.ObjectID();
+			obj_grass_area.area_from_sqft = req.body.grass_from_sqft;
+			obj_grass_area.area_to_sqft = req.body.grass_to_sqft;
+			obj_grass_area.price = req.body.grass_price;
+			arr_grass_pricing.push(obj_grass_area);
+		}
+		
+		
+		var arr_addon_pricing = [];
+		if(typeof req.body.addon_name == "object") {
+			//array
+			if(req.body.addon_name.length != req.body.addon_name.price) {
+				req.session.alert_data = { alert_type: "danger", alert_msg: "Invalid addon pricing values" };
+				res.redirect('/admin/list_services');
+			}
+			for(var i = 0; i < req.body.addon_name.length; i++) {
+				var obj_addon = {};
+				obj_addon._id = new mongo.ObjectID();
+				obj_addon.name = req.body.addon_name[i];
+				obj_addon.price = req.body.addon_price[i];
+				arr_addon_pricing.push(obj_addon);
+			}
+			
+		} else {
+			//string
+			var obj_addon = {};
+			obj_addon._id = new mongo.ObjectID();
+			obj_addon.name = req.body.addon_name;
+			obj_addon.price = req.body.addon_price;
+			arr_addon_pricing.push(obj_addon);
+		}
+		
+		let servicedata = {
+			service_category_id : req.body.service_category_id,
+			service_name : _.trim(req.body.service_name),
+			service_type : req.body.service_type,
+			additional_details : _.trim(req.body.additional_details),
+			service_radius: req.body.service_radius,
+			service_radius_units: req.body.service_radius_units,
+			weekday_start_time: req.body.weekday_start_time,
+			weekday_stop_time: req.body.weekday_stop_time,
+			weekend_start_time: req.body.weekend_start_time,
+			weekend_stop_time: req.body.weekend_stop_time,
+			cancel_hours: req.body.cancel_hours,
+			cancel_fee: req.body.cancel_fee,
+			reschedule_hours: req.body.reschedule_hours,
+			reschedule_fee: req.body.reschedule_fee,
+			address: _.trim(req.body.address),
+			city: _.trim(req.body.city),
+			province: _.trim(req.body.province),
+			country: req.body.country,
+			zipcode: req.body.zipcode,
+			rating: ""+ req.body.rating,
+			currency: req.body.currency,
+			is_deleted: 0,
+			user_id: req.body.user_id,
+			parent_category_id: req.body.parent_category_id,
+			parent_category_name: req.body.parent_category_name,
+			service_area_and_pricing: arr_area_pricing,
+			service_grass_snow_height: arr_grass_pricing,
+			service_addons: arr_addon_pricing,
+			service_options: [],
+		};
+		
+		
+		if(req.body.is_active == null || req.body.is_active == undefined || req.body.is_active == "") {
+			servicedata.is_active = 0;
+		} else {
+			servicedata.is_active = 1;
+		}
+		
+		var availability = req.body.service_availability;
+		if(typeof availability == "object") {
+			//array
+			for(var i = 0; i < availability.length; i++) {
+				servicedata.available_monday = (availability[i] == "available_monday") ? 1: 0;
+				servicedata.available_tuesday = (availability[i] == "available_tuesday") ? 1: 0;
+				servicedata.available_wednesday = (availability[i] == "available_wednesday") ? 1: 0;
+				servicedata.available_thursday = (availability[i] == "available_thursday") ? 1: 0;
+				servicedata.available_friday = (availability[i] == "available_friday") ? 1: 0;
+				servicedata.available_saturday = (availability[i] == "available_saturday") ? 1: 0;
+				servicedata.available_sunday = (availability[i] == "available_sunday") ? 1: 0;
+			}
+		} else {
+			servicedata.available_monday = (availability == "available_monday") ? 1: 0;
+			servicedata.available_tuesday = (availability == "available_tuesday") ? 1: 0;
+			servicedata.available_wednesday = (availability == "available_wednesday") ? 1: 0;
+			servicedata.available_thursday = (availability == "available_thursday") ? 1: 0;
+			servicedata.available_friday = (availability == "available_friday") ? 1: 0;
+			servicedata.available_saturday = (availability == "available_saturday") ? 1: 0;
+			servicedata.available_sunday = (availability == "available_sunday") ? 1: 0;
+		}
+		
+		//reschedule policy
+		servicedata.cancel_rsh_policy = "";
+		if(req.files.cancel_rsh_policy != '' && req.files.cancel_rsh_policy != undefined) {
+			let cancelFile = req.files.cancel_rsh_policy;
+			var file_name = "cancelpolicy_"  + Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
+			servicedata.cancel_rsh_policy = config.base_url + '/uploads/policies/' + file_name;
+			cancelFile.mv('public/uploads/policies/' + file_name, function(err) {
+				if (err){
+				  console.log(err);
+				}
+			});
+		}
+		
+		//legal policy
+		servicedata.legal_policy = "";
+		if(req.files.legal_policy != '' && req.files.legal_policy != "undefined") {
+			let legalFile = req.files.legal_policy;
+			var file_name = "legalpolicy_"  + Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
+			servicedata.legal_policy = config.base_url + '/uploads/policies/' + file_name;
+			legalFile.mv('public/uploads/policies/' + file_name, function(err) {
+				if (err){
+				  console.log(err);
+				}
+			});
+		}
+		
+		//fileupload
+		var  svc_uploads = [];
+		
+		let uploadedFile1 = req.files.fileupload1;
+		if(uploadedFile1 != undefined && uploadedFile1 != null) {
+			var file_name = "service_"  + Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
+			svc_uploads.push(config.base_url + '/uploads/services/' + file_name);
+			uploadedFile1.mv('public/uploads/services/' + file_name, function(err) {
+				if (err){
+				  console.log(err);
+				}
+			});
+		}
+		
+		let uploadedFile2 = req.files.fileupload2;
+		if(uploadedFile2 != undefined && uploadedFile2 != null) {
+			var file_name = "service_"  + Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
+			svc_uploads.push(config.base_url + '/uploads/services/' + file_name);
+			uploadedFile2.mv('public/uploads/services/' + file_name, function(err) {
+				if (err){
+				  console.log(err);
+				}
+			});
+		}
+		
+		
+		let uploadedFile3 = req.files.fileupload3;
+		if(uploadedFile3 != undefined && uploadedFile3 != null) {
+			var file_name = "service_"  + Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
+			svc_uploads.push(config.base_url + '/uploads/services/' + file_name);
+			uploadedFile3.mv('public/uploads/services/' + file_name, function(err) {
+				if (err){
+				  console.log(err);
+				}
+			});
+		}
+		
+		let uploadedFile4 = req.files.fileupload4;
+		if(uploadedFile4 != undefined && uploadedFile4 != null) {
+			var file_name = "service_"  + Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
+			svc_uploads.push(config.base_url + '/uploads/services/' + file_name);
+			uploadedFile4.mv('public/uploads/services/' + file_name, function(err) {
+				if (err){
+				  console.log(err);
+				}
+			});
+		}
+		
+		servicedata.service_uploads = svc_uploads;
+		
+		services.post_service(servicedata)
 		.then(function(res_service){
 			req.session.alert_data = { alert_type: "success", alert_msg: "Service added successfully" };
 			res.redirect('/admin/list_services');
@@ -219,6 +763,38 @@ web.post_service = (req, res) => {
 	}
 };
 
+
+//add service/post 
+web.delete = (req, res) => {
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
+	{
+	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
+	    {
+	        res.locals.flashmessages = req.session.alert_data;
+	        req.session.alert_data = null;
+	    }
+		res.redirect('/admin');
+	} else {
+		if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true) {
+            res.locals.flashmessages = req.session.alert_data;
+            req.session.alert_data = null;
+        }
+		if(req.params.service_id == null || req.params.service_id == undefined) {
+			req.session.alert_data = { alert_type: "danger", alert_msg: "Invalid request. Service Id not provided" };
+			res.redirect('/admin/list_services');
+		}
+		services.delete_service(req.params.service_id)
+		.then(function(res_service){
+			if(res_service) {
+				req.session.alert_data = { alert_type: "success", alert_msg: "Service deleted successfully" };
+				res.redirect('/admin/list_services');
+			} else {
+				req.session.alert_data = { alert_type: "danger", alert_msg: "Service could not be deleted" };
+				res.redirect('/admin/list_services');
+			}
+		});
+	}
+};
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 exportFuns.web = web;
