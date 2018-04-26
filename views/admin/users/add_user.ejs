@@ -1,177 +1,167 @@
-<%-include('../header') %> 
-<%-include('../sidebar') %> 
-   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <h1>
-        Add User
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="/admin/user">User</a></li>
-        <li class="active">Add User</li>
-      </ol>
-    </section>
-    <!-- Main content -->
-    <section class="content">
-
-      <div class="row">
-        <div class="col-md-3">
- <% if (locals.flashmessages) { %>
-    <div class="alert alert-<%=flashmessages.alert_type%> alert-dismissible">
-      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-      <%=flashmessages.alert_msg%>
-    </div>
-    <% } %>
-          <!-- Profile Image -->
-          <div class="box box-primary">
-            <div class="box-body box-profile">
-				<%
-					var user_profile_image = "http://" + hostname + "/uploads/default/default_user.jpg";
-					
-				%>
-              <img class="profile-user-img img-responsive img-circle" src="<%=user_profile_image%>" alt="User profile picture">
-              <h3 class="profile-username text-center">Add User</h3>
-            </div>
-          </div>  
-        </div>
-        <!-- /.col -->
-        <div class="col-md-9">
-          <div class="alert alert-success" id="success_alert" style="display: none;">
-  <strong>Success!</strong>
-</div>
-
-          <div class="nav-tabs-custom">
-            <ul class="nav nav-tabs">
-              <li class="active"><a href="#activity" data-toggle="tab">User Information</a></li>
-            </ul>
-            <div class="tab-content">
-              <div class="active tab-pane" id="activity">
-                <form class="form-horizontal" id="add_user" encType="multipart/form-data" method="post" action="/admin/user/add_user">
-                  <div class="form-group">
-                    <label for="fullname" class="col-sm-2 control-label">Name</label>
-
-                    <div class="col-sm-10">
-                      <input type="text" value="" name="fullname" class="form-control" id="name" placeholder="Enter full name" data-validation="length alphanumeric" data-validation-length="min4">
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="email" class="col-sm-2 control-label">Email</label>
-
-                    <div class="col-sm-10">
-                      <input type="email" value="" name="email" class="form-control" id="inputEmail" placeholder="Enter Email" autocomplete="off" />
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="password" class="col-sm-2 control-label">Password</label>
-
-                    <div class="col-sm-10">
-                      <input type="password" value="" name="password" class="form-control" id="password" placeholder="Enter Password" />
-                    </div>
-                  </div>
-				  <div class="form-group">
-                    <label for="confirm__password" class="col-sm-2 control-label">Retype Password</label>
-
-                    <div class="col-sm-10">
-                      <input type="password" value="" name="confirm_password" class="form-control" id="confirm_password" placeholder="Re-enter Password" />
-                    </div>
-                  </div>
-				  <div class="form-group">
-                    <label for="phone" class="col-sm-2 control-label">Phone</label>
-
-                    <div class="col-sm-10">
-					  <input value="" name="phone" class="form-control" data-inputmask='"mask": "999-999-9999"' data-mask='' type="text" id="phone">                      
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="address" class="col-sm-2 control-label">Street Address</label>
-
-                    <div class="col-sm-10">
-                      <textarea name="address"  class="form-control" rows="5" id="address"></textarea>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="city" class="col-sm-2 control-label">City</label>
-
-                    <div class="col-sm-10">
-                      <input type="text" value="" name="city" class="form-control" id="city" placeholder="Enter City name">
-                    </div>
-                  </div>
-                   <div class="form-group">
-                    <label for="state" class="col-sm-2 control-label">State</label>
-
-                    <div class="col-sm-10">
-                      <input type="text" value="" name="state" class="form-control" id="state" placeholder="Enter State name">
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="country" class="col-sm-2 control-label">Country</label>
-
-                    <div class="col-sm-10">
-                      <input type="text" value="" name="country" class="form-control" id="country" placeholder="Enter country name">
-                    </div>
-                  </div>
-                  
-				  <div class="form-group">
-                    <label for="zip_code" class="col-sm-2 control-label">Zip Code</label>
-
-                    <div class="col-sm-10">
-                      <input type="text" value="" name="zip_code" class="form-control" id="zip_code" placeholder="Zipcode">
-                    </div>
-                  </div>
-				  
-				  <div class="form-group">
-                    <label for="profile" class="col-sm-2 control-label">Profile</label>
-
-                    <div class="col-sm-10">
-                   <input type="file" name="profile"  class="form-control" id="profile" placeholder="Profile" style="padding-top: 0; padding-left: 0;">
-                    </div>
-                  </div> 
-				  
-				  <div class="form-group">
-                    <label for="is_active" class="col-sm-2 control-label">Enabled</label>
-
-                    <div class="col-sm-10">
-						<label class="switch" style="margin-left: 10px;">
-						  <input type="checkbox" id="is_active" name="is_active" style="position: relative; top: 7px;" />
-						  <span class="slider round"></span>
-						</label>
-                    </div>
-                  </div>
-				  
-                  <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
-                      <input type="hidden" id="user_id" name="user_id" value="">
-                      <input type="hidden" id="latitude" name="latitude">
-                      <input type="hidden" id="longitude" name="longitude">
-                      <button type="submit" id="btnsubmit" name="btnsubmit" class="btn btn-success">Submit</button>
-                    </div>
-                  </div>
-                </form>
+<%-include('../header') %>
+  <%-include('../sidebar') %>
+    <div class="content-wrapper">
+      <section class="content-header">
+        <h1>
+          Add User
+        </h1>
+        <ol class="breadcrumb">
+          <li>
+            <a href="/admin/dashboard">
+              <i class="fa fa-dashboard"></i> Home</a>
+          </li>
+          <li>
+            <a href="/admin/user">User</a>
+          </li>
+          <li class="active">Add User</li>
+        </ol>
+      </section>
+      <section class="content">
+        <div class="row">
+          <div class="col-md-3">
+            <% if (locals.flashmessages) { %>
+              <div class="alert alert-<%=flashmessages.alert_type%> alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <%=flashmessages.alert_msg%>
               </div>
-              
-              <!-- /.tab-pane -->
-            </div>
-            <!-- /.tab-content -->
+              <% } %>
+                <div class="box box-primary">
+                  <div class="box-body box-profile">
+                    <%	var user_profile_image = "http://" + hostname + "/uploads/default/default_user.jpg";	%>
+                      <img class="profile-user-img img-responsive img-circle" src="<%=user_profile_image%>" alt="User profile picture">
+                      <h3 class="profile-username text-center">Add User</h3>
+                  </div>
+                </div>
           </div>
-          <!-- /.nav-tabs-custom -->
-        </div>
-        <!-- /.col -->
-      </div>
-      <!-- /.row -->
+          <div class="col-md-9">
+            <div class="alert alert-success" id="success_alert" style="display: none;">
+              <strong>Success!</strong>
+            </div>
+            <div class="nav-tabs-custom">
+              <ul class="nav nav-tabs">
+                <li class="active">
+                  <a href="#activity" data-toggle="tab">User Information</a>
+                </li>
+              </ul>
+              <div class="tab-content">
+                <div class="active tab-pane" id="activity">
+                  <form class="form-horizontal" id="add_user" encType="multipart/form-data" method="post" action="/admin/user/add_user">
+                    <div class="form-group">
+                      <label for="fullname" class="col-sm-2 control-label">Name</label>
 
-    </section>
-    <!-- /.content -->
-  </div>
-  <script language="javascript">
-  jQuery(document).ready(function(){
-	/*
-	jQuery("#btnsubmit").click(function(e) {
-		e.preventDefault();		
-	});
-	*/
-  });
-  </script>
-  
-  <%-include('../footer') %> 
+                      <div class="col-sm-10">
+
+                        <input type="text" value="<%=(temp_user==null) ? " ":temp_user.fullname%>" name="fullname" class="form-control" id="name"
+                          placeholder="Enter full name" data-validation="length alphanumeric" data-validation-length="min4">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="email" class="col-sm-2 control-label">Email</label>
+
+                      <div class="col-sm-10">
+                        <input type="email" value="<%=(temp_user==null) ? " ":temp_user.email%>" name="email" class="form-control" id="inputEmail"
+                          placeholder="Enter Email" autocomplete="off" />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="password" class="col-sm-2 control-label">Password</label>
+
+                      <div class="col-sm-10">
+                        <input type="password" value="" name="password" class="form-control" id="password" placeholder="Enter Password" />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="confirm__password" class="col-sm-2 control-label">Retype Password</label>
+
+                      <div class="col-sm-10">
+                        <input type="password" value="" name="confirm_password" class="form-control" id="confirm_password" placeholder="Re-enter Password"
+                        />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="phone" class="col-sm-2 control-label">Phone</label>
+
+                      <div class="col-sm-10">
+                        <input value="<%=(temp_user==null) ? " ":temp_user.phone%>" name="phone" class="form-control" data-inputmask='"mask": "999-999-9999"'
+                          data-mask='' type="text" id="phone">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="address" class="col-sm-2 control-label">Street Address</label>
+
+                      <div class="col-sm-10">
+                        <textarea name="address" class="form-control" rows="5" id="address"><%=(temp_user==null) ? "":temp_user.address%></textarea>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="city" class="col-sm-2 control-label">City</label>
+
+                      <div class="col-sm-10">
+                        <input type="text" value="<%=(temp_user==null) ? " ":temp_user.city%>" name="city" class="form-control" id="city" placeholder="Enter City name">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="state" class="col-sm-2 control-label">State</label>
+
+                      <div class="col-sm-10">
+                        <input type="text" value="<%=(temp_user==null) ? " ":temp_user.state%>" name="state" class="form-control" id="state" placeholder="Enter State name">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="country" class="col-sm-2 control-label">Country</label>
+
+                      <div class="col-sm-10">
+                        <input type="text" value="<%=(temp_user==null) ? " ":temp_user.country%>" name="country" class="form-control" id="country"
+                          placeholder="Enter country name">
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="zip_code" class="col-sm-2 control-label">Zip Code</label>
+
+                      <div class="col-sm-10">
+                        <input type="text" value="<%=(temp_user==null) ? " ":temp_user.zip_code%>" name="zip_code" class="form-control" id="zip_code"
+                          placeholder="Zipcode">
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="profile" class="col-sm-2 control-label">Profile</label>
+
+                      <div class="col-sm-10">
+                        <input type="file" name="profile" class="form-control" id="profile" placeholder="Profile" style="padding-top: 0; padding-left: 0;">
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="is_active" class="col-sm-2 control-label">Enabled</label>
+
+                      <div class="col-sm-10">
+                        <label class="switch" style="margin-left: 10px;">
+                          <input type="checkbox" id="is_active" name="is_active" style="position: relative; top: 7px;" />
+                          <span class="slider round"></span>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-sm-offset-2 col-sm-10">
+                        <input type="hidden" id="user_id" name="user_id" value="">
+                        <input type="hidden" id="latitude" name="latitude">
+                        <input type="hidden" id="longitude" name="longitude">
+                        <button type="submit" id="btnsubmit" name="btnsubmit" class="btn btn-success">Submit</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script language="javascript">
+      jQuery(document).ready(function () {
+      });
+    </script>
+
+    <%-include('../footer') %>

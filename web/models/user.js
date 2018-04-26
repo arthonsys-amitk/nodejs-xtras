@@ -70,6 +70,25 @@ exportFuns.get_user_by_user_id = (user_id) => {
         return user;
     });
 };
+// check phone is exist
+exportFuns.get_user_by_phone_no = (phone) => {
+
+	let db = new Mongo;
+
+	let searchPattern = {
+			phone:  phone,
+			user_role: 2
+	};
+
+	return db.connect(config.mongoURI)
+	.then(function() {
+			return db.findOne('users', searchPattern);
+	})
+	.then(function(user) {
+			db.close();
+			return user;
+	});
+};
 // get data user not particular user
 exportFuns.check_phone_exist = (user_id,phone) => {
 
@@ -256,5 +275,24 @@ exportFuns.add_user = (user_data,file, latitude, longitude, zipcode)=>{
 			return user.ops[0];
 	    });
 };
+// check email address is exist
+exportFuns.check_email_exist = (email) => {
 
+	let db = new Mongo;
+
+	let searchPattern = {
+			email: email,
+			user_role: 2,
+			is_deleted: 0
+	};
+
+	return db.connect(config.mongoURI)
+	.then(function() {
+			return db.findOne('users', searchPattern);
+	})
+	.then(function(user) {
+			db.close();
+			return user;
+	});
+};
 module.exports = exportFuns;

@@ -8,25 +8,68 @@
       </h1>
       <ol class="breadcrumb">
         <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        <li class="active">All coupons</li>
-		<li class="active">Payment</li>
+        <li class="active">Payment</li>
         <li class="active">View Transactions</li>
       </ol>
     </section>
     <section class="content">
       <div class="row">
-		<% if (locals.flashmessages) { %>
-		<div class="alert alert-<%=flashmessages.alert_type%> alert-dismissible">
-		  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-		  <%=flashmessages.alert_msg%>
-		</div>
-		<% } %>
         <div class="col-xs-12">
+			<% if (locals.flashmessages) { %>
+				<div class="alert alert-<%=flashmessages.alert_type%> alert-dismissible">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+					<%=flashmessages.alert_msg%>
+				</div>
+			<% } %>
           <div class="box">
             
            
             <div class="box-body">
-              <table id="example2" class="table table-bordered table-hover">
+                <form action="/admin/filter_payment" method="post">
+                <div class="box box-primary box-solid">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Filters</h3>
+        
+                      <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                        </button>
+                      </div>
+                     
+                    </div>
+                  
+                    <div class="box-body" style="">
+                      <div class="col-sm-3">
+                          <div class="form-group">
+                              <label for="coupon_code" class="col-sm-6 control-label">From Date</label>
+                              <div class="input-group date col-sm-10" style="padding-left: 15px; padding-right: 15px;">
+                                  <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                  <input class="form-control pull-right" id="from_date" name="from_date" type="text" value="" />
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-sm-3">
+                          <div class="form-group">
+                              <label for="coupon_code" class="col-sm-6 control-label">To Date</label>
+                              <div class="input-group date col-sm-10" style="padding-left: 15px; padding-right: 15px;">
+                                  <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                  <input class="form-control pull-right" id="to_date" name="to_date" type="text" value="" />
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-sm-3">
+                          <div class="form-group">
+                              <label for="coupon_code" class="col-sm-6 control-label"> .</label>
+                              <div class="input-group date col-sm-10" style="padding-left: 15px; padding-right: 15px;">
+                                 
+                                  
+                                    <input type="submit" class="btn btn-success" value="Submit">
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <table id="example2" class="table table-bordered table-hover">
                 <thead>
                 <tr>
                   <th>#</th>
@@ -35,17 +78,15 @@
                   <th>Appointment ID</th>
                   <th>Status</th>
                   <th>Date</th>
-                  <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
-                <% var count=1; for(var i = 0; i < transactions.length; i++){%>
-					<%
+                <% var count=1; for(var i = 0; i < transactions.length; i++){%>	<%
 						var transaction_status = "Failed";
 						if(transactions[i].payment_details != null && transactions[i].payment_details != undefined && transactions[i].payment_details.status != undefined && transactions[i].payment_details.status != null) {
 							transaction_status = transactions[i].payment_details.status;
 						}
-						
+						var total=0;
 						var username = "";
 						if(transactions[i].user_id != null && transactions[i].user_id != undefined) {
 							if(users != null && users != undefined && users.length > 0) {
@@ -70,21 +111,21 @@
                   <td><%=transactions[i].created_at%></td>
                   <td><a class="btn btn-xs btn-info" href="/admin/view_transaction/<%=transactions[i]._id%>" style="margin-right: 10px;">View Details</a></td>
                 </tr>
-				<% count++; } %>
-                
+                <% count++; total=parseFloat(transactions[i].amount / 100).toFixed(2) + parseFloat(total);} %>
+               
                 </tbody>
                 <tfoot>
                 <tr>
                   <th>#</th>
-                  <th>User ID</th>
-                  <th>Amount</th>
-                  <th>Appointment ID</th>
-                  <th>Status</th>
-                  <th>Date</th>
-				  <th>Action</th>
+                  <th>Total</th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
                 </tr>
                 </tfoot>
               </table>
+              
             </div>
           
           </div>

@@ -45,20 +45,20 @@
   <div class="login-box-body">
     <p class="login-box-msg">Sign In</p>
    
-    <form action="admin/login/login_process" method="post">
+    <form action="admin/login/login_process" id="login" method="post">
       <div class="form-group has-feedback">
-        <input type="email" name="email" class="form-control" placeholder="Email">
+        <input type="email" id="email" name="email" class="form-control" placeholder="Email">
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">
-        <input type="password" name="password" class="form-control" placeholder="Password">
+        <input type="password" id="password" name="password" class="form-control" placeholder="Password">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
       <div class="row">
         <div class="col-xs-8">
           <div class="checkbox icheck">
             <label>
-              <input type="checkbox"> Remember Me
+              <input type="checkbox" id="remember"> Remember Me
             </label>
           </div>
         </div>
@@ -66,35 +66,17 @@
         <div class="col-xs-4">
           <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
         </div>
-        <!-- /.col -->
       </div>
     </form>
-
-    <!--
-	<div class="social-auth-links text-center">
-      <p>- OR -</p>
-      <a href="#" class="btn btn-block btn-social btn-facebook btn-flat"><i class="fa fa-facebook"></i> Sign in using
-        Facebook</a>
-      <a href="#" class="btn btn-block btn-social btn-google btn-flat"><i class="fa fa-google-plus"></i> Sign in using
-        Google+</a>
-    </div>
-	-->
-    <!-- /.social-auth-links -->
-
-    <a href="#">Forgot Password</a><br>
-    <!-- <a href="register.html" class="text-center">Register a new membership</a> -->
-
   </div>
-  <!-- /.login-box-body -->
 </div>
-<!-- /.login-box -->
-
 <!-- jQuery 3 -->
 <script src="/bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <!-- iCheck -->
 <script src="/plugins/iCheck/icheck.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script>
   $(function () {
     $('input').iCheck({
@@ -103,6 +85,38 @@
       increaseArea: '20%' /* optional */
     });
   });
+$(document).ready(function() {
+
+var remember = $.cookie('remember');
+if (remember == 'true') 
+{
+    var email = $.cookie('email');
+    var password = $.cookie('password');
+    // autofill the fields
+    $('#email').val(email);
+    $('#password').val(password);
+}
+
+
+$("#login").submit(function() {
+if ($('#remember').is(':checked')) {
+    var email = $('#email').val();
+    var password = $('#password').val();
+
+    // set cookies to expire in 14 days
+    $.cookie('email', email, { expires: 14 });
+    $.cookie('password', password, { expires: 14 });
+    $.cookie('remember', true, { expires: 14 });                
+}
+else
+{
+    // reset cookies
+    $.cookie('email', null);
+    $.cookie('password', null);
+    $.cookie('remember', null);
+}
+});
+});
 </script>
 </body>
 </html>

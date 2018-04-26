@@ -7,7 +7,7 @@ var exportFuns = {},
 
 
 const Promise = require("bluebird");
-
+var dateFormat = require('dateformat');
 //get_services_count
 exportFuns.get_services_count = ()=>{
   let db = new Mongo;
@@ -160,6 +160,7 @@ exportFuns.get_transaction_details = (payment_id) => {
 			var result = [];
 			result.push(res_transaction);
 			result.push(rec_user);
+			console.log(result);
 			return result;
 		});		
 	})
@@ -271,6 +272,25 @@ exportFuns.delete_service = (service_id) => {
 	return db.connect(config.mongoURI)
 	.then(function(){
 		return db.update("services", searchPattern, updatePattern);
+	})
+	.then(function(result){
+		db.close();
+		return result;
+	});
+};
+
+// Date filter for payment
+exportFuns.filter_payment = (data) => {
+
+	let searchPattern = {
+		created_at:  { $gte: new Date(data.from_date), $lt: new Date(data.to_date)},
+	   };
+	let db = new Mongo;
+	return db.connect(config.mongoURI)
+	.then(function(){
+		return db.find('payments', searchPattern).then(function(result){
+			return result;
+		});
 	})
 	.then(function(result){
 		db.close();

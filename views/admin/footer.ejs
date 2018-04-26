@@ -13,6 +13,7 @@
 
 <!-- jQuery 3 -->
 <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+
 <!-- jQuery UI 1.11.4 -->
 <script src="/bower_components/jquery-ui/jquery-ui.min.js"></script>
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
@@ -45,7 +46,8 @@
 
 <!-- AdminLTE App -->
 <script src="/dist/js/adminlte.min.js"></script>
-
+<!-- Select2 -->
+<script src="/bower_components/select2/dist/js/select2.full.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="/dist/js/demo.js"></script>
 <!-- validation -->
@@ -75,7 +77,7 @@
 
 <script type="text/javascript">
    $('#example2').DataTable();
-
+   $('#transaction').DataTable();
   function myFunctionName() {
             var flag=0;
             var street=$('#address').val();
@@ -112,9 +114,20 @@
 		jQuery('[data-mask]').inputmask();	
         CKEDITOR.replace('content');
 	});
- $('#expiry_date').datepicker({
+  //Expiry date
+  $('#expiry_date').datepicker({
       format: 'yyyy-mm-dd'
-	 })
+	 });
+  //From date
+  $('#from_date').datepicker({
+    format: 'yyyy-mm-dd'
+  });
+  //To date
+  $('#to_date').datepicker({
+    format: 'yyyy-mm-dd'
+  });
+//Add coupon
+$('#service_ids').select2();
 </script>
 </body>
 </html>

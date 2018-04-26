@@ -153,7 +153,7 @@ web.view_transaction = (req, res) => {
 			if(res_transaction != null && res_transaction != undefined && res_transaction != [] && res_transaction.length > 0) {
 				var rec_transaction = res_transaction[0];
 				var rec_user = res_transaction[1];
-				rec_transaction.created_at = dateFormat(new Date(rec_transaction.created_at), "dd-mm-yyyy hh:MM:ss TT");
+rec_transaction.created_at = dateFormat(new Date(rec_transaction.created_at), "dd-mm-yyyy hh:MM:ss TT");
 				res.render('admin/services/transaction_details',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "transaction" : rec_transaction, "user" : rec_user});
 			} else {
 				req.session.alert_data = { alert_type: "danger", alert_msg: "Details could not be fetched" };
@@ -162,38 +162,27 @@ web.view_transaction = (req, res) => {
 		});
 	}
 };
-
-//show add service/post form
-web.create_service = (req, res) => {
-	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
-	{
-	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
-	    {
-	        res.locals.flashmessages = req.session.alert_data;
-	        req.session.alert_data = null;
-	    }
-		res.redirect('/admin');
-	} else {
-		if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true) {
-            res.locals.flashmessages = req.session.alert_data;
-            req.session.alert_data = null;
-        }
-		services.create_service()
-		.then(function(res_service){
-			if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
-				var qrycount = 0;
-				var resqueries = null;
-			} else {
-				var qrycount = req.session.resqueries.length;
-				var resqueries = req.session.resqueries;
-			}
-			if(res_service != null && res_service != undefined && res_service != {} ) {
-				res.render('admin/services/add_service',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "service" : res_service});
-			}
-		});
-	}
-};
-
+//filter date for payment
+web.filter_payment=(req,res)=>{
+	services.filter_payment(req.body).then(function(res_transaction){
+		console.log(res_transaction);
+		if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+			var qrycount = 0;
+			var resqueries = null;
+		} else {
+			var qrycount = req.session.resqueries.length;
+			var resqueries = req.session.resqueries;
+		}
+		if(res_transaction != null && res_transaction != undefined && res_transaction != [] && res_transaction.length > 0) {
+			var rec_transaction = res_transaction[0];
+			var rec_user = res_transaction[1];
+			res.render('admin/services/filter_date',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "transactions" : res_transaction, "user" : rec_user});
+		}else{
+			req.session.alert_data = { alert_type: "danger", alert_msg: "Details could not be fetched" };
+			res.redirect('/admin');
+		} 
+	});
+}
 //show add service/post form
 web.create_service = (req, res) => {
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)

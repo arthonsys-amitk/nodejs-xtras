@@ -15,10 +15,9 @@
     </section>
     <!-- Main content -->
     <section class="content">
-
       <div class="row">
         <div class="col-md-3">
- <% if (locals.flashmessages) { %>
+  <% if (locals.flashmessages) { %>
     <div class="alert alert-<%=flashmessages.alert_type%> alert-dismissible">
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
       <%=flashmessages.alert_msg%>
