@@ -1649,13 +1649,24 @@ api.make_stripe_payment = (req, res)=> {
 	} else {
 		services.make_stripe_payment(token, amount, currency, user_id, appointment_id)
 		.then(function(res_payment) {
-			res.json({
-				"status": 200,
-				"api_name": "make_stripe_payment",
-				"message": "Payment is successful",
-				"data": {}
-			});
-			return;
+			if(res_payment.responsecode == 1) {
+				res.json({
+					"status": 200,
+					"api_name": "make_stripe_payment",
+					"message": "" + res_payment.message,
+					"data": {}
+				});
+				return;
+			} else {
+				res.json({
+					"status": 400,
+					"api_name": "make_stripe_payment",
+					"message": "Error occurred." + res_payment.message,
+					"data": {}
+				});
+				return;
+			}
+			
 		});
 	}
 }
