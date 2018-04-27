@@ -9,7 +9,7 @@
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="/list_services">Services</a></li>
+        <li><a href="/admin/list_services">Services</a></li>
         <li class="active">Update Service</li>
       </ol>
     </section>
@@ -129,21 +129,25 @@
                   </div>
 				  
 				  <%
-					if(service.weekday_start_time && service.weekday_start_time.indexOf(" ") == -1) { 
+					if(service.weekday_start_time != null && service.weekday_start_time != undefined && service.weekday_start_time ) { 
+						service.weekday_start_time.replace(" ", "");
 						service.weekday_start_time = service.weekday_start_time.replace("PM", " PM");
 						service.weekday_start_time = service.weekday_start_time.replace("AM", " AM");
 					}
-					if(service.weekday_stop_time && service.weekday_stop_time.indexOf(" ") == -1) { 
+					if(service.weekday_stop_time != null  && service.weekday_stop_time != undefined && service.weekday_stop_time ) { 
+						service.weekday_stop_time.replace(" ", "");
 						service.weekday_stop_time = service.weekday_stop_time.replace("PM", " PM");
 						service.weekday_stop_time = service.weekday_stop_time.replace("AM", " AM");
 					}
-					if(service.weekend_start_time && service.weekend_start_time.indexOf(" ") == -1) { 
+					if(service.weekend_start_time != null && service.weekend_start_time != undefined && service.weekend_start_time ) { 
+						service.weekend_start_time.replace(" ", "");
 						service.weekend_start_time = service.weekend_start_time.replace("PM", " PM");
 						service.weekend_start_time = service.weekend_start_time.replace("AM", " AM");
 					}
-					if(service.weekend_stop_time && service.weekend_stop.indexOf(" ") == -1) { 
-						service.weekend_stop = service.weekend_stop.replace("PM", " PM");
-						service.weekend_stop = service.weekend_stop.replace("AM", " AM");
+					if(service.weekend_stop_time != null && service.weekend_stop_time  != undefined && service.weekend_stop_time ) { 
+						service.weekend_stop_time.replace(" ", "");
+						service.weekend_stop_time = service.weekend_stop_time.replace("PM", " PM");
+						service.weekend_stop_time = service.weekend_stop_time.replace("AM", " AM");
 					}
 				  %>
 				  <div class="bootstrap-timepicker">
@@ -1015,7 +1019,7 @@
    
   </script>
   <script>
-  alert("uploadctr:" + <%=uploadctr%>);
+  
    var areactr = <%=areactr%>;
    var grassctr = <%=grassctr%>;
    var addonctr = <%=addonctr%>;

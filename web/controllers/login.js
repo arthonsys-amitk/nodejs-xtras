@@ -76,7 +76,7 @@ web.login_process = (req, res)=>{
 
                     } else {
 						req.session.user_data=userObj;
-						req.session.alert_data = { alert_type: "success", alert_msg: "Successful login." };
+						req.session.alert_data = { alert_type: "success", alert_msg: "Successfully logged-in." };
                         res.redirect('/admin/dashboard')                    
                     }
                   });

@@ -1,47 +1,213 @@
 // validation of add user
 $( document ).ready(function() {
+// validation of Add/edit coupon
+$('form[id="admin_profile"]').validate({
+  rules: {
+    fullname: {
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
+      minlength: 3,
+      maxlength:50
+    },
+    email: {
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
+      email:true
+    },
+    phone: {
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
+      maxlength:14
+    },
+    address:{
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
+      maxlength:100
+    },
+    profile:{
+     
+    }
+  },
+  submitHandler: function(form) {
+    form.submit();
+  }
+});
+// End
+$('form[id="update_admin_password"]').validate({
+  rules: {
+    old_password: {
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
+      minlength: 6,
+    },
+    new_password: {
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
+      minlength: 6,
+    },
+    confirm_password: {
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        },
+      },
+      equalTo: "#new_password",
+      minlength: 6,
+    }
+  },
+  messages: {
+    confirm_password:{equalTo:'password not match'}
+  },
+  submitHandler: function(form) {
+    form.submit();
+  }
+});
+$('form[id="user_update_password"]').validate({
+  rules: {
+    new_password: {
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
+      minlength: 6,
+    },
+    confirm_password: {
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        },
+      },
+      equalTo: "new_password",
+      minlength: 6,
+    }
+  },
+  messages: {
+    confirm_password:{equalTo:'password not match'}
+  },
+  submitHandler: function(form) {
+    form.submit();
+  }
+});
 $('form[id="add_user"]').validate({
   rules: {
     fullname: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 3,
     },
     email: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 3,
       email: true
     },
     password: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 5,
     },
     confirm_password: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 5,
       equalTo: "#password"
     },
     phone: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 10,
     },
     address: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 3,
     },
     city: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 3,
     },
     state: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 3,
     },
     country: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 3,
     },
     zip_code: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 3,
     },
     profile: {
@@ -65,45 +231,95 @@ $('form[id="add_user"]').validate({
 $('form[id="edit_user"]').validate({
   rules: {
     fullname: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 3,
     },
     email: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 3,
       email: true
     },
     password: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 5,
     },
     confirm_password: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 5,
       equalTo: "password"
     },
     phone: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 10,
     },
     address: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 3,
     },
     city: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 3,
     },
     state: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 3,
     },
     country: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 3,
     },
     zip_code: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 3,
     }
   },
@@ -121,20 +337,53 @@ $('form[id="edit_user"]').validate({
 $('form[id="add_coupon"]').validate({
   rules: {
     coupon_code: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 3,
     },
     expiry_date: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
     },
     percent: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       max: 100,
       maxlength:3
     },
     service_ids:{
-      required: true,
+      required: true
+     
     }
+  },
+  messages: {
+   
+  },
+  submitHandler: function(form) {
+    form.submit();
+  }
+});
+// End
+
+
+// validation of Query Reply form
+$('form[id="frmReply"]').validate({
+  rules: {
+    reply: {
+      required: true
+    }    
   },
   messages: {
    
@@ -149,22 +398,42 @@ $('form[id="add_coupon"]').validate({
 $('form[id="payment_setting"]').validate({
   rules: {
     stripe_email: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       email:true,
       minlength: 3,
       maxlength:30
     },
     stripe_secret_key: {
-      required: true,
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
       minlength: 3,
-      maxlength:30
+      maxlength:50
     },
     stripe_publishable_key: {
-      required: true
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
     },
     stripe_mode:{
-      required: true,
-      maxlength:30
+      required: {
+        depends:function(){
+            $(this).val($.trim($(this).val()));
+            return true;
+        }
+      },
+      maxlength:50
     }
   },
   messages: {
@@ -180,58 +449,123 @@ $('form[id="payment_setting"]').validate({
 $('form[id="frm_postservice"]').validate({
   rules: {
 	service_category_id : {
-		required: true,
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
 	},
 	service_name  : {
-		required: true,
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
 		minlength: 3,
         maxlength: 50
 	},
 	service_radius  : {
-		required: true,
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
 		digits: true
 	},
 	service_availability :  {
-		required: true,
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
 	},
 	cancel_hours  : {
-		required: true,
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
 		digits: true
 	},
 	cancel_fee  : {
-		required: true,
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
 		digits: true
 	},
 	reschedule_hours  : {
-		required: true,
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
 		digits: true
 	},
 	reschedule_fee :  {
-		required: true,
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
 		digits: true
 	},
 	address  : {
-		required: true,
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
 		minlength: 3,
         maxlength: 50
 	},
 	city :  {
-		required: true,
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
 		minlength: 3,
         maxlength: 30
 	},
 	province  : {
-		required: true,
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
 		minlength: 3,
         maxlength: 30
 	},
 	zipcode :  {
-		required: true,
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
 		minlength: 3,
         maxlength: 30
 	},
 	fileupload1  : {
-		required: true
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
 	}
   },
   messages: {

@@ -113,7 +113,7 @@
                     <label for="profile" class="col-sm-2 control-label">Profile</label>
 
                     <div class="col-sm-10">
-                   <input type="file" name="profile"  class="form-control" id="profile" placeholder="Profile" style="padding-top: 0; padding-left: 0;">
+                   <input type="file" name="profile"  class="form-control" id="profile" accept="image/*" placeholder="Profile" style="padding-top: 0; padding-left: 0;">
                     </div>
                   </div> 
 				  
@@ -140,7 +140,7 @@
                       <input type="hidden" id="latitude" name="latitude">
                       <input type="hidden" id="longitude" name="longitude">
                       <button type="submit" id="submit" class="btn btn-success">Submit</button>
-                      <button type="button" id="btnback" class="btn btn-success" onclick="javascript: location.href='/admin/user';">Back</button>
+                      <button type="button" id="btnback" class="btn btn-info" onclick="javascript: location.href='/admin/user';">Back</button>
                     </div>
                   </div>
                 </form>
@@ -148,7 +148,7 @@
               
 
               <div class="tab-pane" id="settings">
-                <form class="form-horizontal" name="registration"  id="update_password" method="post" action="/admin/user/update_password">
+                <form class="form-horizontal" name="registration"  id="user_update_password" method="post" action="/admin/user/update_password">
                   <div class="form-group">
                     <label for="inputNewpassword"  class="col-sm-2 control-label">New Password</label>
 
@@ -167,7 +167,7 @@
                   <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                        <input type="hidden" id="user_id" name="user_id" value="<%=user._id; %>">
-                      <button type="submit" class="btn btn-danger">Submit</button>
+                      <button type="submit" class="btn btn-success">Submit</button>
                     </div>
                   </div>
                 </form>

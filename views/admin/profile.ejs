@@ -5,14 +5,14 @@
       <!-- Content Header (Page header) -->
       <section class="content-header">
         <h1>
-          User Profile
+          Admin Profile
         </h1>
         <ol class="breadcrumb">
           <li>
             <a href="/admin/dashboard">
               <i class="fa fa-dashboard"></i> Home</a>
           </li>
-          <li class="active">User profile</li>
+          <li class="active">Admin Profile</li>
         </ol>
       </section>
       <!-- Main content -->
@@ -79,44 +79,44 @@
               </ul>
               <div class="tab-content">
                 <div class="active tab-pane" id="activity">
-                  <form class="form-horizontal" encType="multipart/form-data" method="post" action="/admin/update_profile">
+                  <form id="admin_profile" class="form-horizontal" encType="multipart/form-data" method="post" action="/admin/update_profile">
                     <div class="form-group">
                       <label for="name" class="col-sm-3 control-label">Name</label>
 
                       <div class="col-sm-6">
-                        <input type="text" value="<%=user_data.fullname; %>" name="fullname" class="form-control" id="name" placeholder="Enter name">
+                        <input type="text" value="<%=user_data.fullname; %>" name="fullname" class="form-control" id="fullname" placeholder="Enter name">
                       </div>
                     </div>
                     <div class="form-group">
                       <label for="inputEmail" class="col-sm-3 control-label">Email</label>
 
                       <div class="col-sm-6">
-                        <input type="email" disabled value="<%=user_data.email; %>" name="new_password" class="form-control" id="inputEmail" placeholder="Enter Email">
+                        <input type="email" disabled value="<%=user_data.email; %>" name="email" class="form-control" id="email" placeholder="Enter Email">
                       </div>
                     </div>
                     <div class="form-group">
                       <label for="inputEmail" class="col-sm-3 control-label">Phone</label>
 
                       <div class="col-sm-6">
-                        <input type="number" value="<%=user_data.phone; %>" name="phone" class="form-control" id="inputEmail" placeholder="Enter Phone number">
+                        <input type="number" value="<%=user_data.phone; %>" name="phone" class="form-control" id="phone" placeholder="Enter Phone number">
                       </div>
                     </div>
                     <div class="form-group">
                       <label for="address" class="col-sm-3 control-label">Address</label>
 
                       <div class="col-sm-6">
-                        <textarea name="address" class="form-control" rows="5" id="comment"><%=profile_data.address; %></textarea>
+                        <textarea name="address" class="form-control" rows="5" id="address"><%=profile_data.address; %></textarea>
                       </div>
                     </div>
                     <div class="form-group">
                       <label for="profile" class="col-sm-3 control-label">Profile</label>
 
                       <div class="col-sm-6">
-                        <input type="file" name="profile" class="form-control" id="profile" placeholder="Profile" style="padding-top: 0px; padding-left: 0px;">
+                        <input type="file" name="profile"  accept="image/*" class="form-control" id="profile" placeholder="Profile" style="padding-top: 0px; padding-left: 0px;">
                       </div>
                     </div>
                     <div class="form-group">
-                      <div class="col-sm-offset-2 col-sm-10">
+                      <div class="col-sm-offset-7 col-sm-3">
                         <input type="hidden" id="user_id" name="user_id" value="<%=user_data._id; %>">
                         <button type="submit" id="submit" class="btn btn-success">Submit</button>
                       </div>
@@ -126,7 +126,7 @@
 
 
                 <div class="tab-pane" id="settings">
-                  <form class="form-horizontal" name="registration" id="update_admin_password" method="post" action="/admin/user/update_admin_password">
+                  <form class="form-horizontal" name="admin_update_password" id="update_admin_password" method="post" action="/admin/user/update_admin_password">
                     <div class="form-group">
                       <label for="password" required class="col-sm-3 control-label">Old password</label>
 
@@ -151,9 +151,9 @@
                     </div>
 
                     <div class="form-group">
-                      <div class="col-sm-offset-3 col-sm-9">
+                      <div class="col-sm-offset-7 col-sm-3">
                         <input type="hidden" id="user_id" name="user_id" value="<%=user_data._id; %>">
-                        <button type="submit" class="btn btn-danger">Submit</button>
+                        <button type="submit" class="btn btn-success">Submit</button>
                       </div>
                     </div>
                   </form>
