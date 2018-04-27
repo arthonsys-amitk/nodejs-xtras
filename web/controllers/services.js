@@ -23,7 +23,7 @@ var exportFuns = {},
 // Display all services
 web.list_services=(req,res)=>{
 	req.session.hostname = req.headers.host;
-	hostname = req.session.hostname;
+	var hostname = req.session.hostname;
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
 	{
 	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
@@ -54,7 +54,7 @@ web.list_services=(req,res)=>{
 // Edit service
 web.edit = (req, res) => {
 	req.session.hostname = req.headers.host;
-	hostname = req.session.hostname;
+	var hostname = req.session.hostname;
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
 	{
 	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
@@ -91,7 +91,7 @@ web.edit = (req, res) => {
 //transaction list
 web.transaction_list = (req, res) => {
 	req.session.hostname = req.headers.host;
-	hostname = req.session.hostname;
+	var hostname = req.session.hostname;
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
 	{
 	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
@@ -128,7 +128,7 @@ web.transaction_list = (req, res) => {
 //view transaction details
 web.view_transaction = (req, res) => {
 	req.session.hostname = req.headers.host;
-	hostname = req.session.hostname;
+	var hostname = req.session.hostname;
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
 	{
 	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
@@ -194,7 +194,7 @@ web.filter_payment=(req,res)=>{
 //show add service/post form
 web.create_service = (req, res) => {
 	req.session.hostname = req.headers.host;
-	hostname = req.session.hostname;
+	var hostname = req.session.hostname;
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
 	{
 	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
