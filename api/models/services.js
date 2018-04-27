@@ -322,7 +322,11 @@ exportFuns.reschedule_appointment = (appointment_id, appointment_date, appointme
 								created_at:new Date(),
 								updated_at:new Date(),
 								is_active:1,
-								is_deleted:0
+								is_deleted:0,
+								service_name: resrecord.service_name,
+								user_name: resrecord.user_name,
+								consumerdata : resrecord.consumerdata,
+								providerdata : resrecord.providerdata 
 							};					
 				return user_model.getUser(resrecord.provider_id)
 				.then(function(userresult){
@@ -336,7 +340,10 @@ exportFuns.reschedule_appointment = (appointment_id, appointment_date, appointme
 					return db.insert('appointments', appointment_data);
 				})
 				.then(function(result){
-					return result.ops[0];
+					return exportFuns.delete_appointment(appointment_id)
+					.then(function(del_result){					
+						return result.ops[0];
+					});					
 				});
 			} else {
 				return "";
@@ -345,6 +352,24 @@ exportFuns.reschedule_appointment = (appointment_id, appointment_date, appointme
     });
 };
 
+//delete appointment
+exportFuns.delete_appointment = (appointment_id) => {
+	let db = new Mongo;
+    let searchPattern = {
+		_id: db.makeID("" + appointment_id)
+    };
+	let updatePattern = {
+		is_deleted : 1,
+		is_active: 0
+	};
+	return db.connect(config.mongoURI)
+    .then(function() {
+        return db.update('appointments', searchPattern, updatePattern);
+    })
+	.then(function(rec_deleted){
+		return rec_deleted;
+	});
+};
 
 // Get appointments by user_id
 exportFuns.get_appointments = (user_id) => {
@@ -827,6 +852,9 @@ exportFuns.getCouponByCode = (coupon_code)=>{
 exportFuns.get_payment_details = (appointment_id, user_id) => {
 	return exportFuns.get_appointment_by_id(appointment_id)
 	.then(function(appointment_data){
+		if(appointment_data.coupon_id == null || appointment_data.coupon_id == undefined || appointment_data.coupon_id == "") {
+			appointment_data.coupon_id = "#####";
+		}
 		//return exportFuns.getCouponById(appointment_data.coupon_id) //changed to below on 24Apr18 as suggested
 		return exportFuns.getCouponByCode(appointment_data.coupon_id)
 		.then(function(coupondata){
@@ -882,18 +910,16 @@ exportFuns.get_total_payment_amount = (appointment_data, percent) => {
 		//}
 	}
 	
-	if(appointment_data.service_addons != null && appointment_data.service_addons != undefined && appointment_data.service_addons != "") {
-		appointment_data.service_addons = _.trim(appointment_data.service_addons);
+	if(appointment_data.service_addons != null && appointment_data.service_addons != undefined && appointment_data.service_addons != "") {		
 		if(typeof appointment_data.service_addons == "string") {
+			appointment_data.service_addons = _.trim(appointment_data.service_addons);
 			var svc_addon = JSON.parse(appointment_data.service_addons)
 		} else {
 			var svc_addon = JSON.parse(JSON.stringify(appointment_data.service_addons));
-		}
+		}		
 		//if(typeof appointment_data.service_addons === 'string') {
 			
 			for(var i = 0; i < svc_addon.length; i++) {
-				console.log("price for row:" + i);
-				console.log(svc_addon[i].price);
 				if(svc_addon[i].price != null && svc_addon[i].price != undefined && svc_addon[i].price != "" && svc_addon[i].price) {
 					total_price = parseFloat(total_price) + parseFloat(svc_addon[i].price);
 				}
@@ -953,6 +979,10 @@ exportFuns.make_stripe_payment = (token, amount, currency, user_id, appointment_
 		.then(function(res_key){
 			var secret_key = res_key.value;
 			if(secret_key) {
+				var stramount = "" + amount;
+				if(stramount.indexOf(".") > -1) {
+					amount = amount * 100; //removing decimals as required by stripe 
+				}
 				var stripe = require("stripe")("" + secret_key);
 				var currency_code = (currency == "C$")? "cad" : "usd";
 				var charge = stripe.charges.create({
