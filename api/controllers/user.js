@@ -362,7 +362,7 @@ api.user_register = (req, res) => {
                                                             google_login_id: "",
                                                             social_login_data_status: 0,
                                                             otp_status: 0,
-                                                            is_active: 0,
+                                                            is_active: 1,
                                                             is_deleted: 0,
                                                             created_time: new Date(),
                                                             modified_time: new Date()
@@ -1504,7 +1504,7 @@ transporter.sendMail(mailOptions, function(error, info){
          "status": 400,
          "api_name": "get_coupon_by_service_id",
          "message": "Result not found.",
-         "data": {}
+         "data": []
       }
 */
 api.get_coupon_by_service_id = (req, res)=>{
@@ -1531,7 +1531,7 @@ api.get_coupon_by_service_id = (req, res)=>{
                     "status": 400,
                     "api_name": "get_coupon_by_service_id",
                     "message": "Coupon not found",
-                    "data": {}
+                    "data": []
                 });
                 return;
             }
@@ -1543,7 +1543,7 @@ api.get_coupon_by_service_id = (req, res)=>{
               if(coupon!=null){
                   res.json({
                     "status": 200,
-                    "api_name": "get_coupon",
+                    "api_name": "get_coupon_by_service_id",
                     "message": "All coupons.",
                     "data": coupon
                   });

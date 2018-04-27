@@ -68,6 +68,10 @@ exportFuns.add_coupon = (coupon_data)=> {
 	coupon_data.is_deleted = 0;
 	if(coupon_data.service_ids == null || coupon_data.service_ids.length == 0) {
 		coupon_data.service_ids = [];
+	} else if(typeof coupon_data.service_ids == "string") {
+		var svc_ids = [];
+		svc_ids.push(coupon_data.service_ids);
+		coupon_data.service_ids = svc_ids;
 	}
 	
 	delete coupon_data.btnsubmit;

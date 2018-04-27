@@ -985,34 +985,36 @@ exportFuns.make_stripe_payment = (token, amount, currency, user_id, appointment_
 				}
 				var stripe = require("stripe")("" + secret_key);
 				var currency_code = (currency == "C$")? "cad" : "usd";
-				var charge = stripe.charges.create({
+				return stripe.charges.create({
 					amount: amount, // amount in cents, again
 					currency: currency_code,
 					card: token,
 					description: "Payment from userid:" + user_id
-				}, function(err, charge) {
-					//if (err && (err.type === 'StripeCardError' || err.type === 'StripeInvalidRequestError')) {
-					if (err) {
-						console.log(JSON.stringify(err, null, 2));
-						return exportFuns.record_payment_details(token, amount, currency, user_id, appointment_id, err)
-						.then(function(res_record){							
-							return 0;
-						});
-					}
-					//console.log(charge);
-					return exportFuns.record_payment_details(token, amount, currency, user_id, appointment_id, charge)
-					.then(function(res_record){							
-						return 1;
-					});
 				});
-			} else {
-				return null;
 			}
-		});
+		})
+		.then(function(charge){
+			return exportFuns.record_payment_details(token, amount, currency, user_id, appointment_id, charge)
+			.then(function(res_record){
+				var resp_obj = {};
+				resp_obj.responsecode = 1;
+				resp_obj.message = "Payment was successful";
+				return resp_obj;
+			});
+		}).catch(function(err){
+			console.log(JSON.stringify(err, null, 2));
+			return exportFuns.record_payment_details(token, amount, currency, user_id, appointment_id, err)
+			.then(function(res_record){
+				var resp_obj = {};
+				resp_obj.responsecode = 0;
+				resp_obj.message = "" + err.message;
+				return resp_obj;
+			});
+		});		
     })
-    .then(function(settings) {
-        db.close();
-        return settings;
+    .then(function(res_payment) {
+		db.close();
+        return res_payment;
     });
 };
 

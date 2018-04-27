@@ -230,30 +230,6 @@ $('form[id="frm_postservice"]').validate({
 		minlength: 3,
         maxlength: 30
 	},
-	area_from_sqft :  {
-		required: true
-	},
-	area_to_sqft :  {
-		required: true
-	},
-	area_price  : {
-		required: true
-	},
-	grass_from_sqft :  {
-		required: true
-	},
-	grass_to_sqft  : {
-		required: true
-	},
-	grass_price  : {
-		required: true
-	},
-	addon_name  : {
-		required: true
-	},
-	addon_price  : {
-		required: true
-	},
 	fileupload1  : {
 		required: true
 	}

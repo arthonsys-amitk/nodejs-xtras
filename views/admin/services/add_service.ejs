@@ -631,6 +631,29 @@
                   </div>
 				  
 				  <div class="form-group">
+                    <label for="service_options" class="col-sm-4 control-label">Service Options</label>
+
+                    <div class="col-sm-6" id="option_pricing_box">
+                      <div id="option_row_1">
+						  <div class="col-sm-3" style="padding-left: 0px;">
+								<label for="option_name" class="col-sm-4 control-label" style="padding: 0px;" >Name</label>
+								<input type="text" class="form-control" name="option_name" value="" />
+						  </div>
+						  <div class="col-sm-3" style="padding-left: 0px;">
+								<label for="option_price" class="col-sm-4 control-label" style="padding: 0px;" >Price</label>
+								<input type="text" class="form-control" name="option_price" value="" />
+						  </div>
+						  <div class="col-sm-3" style="padding-left: 0px;">&nbsp;</div>
+						  <div class="col-sm-3" style="padding-left: 0px;">
+								<br/>
+								<button type="button" id="btnoptionaddmore" class="btn " title="Add More" onclick="javascript: addOption();"><i class="fa fa-plus"></i></button>
+						  </div>
+					  </div>
+					  
+                    </div>
+                  </div>
+				  
+				  <div class="form-group">
                     <label for="service_addons" class="col-sm-4 control-label">Add Ons/Special Equipment</label>
 
                     <div class="col-sm-6" id="addon_pricing_box">
@@ -723,7 +746,7 @@
        showInputs: false
 	 });
 	 jQuery("#weekday_stop_time").timepicker({
-       showInputs: false
+       showInputs: false,
 	 });
 	 jQuery("#weekend_start_time").timepicker({
        showInputs: false
@@ -736,7 +759,11 @@
 	 jQuery("#parent_category_id").click(function(){
 		jQuery("#parent_category_name").val(jQuery("#parent_category_id option:selected").html());
 	 });
-	 	 
+	 
+	 jQuery("#weekday_start_time").val("");
+	 jQuery("#weekday_stop_time").val("");
+	 jQuery("#weekend_start_time").val("");
+	 jQuery("#weekend_stop_time").val("");
   });
    
   </script>
@@ -744,6 +771,7 @@
    var areactr = 1;
    var grassctr = 1;
    var addonctr = 1;
+   var optctr = 1;
    function addArea() {
 	 var rowctr = areactr + 1;
      var strareahtml = "<div id='area_row_" + rowctr + "'><div class='col-sm-3' style='padding-left: 0px;'><label for='area_from_sqft' class='col-sm-4 control-label' style='padding: 0px;' >From(sqft)</label><input type='text' class='form-control' name='area_from_sqft' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label for='area_to_sqft' class='col-sm-4 control-label' style='padding: 0px;' >To(sqft)</label><input type='text' class='form-control' name='area_to_sqft' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label for='area_price' class='col-sm-4 control-label' style='padding: 0px;' >Price</label><input type='text' class='form-control' name='area_price' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><br/><button type='button' id='btnareadelete"+ rowctr +"' class='btn btn-danger' title='Remove' onclick='javascript: removeArea(" + rowctr + ");'><i class='fa fa-trash'></i></button></div></div>";
@@ -780,6 +808,20 @@
    
    function removeAddon(rownum) {
 		jQuery("#addon_row_" + rownum).remove();
+		return false;
+   }
+   
+   
+   function addOption() {
+		var rowctr = optctr + 1;
+		var stroptionhtml = "<div id='option_row_" + rowctr + "'><div class='col-sm-3' style='padding-left: 0px;'><label for='option_name' class='col-sm-4 control-label' style='padding: 0px;' >Name</label><input type='text' class='form-control' name='option_name' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label class='col-sm-4 control-label' style='padding: 0px;' >Price</label><input type='text' class='form-control' name='option_price' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'>&nbsp;</div><div class='col-sm-3' style='padding-left: 0px;'><br/><button type='button' id='btnoptiondelete" + rowctr + "' class='btn btn-danger' title='Remove' onclick='javascript: removeOption(" + rowctr + ")'><i class='fa fa-trash'></i></button></div></div>";
+		jQuery("#option_pricing_box").append(stroptionhtml);
+		optctr = optctr + 1;
+		return false;
+   }
+   
+   function removeOption(rownum) {
+		jQuery("#option_row_" + rownum).remove();
 		return false;
    }
   </script>

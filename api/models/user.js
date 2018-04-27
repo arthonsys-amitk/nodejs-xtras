@@ -477,15 +477,31 @@ exportFuns.add_faq = (email,query) => {
 exportFuns.get_coupon_by_service_id = (service_id) => {
     console.log(service_id);
     let db = new Mongo;
+	/*
     let searchPattern = {
         service_ids:service_id,
         expiry_date: { $gte: new Date() }         
+    }; */
+	let searchPattern = {
+        expiry_date: { $gte: new Date() }
     };
-    console.log(searchPattern);
-    return db.connect(config.mongoURI)
+	return db.connect(config.mongoURI)
     .then(function() {
-         return db.find('coupon', searchPattern);
-    });
+		console.log(searchPattern);
+         return db.find('coupon', {})
+    })
+	.then(function(res){
+		console.log(res);
+		if(res == null) { return res; }
+		var coupons = [];
+		var svc_ids = [];
+		for(var i = 0; i < res.length; i++) {
+			if(res[i].service_ids != null && res[i].service_ids.length > 0 && res[i].service_ids.indexOf("" + service_id) > -1) {
+				coupons.push(res[i]);
+			}
+		}
+		return coupons;
+	});
 
 };
 

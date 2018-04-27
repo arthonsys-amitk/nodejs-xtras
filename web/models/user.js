@@ -135,7 +135,7 @@ exportFuns.update_profile = (user_data,file,latitude,longitude,zipcode)=>{
 	    console.log("profiletype:" + typeof file.profile);
 		if (typeof file.profile != "undefined") {
 		    let imageFile = file.profile;
-		    var file_name = user_data.fullname+Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
+		    var file_name = Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
 		    imageFile.mv('public/uploads/users/'+file_name, function(err) {
 		    if (err){
 		      console.log(err);
@@ -255,7 +255,7 @@ exportFuns.add_user = (user_data,file, latitude, longitude, zipcode)=>{
  	 
 		if(typeof file.profile!="undefined") {
 			let imageFile = file.profile;
-			var file_name = user_data.fullname+Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
+			var file_name = Date.now() + Math.floor(Math.random() * (500 - 20 + 1) + 20) + ".jpg";
 			imageFile.mv('public/uploads/users/'+file_name, function(err) {
 				if (err){
 				  console.log(err);

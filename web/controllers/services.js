@@ -616,6 +616,31 @@ web.post_service = (req, res) => {
 			obj_addon.price = req.body.addon_price;
 			arr_addon_pricing.push(obj_addon);
 		}
+				
+		
+		var arr_option_pricing = [];
+		if(typeof req.body.option_name == "object") {
+			//array
+			if(req.body.option_name.length != req.body.option_name.price) {
+				req.session.alert_data = { alert_type: "danger", alert_msg: "Invalid option pricing values" };
+				res.redirect('/admin/list_services');
+			}
+			for(var i = 0; i < req.body.option_name.length; i++) {
+				var obj_option = {};
+				obj_option._id = new mongo.ObjectID();
+				obj_option.name = req.body.option_name[i];
+				obj_option.price = req.body.option_price[i];
+				arr_option_pricing.push(obj_option);
+			}
+			
+		} else {
+			//string
+			var obj_option = {};
+			obj_option._id = new mongo.ObjectID();
+			obj_option.name = req.body.option_name;
+			obj_option.price = req.body.option_price;
+			arr_option_pricing.push(obj_option);
+		}
 		
 		let servicedata = {
 			service_category_id : req.body.service_category_id,
@@ -646,7 +671,7 @@ web.post_service = (req, res) => {
 			service_area_and_pricing: arr_area_pricing,
 			service_grass_snow_height: arr_grass_pricing,
 			service_addons: arr_addon_pricing,
-			service_options: [],
+			service_options: arr_option_pricing,
 		};
 		
 		

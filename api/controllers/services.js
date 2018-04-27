@@ -1463,7 +1463,14 @@ api.get_posts = (req, res)=> {
 		.then(function(posts){
 			posts.forEach(function(item) {
 				item.rating = parseFloat(item.rating).toFixed(2);
-				item.min_price = parseFloat(services.getMinServicePrice(item)).toFixed(2);
+				item.min_price = parseFloat(services.getMinServicePrice(item)).toFixed(2);	
+				item.available_monday = "" + item.available_monday;
+				item.available_tuesday = "" + item.available_tuesday;
+				item.available_wednesday = "" + item.available_wednesday;
+				item.available_thursday = "" + item.available_thursday;
+				item.available_friday = "" + item.available_friday;
+				item.available_saturday = "" + item.available_saturday;
+				item.available_sunday = "" + item.available_sunday;
 			});
 						
 			if(type == "price")
