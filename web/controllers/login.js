@@ -216,7 +216,7 @@ web.update_profile = (req, res)=>{
 				});
 			}else
 			{
-				req.flash("msg","Profile not update");
+				req.flash("msg","Profile not updated");
 				res.locals.messages = req.flash();
 				login.getUser(req.session.user_data._id).then(function(result){
 				res.redirect('/admin/profile');

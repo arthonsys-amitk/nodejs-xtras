@@ -62,7 +62,7 @@ exportFuns.add_coupon = (coupon_data)=> {
 	else
 		coupon_data.multiple_use = 0;
 	
-	coupon_data.expiry_date = dateFormat(coupon_data.expiry_date, "dd-mm-yyyy");
+	coupon_data.expiry_date = dateFormat(coupon_data.expiry_date, "isoDateTime");
 		
 	coupon_data.created_at = new Date();
 	coupon_data.is_deleted = 0;

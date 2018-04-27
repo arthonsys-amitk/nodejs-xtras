@@ -18,7 +18,7 @@ $('form[id="add_user"]').validate({
     confirm_password: {
       required: true,
       minlength: 5,
-      equalTo: "password"
+      equalTo: "#password"
     },
     phone: {
       required: true,
@@ -166,6 +166,97 @@ $('form[id="payment_setting"]').validate({
       required: true,
       maxlength:30
     }
+  },
+  messages: {
+   
+  },
+  submitHandler: function(form) {
+    form.submit();
+  }
+});
+// End
+
+// validation of Add Service
+$('form[id="frm_postservice"]').validate({
+  rules: {
+	service_category_id : {
+		required: true,
+	},
+	service_name  : {
+		required: true,
+		minlength: 3,
+        maxlength: 50
+	},
+	service_radius  : {
+		required: true,
+		digits: true
+	},
+	service_availability :  {
+		required: true,
+	},
+	cancel_hours  : {
+		required: true,
+		digits: true
+	},
+	cancel_fee  : {
+		required: true,
+		digits: true
+	},
+	reschedule_hours  : {
+		required: true,
+		digits: true
+	},
+	reschedule_fee :  {
+		required: true,
+		digits: true
+	},
+	address  : {
+		required: true,
+		minlength: 3,
+        maxlength: 50
+	},
+	city :  {
+		required: true,
+		minlength: 3,
+        maxlength: 30
+	},
+	province  : {
+		required: true,
+		minlength: 3,
+        maxlength: 30
+	},
+	zipcode :  {
+		required: true,
+		minlength: 3,
+        maxlength: 30
+	},
+	area_from_sqft :  {
+		required: true
+	},
+	area_to_sqft :  {
+		required: true
+	},
+	area_price  : {
+		required: true
+	},
+	grass_from_sqft :  {
+		required: true
+	},
+	grass_to_sqft  : {
+		required: true
+	},
+	grass_price  : {
+		required: true
+	},
+	addon_name  : {
+		required: true
+	},
+	addon_price  : {
+		required: true
+	},
+	fileupload1  : {
+		required: true
+	}
   },
   messages: {
    

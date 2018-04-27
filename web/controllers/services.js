@@ -22,6 +22,8 @@ var exportFuns = {},
 
 // Display all services
 web.list_services=(req,res)=>{
+	req.session.hostname = req.headers.host;
+	hostname = req.session.hostname;
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
 	{
 	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
@@ -44,13 +46,15 @@ web.list_services=(req,res)=>{
 				var qrycount = req.session.resqueries.length;
 				var resqueries = req.session.resqueries;
 			}
-			res.render('admin/services/list',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "services_list" : services_result});
+			res.render('admin/services/list',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "services_list" : services_result, "hostname" : hostname});
 		});
    	}
 };
 
 // Edit service
 web.edit = (req, res) => {
+	req.session.hostname = req.headers.host;
+	hostname = req.session.hostname;
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
 	{
 	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
@@ -79,13 +83,15 @@ web.edit = (req, res) => {
 				var qrycount = req.session.resqueries.length;
 				var resqueries = req.session.resqueries;
 			}
-			res.render('admin/services/edit_services',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "service" : res_service});
+			res.render('admin/services/edit_services',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "service" : res_service, "hostname" : hostname});
 		}
 	});
 };
 
 //transaction list
 web.transaction_list = (req, res) => {
+	req.session.hostname = req.headers.host;
+	hostname = req.session.hostname;
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
 	{
 	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
@@ -114,13 +120,15 @@ web.transaction_list = (req, res) => {
 			for(var i = 0; i < transaction_recs.length; i++) {
 				transaction_recs[i].created_at = dateFormat(new Date(transaction_recs[i].created_at), "dd-mm-yyyy hh:MM:ss TT");
 			}
-			res.render('admin/services/transaction_list',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "transactions" : transaction_recs, "users" : user_recs, "arr_user_ids" : user_id_recs});
+			res.render('admin/services/transaction_list',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "transactions" : transaction_recs, "users" : user_recs, "arr_user_ids" : user_id_recs, "hostname" : hostname});
 		});
 	}
 };
 
 //view transaction details
 web.view_transaction = (req, res) => {
+	req.session.hostname = req.headers.host;
+	hostname = req.session.hostname;
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
 	{
 	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
@@ -154,7 +162,7 @@ web.view_transaction = (req, res) => {
 				var rec_transaction = res_transaction[0];
 				var rec_user = res_transaction[1];
 rec_transaction.created_at = dateFormat(new Date(rec_transaction.created_at), "dd-mm-yyyy hh:MM:ss TT");
-				res.render('admin/services/transaction_details',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "transaction" : rec_transaction, "user" : rec_user});
+				res.render('admin/services/transaction_details',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "transaction" : rec_transaction, "user" : rec_user, "hostname" : hostname});
 			} else {
 				req.session.alert_data = { alert_type: "danger", alert_msg: "Details could not be fetched" };
 				res.redirect('/admin/transaction_list');
@@ -185,6 +193,8 @@ web.filter_payment=(req,res)=>{
 }
 //show add service/post form
 web.create_service = (req, res) => {
+	req.session.hostname = req.headers.host;
+	hostname = req.session.hostname;
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
 	{
 	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
@@ -208,7 +218,7 @@ web.create_service = (req, res) => {
 				var resqueries = req.session.resqueries;
 			}
 			if(res_service != null && res_service != undefined && res_service != {} ) {
-				res.render('admin/services/add_service',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "service" : res_service});
+				res.render('admin/services/add_service',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "service" : res_service, "hostname" : hostname});
 			}
 		});
 	}

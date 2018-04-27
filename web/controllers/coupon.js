@@ -43,6 +43,11 @@ web.get_coupon=(req,res)=>{
 				var qrycount = req.session.resqueries.length;
 				var resqueries = req.session.resqueries;
 			}
+			if(coupon_result != null && coupon_result != undefined) {
+				for(var i = 0; i < coupon_result.length; i++) {
+					coupon_result[i].expiry_date = dateFormat(new Date(coupon_result[i].expiry_date), "dd mmmm yyyy");					
+				}
+			}
 			res.render('admin/coupon/coupon_list',{"user_data":req.session.user_data,'coupon':coupon_result, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since});
 
 		});
