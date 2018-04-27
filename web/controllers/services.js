@@ -187,7 +187,7 @@ web.filter_payment=(req,res)=>{
 			res.render('admin/services/filter_date',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "transactions" : res_transaction, "user" : rec_user});
 		}else{
 			req.session.alert_data = { alert_type: "danger", alert_msg: "Details could not be fetched" };
-			res.redirect('/admin');
+			res.redirect('/admin/transaction_list');
 		} 
 	});
 }

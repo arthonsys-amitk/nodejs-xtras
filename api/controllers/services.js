@@ -1124,7 +1124,7 @@ function send_confirm_appointment_push_notification(appointment_id){
 							
 				}; 
 	
-	all_function.send_device_token_using_user_id(data[0].consumer_id,cunsumer_messagePattern);
+	all_function.send_device_token_using_user_id(data.consumer_id,cunsumer_messagePattern);
 	});
 }
 /**
