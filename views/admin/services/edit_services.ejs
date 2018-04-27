@@ -9,7 +9,7 @@
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="/list/services">Services</a></li>
+        <li><a href="/list_services">Services</a></li>
         <li class="active">Update Service</li>
       </ol>
     </section>
@@ -43,7 +43,7 @@
             </ul>
             <div class="tab-content">
               <div class="active tab-pane" id="activity">
-                <form class="form-horizontal" method="post" action="/admin/services/update_service">
+                <form class="form-horizontal" method="post" enctype="multipart/form-data" action="/admin/services/update_service">
                   <div class="form-group">
                     <label for="coupon_code" class="col-sm-4 control-label">Service Category</label>
 
@@ -95,7 +95,7 @@
                   </div>
 				  
 				  <div class="form-group">                    
-						<label class="col-sm-4 control-label">Service Name</label>
+						<label class="col-sm-4 control-label">Additional Details</label>
 
 						<div class="col-sm-6">
 						  <textarea name="additional_details" class="form-control" id="additional_details" placeholder="Enter Additional Details"><%=service.additional_details%></textarea>
@@ -195,16 +195,25 @@
 				  <div class="form-group">
 					<label for="service_availability" class="col-sm-4 control-label">Service Availability</label>
 
+					<%
+						var avl_mon = (service.available_monday != 0 && service.available_monday != "0")? "selected" : "";
+						var avl_tue = (service.available_tuesday != 0 && service.available_tuesday != "0")? "selected" : "";
+						var avl_wed = (service.available_wednesday != 0 && service.available_wednesday != "0")? "selected" : "";
+						var avl_thu = (service.available_thursday != 0 && service.available_thursday != "0")? "selected" : "";
+						var avl_fri = (service.available_friday != 0 && service.available_friday != "0")? "selected" : "";
+						var avl_sat = (service.available_saturay != 0 && service.available_saturday != "0")? "selected" : "";
+						var avl_sun = (service.available_sunday != 0 && service.available_sunday != "0")? "selected" : "";
+					%>
 					<div class="col-sm-6">
 					  <select class="form-control" id="service_availability" name="service_availability" multiple>
 							<option value="">--Select --</option>
-							<option value="available_monday" >Monday</option>
-							<option value="available_tuesday" >Tuesday</option>
-							<option value="available_wednesday" >Wednesday</option>
-							<option value="available_thursday" >Thursday</option>
-							<option value="available_friday" >Friday</option>
-							<option value="available_saturday" >Saturday</option>
-							<option value="available_sunday" >Sunday</option>							
+							<option value="available_monday" <%=avl_mon%>>Monday</option>
+							<option value="available_tuesday" <%=avl_tue%>>Tuesday</option>
+							<option value="available_wednesday" <%=avl_wed%>>Wednesday</option>
+							<option value="available_thursday" <%=avl_thu%>>Thursday</option>
+							<option value="available_friday" <%=avl_fri%>>Friday</option>
+							<option value="available_saturday" <%=avl_sat%>>Saturday</option>
+							<option value="available_sunday" <%=avl_sun%>>Sunday</option>							
 					  </select>
 					</div>
 				  </div>
@@ -284,7 +293,7 @@
                     <label for="address" class="col-sm-4 control-label">Address</label>
 
                     <div class="col-sm-6 " >
-                      <input type="text" value="<%=service.address %>" name="address" class="form-control" id="address" style="padding-left: 0px; padding-top: 0px;"/>
+                      <input type="text" value="<%=service.address %>" name="address" class="form-control" id="address" />
                     </div>
                   </div>
 				  
@@ -292,7 +301,7 @@
                     <label for="city" class="col-sm-4 control-label">City</label>
 
                     <div class="col-sm-6 " >
-                      <input type="text" value="<%=service.city %>" name="city" class="form-control" id="city" style="padding-left: 0px; padding-top: 0px;"/>
+                      <input type="text" value="<%=service.city %>" name="city" class="form-control" id="city" />
                     </div>
                   </div>
 				  
@@ -300,10 +309,18 @@
                     <label for="province" class="col-sm-4 control-label">Province/State</label>
 
                     <div class="col-sm-6 " >
-                      <input type="text" value="<%=service.province %>" name="province" class="form-control" id="province" style="padding-left: 0px; padding-top: 0px;"/>
+                      <input type="text" value="<%=service.province %>" name="province" class="form-control" id="province" />
                     </div>
                   </div>
-				  
+
+				  <div class="form-group">
+                    <label for="zipcode" class="col-sm-4 control-label">Zipcode</label>
+
+                    <div class="col-sm-6 " >
+                      <input type="text" name="zipcode" class="form-control" id="zipcode" value="<%=service.zipcode%>" />
+                    </div>
+                  </div>
+	  			  
 				  
 				  <div class="form-group">
                     <label for="province" class="col-sm-4 control-label">Country</label>
@@ -577,7 +594,7 @@
 							if(service.currency == "$") usd = "selected";
 							if(service.currency == "C$") cad = "selected";
 							%>
-						  <select id="rating" name="rating" class="form-control">
+						  <select id="currency" name="currency" class="form-control">
 							<option value="$" <%=usd%>>USD</option>
 							<option value="C$" <%=cad%>>CAD</option>
 						  </select>
@@ -611,7 +628,41 @@
 				  <div class="form-group">
                     <label for="service_area_and_pricing" class="col-sm-4 control-label">Service Area & Pricing</label>
 
-                    <div class="col-sm-6">
+                    <div class="col-sm-6" id="area_pricing_box">
+						<%
+							var areactr = 1;
+							if(service.service_area_and_pricing != null && service.service_area_and_pricing != undefined && service.service_area_and_pricing != [] && service.service_area_and_pricing.length > 0) {
+								areactr = service.service_area_and_pricing.length;
+								for(var i = 0; i < service.service_area_and_pricing.length; i++) {
+									%>
+										<div id="area_row_<%=(i+1)%>">
+										  <div class="col-sm-3" style="padding-left: 0px;">
+												<label for="area_from_sqft" class="col-sm-4 control-label" style="padding: 0px;" >From(sqft)</label>
+												<input type="text" class="form-control" name="area_from_sqft" value="<%=service.service_area_and_pricing[i].area_from_sqft %>" />
+												<input type="hidden" class="form-control" name="area_id" value="<%=service.service_area_and_pricing[i]._id %>" />
+										  </div>
+										  <div class="col-sm-3" style="padding-left: 0px;">
+												<label for="area_to_sqft" class="col-sm-4 control-label" style="padding: 0px;" >To(sqft)</label>
+												<input type="text" class="form-control" name="area_to_sqft" value="<%=service.service_area_and_pricing[i].area_to_sqft%>" />
+										  </div>
+										  <div class="col-sm-3" style="padding-left: 0px;">
+												<label for="area_price" class="col-sm-4 control-label" style="padding: 0px;" >Price</label>
+												<input type="text" class="form-control" name="area_price" value="<%=service.service_area_and_pricing[i].price%>" />
+										  </div>
+										  <div class="col-sm-3" style="padding-left: 0px;">
+												<br/>
+												<%if((i+1) > 1) {%>
+													<button type="button" id="btnareadelete<%=(i+1)%>" class="btn btn-danger" title="Remove" onclick="javascript: removeArea(<%=(i+1)%>);'><i class='fa fa-trash'></i></button>";
+												<% }%>
+												<%if((i+1) == 1) {%>
+												<button type="button" id="btnareaaddmore" class="btn " title="Add More" onclick="javascript: addArea();"><i class="fa fa-plus"></i></button>
+												<% }%>
+										  </div>
+									  </div>
+									<%
+								}
+							} else {
+						%>
                       <div id="area_row_1">
 						  <div class="col-sm-3" style="padding-left: 0px;">
 								<label for="area_from_sqft" class="col-sm-4 control-label" style="padding: 0px;" >From(sqft)</label>
@@ -623,14 +674,164 @@
 						  </div>
 						  <div class="col-sm-3" style="padding-left: 0px;">
 								<label for="area_price" class="col-sm-4 control-label" style="padding: 0px;" >Price</label>
-								<input type="text" class="form-control" name="price" value="" />
+								<input type="text" class="form-control" name="area_price" value="" />
 						  </div>
 						  <div class="col-sm-3" style="padding-left: 0px;">
-								<br/><button type="button" id="btndelete1" class="btn btn-danger" title="Remove">X</button>
+								<br/>
+								<button type="button" id="btnareaaddmore" class="btn " title="Add More" onclick="javascript: addArea();"><i class="fa fa-plus"></i></button>
 						  </div>
 					  </div>
+					  <% } %>
 					  
-                    </div>					
+                    </div>
+                  </div>
+				  
+				  <div class="form-group">
+                    <label for="service_grass_snow_height" class="col-sm-4 control-label">Snow/Grass Height</label>
+
+                    <div class="col-sm-6" id="grass_pricing_box">
+						<%
+							var grassctr = 1;
+							if(service.service_grass_snow_height != null && service.service_grass_snow_height != undefined && service.service_grass_snow_height != []  && service.service_grass_snow_height.length > 0) {								
+									grassctr = service.service_grass_snow_height.length;
+									for(var i =0 ; i< service.service_grass_snow_height.length; i++ ) {
+										%>
+										<div id="grass_row_<%=(i+1)%>">
+										  <div class="col-sm-3" style="padding-left: 0px;">
+												<label for="grass_from_sqft" class="col-sm-4 control-label" style="padding: 0px;" >From(sqft)</label>
+												<input type="text" class="form-control" name="grass_from_sqft" value="<%=service.service_grass_snow_height[i].area_from_sqft %>" />
+												<input type="hidden" class="form-control" name="grass_id" value="<%=service.service_grass_snow_height[i]._id %>" />
+										  </div>
+										  <div class="col-sm-3" style="padding-left: 0px;">
+												<label for="grass_to_sqft" class="col-sm-4 control-label" style="padding: 0px;" >To(sqft)</label>
+												<input type="text" class="form-control" name="grass_to_sqft" value="<%=service.service_grass_snow_height[i].area_to_sqft %>" />
+										  </div>
+										  <div class="col-sm-3" style="padding-left: 0px;">
+												<label for="grass_price" class="col-sm-4 control-label" style="padding: 0px;" >Price</label>
+												<input type="text" class="form-control" name="grass_price" value="<%=service.service_grass_snow_height[i].price %>" />
+										  </div>
+										  <div class="col-sm-3" style="padding-left: 0px;">
+												<br/>
+												<% if((i+1) > 1) { %>
+													<button type="button" id="btnareadelete<%=(i+1)%>" class="btn btn-danger" title="Remove" onclick="javascript: removeArea(<%=(i+1)%>);><i class='fa fa-trash'></i></button>";
+												<% } %>
+												<% if((i+1) == 1) { %>
+													<button type="button" id="btngrassaddmore" class="btn " title="Add More" onclick="javascript: addGrassArea();"><i class="fa fa-plus"></i></button>
+												<% } %>
+										  </div>
+									  </div>
+										<%
+									}								
+							} else {
+						%>
+                      <div id="grass_row_1">
+						  <div class="col-sm-3" style="padding-left: 0px;">
+								<label for="grass_from_sqft" class="col-sm-4 control-label" style="padding: 0px;" >From(sqft)</label>
+								<input type="text" class="form-control" name="grass_from_sqft" value="" />
+						  </div>
+						  <div class="col-sm-3" style="padding-left: 0px;">
+								<label for="grass_to_sqft" class="col-sm-4 control-label" style="padding: 0px;" >To(sqft)</label>
+								<input type="text" class="form-control" name="grass_to_sqft" value="" />
+						  </div>
+						  <div class="col-sm-3" style="padding-left: 0px;">
+								<label for="grass_price" class="col-sm-4 control-label" style="padding: 0px;" >Price</label>
+								<input type="text" class="form-control" name="grass_price" value="" />
+						  </div>
+						  <div class="col-sm-3" style="padding-left: 0px;">
+								<br/>
+								<button type="button" id="btngrassaddmore" class="btn " title="Add More" onclick="javascript: addGrassArea();"><i class="fa fa-plus"></i></button>
+						  </div>
+					  </div>
+					  <% } %>
+					  
+                    </div>
+                  </div>
+				  
+				  <div class="form-group">
+                    <label for="service_addons" class="col-sm-4 control-label">Add Ons/Special Equipment</label>
+
+                    <div class="col-sm-6" id="addon_pricing_box">
+                      <%
+						var addonctr = 1;
+						if(service.service_addons != undefined && service.service_addons != null && service.service_addons.length > 0) {
+							addonctr = service.service_addons.length;
+							for(var i = 0; i < service.service_addons.length; i++) {
+								%>
+								<div id="addon_row_<%=(i+1)%>">
+								  <div class="col-sm-3" style="padding-left: 0px;">
+										<label for="addon_name" class="col-sm-4 control-label" style="padding: 0px;" >Name</label>
+										<input type="hidden" class="form-control" name="addon_id" value="<%=service.service_addons[i]._id%>" />
+										<input type="text" class="form-control" name="addon_name" value="<%=service.service_addons[i].name%>" />
+								  </div>
+								  <div class="col-sm-3" style="padding-left: 0px;">
+										<label for="addon_price" class="col-sm-4 control-label" style="padding: 0px;" >Price</label>
+										<input type="text" class="form-control" name="addon_price" value="<%=service.service_addons[i].price%>" />
+								  </div>
+								  <div class="col-sm-3" style="padding-left: 0px;">&nbsp;</div>
+								  <div class="col-sm-3" style="padding-left: 0px;">
+										<br/>
+										<% if((i+1) > 1) {%>
+											<button type="button" id="btnaddondelete<%=(i+1)%>" class="btn btn-danger" title="Remove" onclick="javascript: removeAddon(<%=(i+1)%>)"><i class="fa fa-trash"></i></button>
+										<% } %>
+										<% if((i+1) == 1) {%>
+										<button type="button" id="btnaddonaddmore" class="btn " title="Add More" onclick="javascript: addAddon();"><i class="fa fa-plus"></i></button>
+										<% } %>
+								  </div>
+							  </div>
+								<%
+							}
+						} else {
+					  %>
+					  <div id="addon_row_1">
+						  <div class="col-sm-3" style="padding-left: 0px;">
+								<label for="addon_name" class="col-sm-4 control-label" style="padding: 0px;" >Name</label>
+								<input type="text" class="form-control" name="addon_name" value="" />
+						  </div>
+						  <div class="col-sm-3" style="padding-left: 0px;">
+								<label for="addon_price" class="col-sm-4 control-label" style="padding: 0px;" >Price</label>
+								<input type="text" class="form-control" name="addon_price" value="" />
+						  </div>
+						  <div class="col-sm-3" style="padding-left: 0px;">&nbsp;</div>
+						  <div class="col-sm-3" style="padding-left: 0px;">
+								<br/>
+								<button type="button" id="btnaddonaddmore" class="btn " title="Add More" onclick="javascript: addAddon();"><i class="fa fa-plus"></i></button>
+						  </div>
+					  </div>
+					  <% } %>
+                    </div>
+                  </div>
+				  
+				  <div class="form-group">
+					<label class="col-sm-4 control-label">Uploads</label>
+                    <div id="file_uploads" class="col-sm-6">
+						<%
+							var link1 = ""; 
+							var link2 = ""; 
+							var link3 = ""; 
+							var link4 = "";
+							if(service.service_uploads != null && service.service_uploads != undefined && service.service_uploads != []) {
+								for(var i = 0; i < service.service_uploads.length; i++) {
+									switch(i) {
+									case 0: link1 = "<div style='text-align: center;'><a href='" + service.service_uploads[0] + "' target='_blank'>View</a></div>"; break;
+									case 1: link2 = "<div style='text-align: center;'><a href='" + service.service_uploads[1] + "' target='_blank'>View</a></div>"; break;
+									case 2: link3 = "<div style='text-align: center;'><a href='" + service.service_uploads[2] + "' target='_blank'>View</a></div>"; break;
+									case 3: link4 = "<div style='text-align: center;'><a href='" + service.service_uploads[3] + "' target='_blank'>View</a></div>"; break;
+									}
+								}
+							}
+						%>
+						<div>
+							<div class="col-sm-3" style="padding-left: 0px;"><button class="btn" title="Upload file" onclick="javascript: upload1.click(); return false;"><a class="btn btn-app"><i class="fa fa-upload"></i></a></button><%- link1%>
+							<input type="file"  name="fileupload1" style="opacity: 0;" id="upload1" />
+							</div>
+							<div class="col-sm-3" style="padding-left: 0px;"><button class="btn" title="Upload file" onclick="javascript: upload1.click(); return false;"><a class="btn btn-app"><i class="fa fa-upload"></i></a></button><%- link2%>
+							<input type="file"  name="fileupload2" style="opacity: 0;" id="upload2" /></div>
+							<div class="col-sm-3" style="padding-left: 0px;"><button class="btn" title="Upload file" onclick="javascript: upload1.click(); return false;"><a class="btn btn-app"><i class="fa fa-upload"></i></a></button><%- link3%>
+							<input type="file"  name="fileupload3" style="opacity: 0;" id="upload3" /></div>
+							<div class="col-sm-3" style="padding-left: 0px;"><button class="btn" title="Upload file" onclick="javascript: upload1.click(); return false;"><a class="btn btn-app"><i class="fa fa-upload"></i></a></button><%- link4%>
+							<input type="file"  name="fileupload4" style="opacity: 0;" id="upload4" /></div>
+						</div>
+					</div>
                   </div>
 				  
 				  <div class="form-group">
@@ -703,4 +904,48 @@
   });
    
   </script>
+  <script>
+   var areactr = <%=areactr%>;
+   var grassctr = <%=grassctr%>;
+   var addonctr = <%=addonctr%>;
+   function addArea() {
+	 var rowctr = areactr + 1;
+     var strareahtml = "<div id='area_row_" + rowctr + "'><div class='col-sm-3' style='padding-left: 0px;'><label for='area_from_sqft' class='col-sm-4 control-label' style='padding: 0px;' >From(sqft)</label><input type='text' class='form-control' name='area_from_sqft' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label for='area_to_sqft' class='col-sm-4 control-label' style='padding: 0px;' >To(sqft)</label><input type='text' class='form-control' name='area_to_sqft' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label for='area_price' class='col-sm-4 control-label' style='padding: 0px;' >Price</label><input type='text' class='form-control' name='area_price' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><br/><button type='button' id='btnareadelete"+ rowctr +"' class='btn btn-danger' title='Remove' onclick='javascript: removeArea(" + rowctr + ");'><i class='fa fa-trash'></i></button></div></div>";
+	 jQuery("#area_pricing_box").append(strareahtml);
+	 areactr = areactr + 1;
+	 return false;
+   }
+   
+   function removeArea(rownum) {
+		jQuery("#area_row_" + rownum).remove();
+		return false;
+   }
+   
+   function addGrassArea(){
+		var rowctr = grassctr + 1;
+		var strgrasshtml = "<div id='grass_row_" + rowctr +"'><div class='col-sm-3' style='padding-left: 0px;'><label for='grass_from_sqft' class='col-sm-4 control-label' style='padding: 0px;' >From(sqft)</label><input type='text' class='form-control' name='grass_from_sqft' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label for='grass_to_sqft' class='col-sm-4 control-label' style='padding: 0px;' >To(sqft)</label><input type='text' class='form-control' name='grass_to_sqft' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label for='grass_price' class='col-sm-4 control-label' style='padding: 0px;' >Price</label><input type='text' class='form-control' name='grass_price' value=''/></div><div class='col-sm-3' style='padding-left: 0px;'><br/><button type='button' id='btngrassdelete" + rowctr + "' class='btn btn-danger' title='Remove' onclick='javascript: removeGrassArea(" + rowctr + ")'><i class='fa fa-trash'></i></button></button></div></div>";
+		jQuery("#grass_pricing_box").append(strgrasshtml);
+		grassctr = grassctr + 1;
+		return false;
+   }
+   
+   function removeGrassArea(rownum) {
+		jQuery("#grass_row_" + rownum).remove();
+		return false;
+   }
+   
+   function addAddon() {
+		var rowctr = addonctr + 1;
+		var straddonhtml = "<div id='addon_row_" + rowctr + "'><div class='col-sm-3' style='padding-left: 0px;'><label for='addon_name' class='col-sm-4 control-label' style='padding: 0px;' >Name</label><input type='text' class='form-control' name='addon_name' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'><label class='col-sm-4 control-label' style='padding: 0px;' >Price</label><input type='text' class='form-control' name='addon_price' value='' /></div><div class='col-sm-3' style='padding-left: 0px;'>&nbsp;</div><div class='col-sm-3' style='padding-left: 0px;'><br/><button type='button' id='btnaddondelete" + rowctr + "' class='btn btn-danger' title='Remove' onclick='javascript: removeAddon(" + rowctr + ")'><i class='fa fa-trash'></i></button></div></div>";
+		jQuery("#addon_pricing_box").append(straddonhtml);
+		addonctr = addonctr + 1;
+		return false;
+   }
+   
+   function removeAddon(rownum) {
+		jQuery("#addon_row_" + rownum).remove();
+		return false;
+   }
+  </script>
   <%-include('../footer') %> 
+  
