@@ -22,6 +22,8 @@ var exportFuns = {},
 
 // Display all users
 web.all_user = (req, res) => {
+	req.session.hostname = req.headers.host;
+	var hostname = req.session.hostname;
 	if (typeof req.session.user_data == "undefined" || req.session.user_data === true) {
 		if (typeof req.session.alert_data != "undefined" || req.session.alert_data === true) {
 			res.locals.flashmessages = req.session.alert_data;
@@ -40,13 +42,15 @@ web.all_user = (req, res) => {
 				var qrycount = req.session.resqueries.length;
 				var resqueries = req.session.resqueries;
 			}
-			res.render('admin/users/user_list', { "user_data": req.session.user_data, 'users': user_result, "num_queries": qrycount, "resqueries": resqueries, "member_since": req.session.member_since });
+			res.render('admin/users/user_list', { "user_data": req.session.user_data, 'users': user_result, "num_queries": qrycount, "resqueries": resqueries, "member_since": req.session.member_since, "hostname" : hostname });
 		});
 	}
 }
 
 // Delete user
 web.delete = (req, res) => {
+	req.session.hostname = req.headers.host;
+	var hostname = req.session.hostname;
 	if (typeof req.session.user_data == "undefined" || req.session.user_data === true) {
 		if (typeof req.session.alert_data != "undefined" || req.session.alert_data === true) {
 			res.locals.flashmessages = req.session.alert_data;
@@ -64,7 +68,8 @@ web.delete = (req, res) => {
 }
 // Edit user
 web.edit = (req, res) => {
-	var hostname = req.session.hostname || "";
+	req.session.hostname = req.headers.host;
+	var hostname = req.session.hostname;
 
 	if (typeof req.session.user_data == "undefined" || req.session.user_data === true) {
 		if (typeof req.session.alert_data != "undefined" || req.session.alert_data === true) {
@@ -154,7 +159,8 @@ web.update_profile = (req, res) => {
 
 //update admin password
 web.update_admin_password = (req, res) => {
-	var hostname = req.session.hostname || req.headers.host;
+	req.session.hostname = req.headers.host;
+	var hostname = req.session.hostname;
 	if (typeof req.session.user_data == "undefined" || req.session.user_data === true) {
 		res.redirect('/admin');
 	} else {
