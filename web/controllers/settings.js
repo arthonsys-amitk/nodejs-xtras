@@ -20,6 +20,8 @@ var exportFuns = {},
 
 // Display all users
 web.notification_settings=(req,res)=>{
+	req.session.hostname = req.headers.host;
+	var hostname = req.session.hostname;
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
 	{
 	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
@@ -49,7 +51,7 @@ web.notification_settings=(req,res)=>{
 			var key_id = "";
 			if(settings_result._id != null && settings_result._id != undefined)
 				key_id = settings_result._id;
-			res.render('admin/settings/notification_settings',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "notifications_enabled" : enabled, "notifications_id" : key_id});
+			res.render('admin/settings/notification_settings',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "notifications_enabled" : enabled, "notifications_id" : key_id, "hostname": hostname});
 
 		});
    	}
@@ -57,6 +59,8 @@ web.notification_settings=(req,res)=>{
 
 //update setting for push notification
 web.notification_update=(req,res)=>{
+	req.session.hostname = req.headers.host;
+	var hostname = req.session.hostname;
 	var enable_notifications = "0";
 	if(req.body.chk_notifications != null && req.body.chk_notifications != "undefined")
 		enable_notifications = "1";
@@ -81,7 +85,7 @@ web.notification_update=(req,res)=>{
 			key_id = settings_result._id;
 		req.session.alert_data = { alert_type: "success", alert_msg: "Successfully Updated." };
 		res.locals.flashmessages = req.session.alert_data;
-		res.render('admin/settings/notification_settings',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "notifications_enabled" : enabled, "notifications_id" : key_id});
+		res.render('admin/settings/notification_settings',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "notifications_enabled" : enabled, "notifications_id" : key_id, "hostname" : hostname});
 	});
 };
 
@@ -197,7 +201,7 @@ web.get_privacy_policy= (req,res) => {
 				var resqueries = req.session.resqueries;
 			}
 			console.log(result);
-			res.render('admin/settings/privacy_policy',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since,'privacy_policy_data':result});
+			res.render('admin/settings/privacy_policy',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since,'privacy_policy_data':result, "hostname": hostname});
 		});
 	}
 };

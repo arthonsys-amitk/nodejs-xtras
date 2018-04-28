@@ -172,6 +172,8 @@ rec_transaction.created_at = dateFormat(new Date(rec_transaction.created_at), "d
 };
 //filter date for payment
 web.filter_payment=(req,res)=>{
+	req.session.hostname = req.headers.host;
+	var hostname = req.session.hostname;
 	services.filter_payment(req.body).then(function(res_transaction){
 		console.log(res_transaction);
 		if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
@@ -184,7 +186,7 @@ web.filter_payment=(req,res)=>{
 		if(res_transaction != null && res_transaction != undefined && res_transaction != [] && res_transaction.length > 0) {
 			var rec_transaction = res_transaction[0];
 			var rec_user = res_transaction[1];
-			res.render('admin/services/filter_date',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "transactions" : res_transaction, "user" : rec_user});
+			res.render('admin/services/filter_date',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "transactions" : res_transaction, "user" : rec_user, "hostname": hostname});
 		}else{
 			req.session.alert_data = { alert_type: "danger", alert_msg: "Details could not be fetched" };
 			res.redirect('/admin/transaction_list');

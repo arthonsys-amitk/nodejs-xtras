@@ -135,6 +135,8 @@ web.logout = (req, res)=>{
 /***************************login**************************** */
 
 web.profile = (req, res)=>{
+	req.session.hostname = req.headers.host;
+	var hostname = req.session.hostname;
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true){
 	res.redirect('/admin');
 	}else{
@@ -155,7 +157,7 @@ web.profile = (req, res)=>{
 			member_since = req.session.resqueries;
 		}
 	login.getUser(req.session.user_data._id).then(function(result){
-	res.render('admin/profile',{"user_data":req.session.user_data,'profile_data':result, "resqueries": resqueries, "num_queries" : qrycount, "member_since" : member_since});
+	res.render('admin/profile',{"user_data":req.session.user_data,'profile_data':result, "resqueries": resqueries, "num_queries" : qrycount, "member_since" : member_since, "hostname" : hostname});
 	})
 	}
 };
@@ -165,11 +167,13 @@ web.profile = (req, res)=>{
 /***************************change_password**************************** */
 
 web.change_password = (req, res)=>{
+	req.session.hostname = req.headers.host;
+	var hostname = req.session.hostname;
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true){
 	res.redirect('/admin');
 	}else{
 	//	res.send('dsfsdf');
-	res.render('admin/profile',{"user_data":req.session.user_data});
+	res.render('admin/profile',{"user_data":req.session.user_data, "hostname" : hostname});
 	}
 };
 

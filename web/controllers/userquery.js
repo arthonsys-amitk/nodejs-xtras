@@ -21,6 +21,8 @@ var exportFuns = {},
 
 // Display all services
 web.list_queries=(req,res)=>{
+	req.session.hostname = req.headers.host;
+	var hostname = req.session.hostname;
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
 	{
 	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
@@ -48,7 +50,7 @@ web.list_queries=(req,res)=>{
 					queries_result[i].query = queries_result[i].query.substr(0, 35) + " ...";
 			}
 			
-			res.render('admin/users/query/list',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "queries_list" : queries_result});
+			res.render('admin/users/query/list',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "queries_list" : queries_result, "hostname" : hostname});
 		});
 		
    	}

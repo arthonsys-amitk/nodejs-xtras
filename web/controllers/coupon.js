@@ -23,6 +23,8 @@ var exportFuns = {},
 
 // Display all coupons
 web.get_coupon=(req,res)=>{
+	req.session.hostname = req.headers.host;
+	var hostname = req.session.hostname;
 	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
 	{
 	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
@@ -48,7 +50,7 @@ web.get_coupon=(req,res)=>{
 					coupon_result[i].expiry_date = dateFormat(new Date(coupon_result[i].expiry_date), "dd mmmm yyyy");					
 				}
 			}
-			res.render('admin/coupon/coupon_list',{"user_data":req.session.user_data,'coupon':coupon_result, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since});
+			res.render('admin/coupon/coupon_list',{"user_data":req.session.user_data,'coupon':coupon_result, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "hostname": hostname});
 
 		});
    	}
