@@ -116,7 +116,8 @@ exportFuns.update_coupon = (coupon_data)=> {
 	else
 		coupon_data.multiple_use = 0;
 	
-	coupon_data.expiry_date = dateFormat(coupon_data.expiry_date, "dd-mm-yyyy");
+	//coupon_data.expiry_date = dateFormat(coupon_data.expiry_date, "dd-mm-yyyy");
+	coupon_data.expiry_date = dateFormat(coupon_data.expiry_date, "isoDateTime");
 	coupon_data.updated_at = new Date();
 	
 	let searchPattern = {

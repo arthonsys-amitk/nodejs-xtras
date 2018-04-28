@@ -78,6 +78,10 @@ web.edit = (req,res) => {
 				var resqueries = req.session.resqueries;
 			}
 			
+			if(coupon_details.expiry_date != null && coupon_details.expiry_date != undefined && coupon_details.expiry_date != "") {
+				coupon_details.expiry_date = dateFormat(new Date(coupon_details.expiry_date), "yyyy-mm-dd");
+			}
+			
 			services.list_services()
 			.then(function(services_recs){
 				var service_ids = [];
