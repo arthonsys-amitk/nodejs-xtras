@@ -91,14 +91,13 @@ exportFuns.send_reply = (sender_email, reply, faq_id)=>{
 	  subject: 'RE: Xtras Query ID: ' + faq_id,
 	  html: "" + reply
 	};
-	transporter.sendMail(mailOptions, function(error, info){
-		if (error) {
-			console.log(error);
-			return 0;
-		} else {
-			console.log('Email sent: ' + info.response);			
-			return 1;			
-		}
+	return transporter.sendMail(mailOptions)
+	.then(function(info){
+		console.log('Email sent: ' + info.response);			
+		return 1;
+	}).catch(function(err){
+		console.log(err);
+		return 0;
 	});
 };
 

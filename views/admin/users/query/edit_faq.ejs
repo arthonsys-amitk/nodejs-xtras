@@ -70,7 +70,7 @@
 						  <textarea id="reply" name="reply" class="textarea" placeholder="Reply..."
 									  style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">
 						  </textarea>
-						  <span id="#spnreply" style="color: #ff0000; display: none;">This field is required</span>
+						  <span id="spnreply" style="color: #ff0000; display: none;">This field is required</span>
 						</div>
                     </div>
                   </div>
@@ -116,9 +116,11 @@
 	var txtreply = jQuery("#reply").val();
 	if(txtreply != "") {
 		jQuery("#spnreply").hide();
+		jQuery("#reply").css({"border" : "1px solid #dddddd"});
 		return true;
 	}
 	jQuery("#spnreply").show();
+	jQuery("#reply").css({"border" : "1px solid red"});
 	return false;
   }
   </script>

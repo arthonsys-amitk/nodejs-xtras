@@ -143,19 +143,25 @@ web.reply = (req,res) => {
 		var faq_id = req.body.query_id;
 		var sender_email = _.trim(req.body.sender_email);
 		var reply = _.trim(req.body.reply);
-		if(reply && sender_email) {
-			var result = userquery.send_reply(sender_email, reply, faq_id);
-			console.log("res");
-			console.log(result);
-			if(result) {
-				req.session.alert_data = { alert_type: "success", alert_msg: "Reply email sent successfully" };
-				res.locals.flashmessages = req.session.alert_data;
-			} else {
-				req.session.alert_data = { alert_type: "danger", alert_msg: "Reply could not be sent" };
-				res.locals.flashmessages = req.session.alert_data;
-			}			
+		if(reply == null || reply == undefined || reply == "") {
+			req.session.alert_data = { alert_type: "danger", alert_msg: "Reply message is empty" };
+			res.locals.flashmessages = req.session.alert_data;
 		}
-		res.redirect('/admin/list_queries');
+		if(reply && sender_email) {
+			userquery.send_reply(sender_email, reply, faq_id)
+			.then(function(result){
+				console.log("res");
+				console.log(result);
+				if(result) {
+					req.session.alert_data = { alert_type: "success", alert_msg: "Reply email sent successfully" };
+					res.locals.flashmessages = req.session.alert_data;
+				} else {
+					req.session.alert_data = { alert_type: "danger", alert_msg: "Reply could not be sent" };
+					res.locals.flashmessages = req.session.alert_data;
+				}
+				res.redirect('/admin/list_queries');
+			});
+		}		
 	}
 };
 
