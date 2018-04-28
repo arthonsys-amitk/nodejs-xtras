@@ -101,14 +101,15 @@
 							var dt = new Date(resqueries[i].created_at);
 							var datestring = ("0" + dt.getDate()).slice(-2) + "-" + ("0"+(dt.getMonth()+1)).slice(-2) + "-" + dt.getFullYear() + " " + ("0" + dt.getHours()).slice(-2) + ":" + ("0" + dt.getMinutes()).slice(-2);
 							%>
-							
+							<% var qry_url = "http://" + hostname + "/admin/userquery/edit_faq/" + resqueries[i]._id;
+							%>
 						<li><!-- start message -->
-							<a href="#">
+							<a href="<%=qry_url%>">
 							  <div class="pull-left">
 								<img src="<%=user_data.user_image%>" class="img-circle" alt="User Image">
 							  </div>
 							  <h4>
-								<%=resqueries[i].email%>								
+								<%=resqueries[i].email%>
 							  </h4>
 							  <small><i class="fa fa-clock-o"></i> <%=datestring%></small>
 							  <p><%=resqueries[i].query.substring(0,15)%></p>
