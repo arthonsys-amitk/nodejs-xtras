@@ -185,4 +185,15 @@
     </section>
     <!-- /.content -->
   </div>
+ <script language="javascript">
+ jQuery(document).ready(function(){
+	jQuery("#profile").change(function(){
+		var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
+        if (jQuery.inArray(jQuery(this).val().split(".").pop().toLowerCase(), fileExtension) == -1) {
+            alert("Only formats allowed are: " + fileExtension.join(", "));
+			jQuery("#profile").val('');
+        }		
+	});
+ });
+ </script>
   <%-include('../footer') %> 
