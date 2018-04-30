@@ -476,12 +476,7 @@ $('form[id="frm_postservice"]').validate({
 		digits: true
 	},
 	service_availability :  {
-		required: {
-      depends:function(){
-          $(this).val($.trim($(this).val()));
-          return true;
-      }
-    },
+		required: true
 	},
 	cancel_hours  : {
 		required: {

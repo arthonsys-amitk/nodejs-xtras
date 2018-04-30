@@ -551,21 +551,25 @@ web.post_service = (req, res) => {
 			}
 			for(var i = 0; i < req.body.area_from_sqft.length; i++) {
 				var obj_service_area = {};
-				obj_service_area._id = new mongo.ObjectID();
-				obj_service_area.area_from_sqft = req.body.area_from_sqft[i];
-				obj_service_area.area_to_sqft = req.body.area_to_sqft[i];
-				obj_service_area.price = req.body.area_price[i];
-				arr_area_pricing.push(obj_service_area);
+				if(req.body.area_from_sqft[i] != null && req.body.area_from_sqft[i] != undefined && req.body.area_from_sqft[i] != "") {
+					obj_service_area._id = new mongo.ObjectID();
+					obj_service_area.area_from_sqft = req.body.area_from_sqft[i];
+					obj_service_area.area_to_sqft = req.body.area_to_sqft[i];
+					obj_service_area.price = req.body.area_price[i];
+					arr_area_pricing.push(obj_service_area);
+				}
 			}
 			
 		} else {
 			//string
 			var obj_service_area = {};
 			obj_service_area._id = new mongo.ObjectID();
-			obj_service_area.area_from_sqft = req.body.area_from_sqft;
-			obj_service_area.area_to_sqft = req.body.area_to_sqft;
-			obj_service_area.price = req.body.area_price;
-			arr_area_pricing.push(obj_service_area);
+			if(req.body.area_from_sqft != null && req.body.area_from_sqft != undefined && req.body.area_from_sqft != "") {
+				obj_service_area.area_from_sqft = req.body.area_from_sqft;
+				obj_service_area.area_to_sqft = req.body.area_to_sqft;
+				obj_service_area.price = req.body.area_price;
+				arr_area_pricing.push(obj_service_area);
+			}
 		}
 		
 		var arr_grass_pricing = [];
@@ -578,20 +582,24 @@ web.post_service = (req, res) => {
 			for(var i = 0; i < req.body.grass_from_sqft.length; i++) {
 				var obj_grass_area = {};
 				obj_grass_area._id = new mongo.ObjectID();
-				obj_grass_area.area_from_sqft = req.body.grass_from_sqft[i];
-				obj_grass_area.area_to_sqft = req.body.grass_to_sqft[i];
-				obj_grass_area.price = req.body.grass_price[i];
-				arr_grass_pricing.push(obj_grass_area);
+				if(req.body.grass_from_sqft[i] != null && req.body.grass_from_sqft[i] != undefined && req.body.grass_from_sqft[i] != "") {
+					obj_grass_area.area_from_sqft = req.body.grass_from_sqft[i];
+					obj_grass_area.area_to_sqft = req.body.grass_to_sqft[i];
+					obj_grass_area.price = req.body.grass_price[i];
+					arr_grass_pricing.push(obj_grass_area);
+				}
 			}
 			
 		} else {
 			//string
 			var obj_grass_area = {};
 			obj_grass_area._id = new mongo.ObjectID();
-			obj_grass_area.area_from_sqft = req.body.grass_from_sqft;
-			obj_grass_area.area_to_sqft = req.body.grass_to_sqft;
-			obj_grass_area.price = req.body.grass_price;
-			arr_grass_pricing.push(obj_grass_area);
+			if(req.body.grass_from_sqft != null && req.body.grass_from_sqft != undefined && req.body.grass_from_sqft != "") {
+				obj_grass_area.area_from_sqft = req.body.grass_from_sqft;
+				obj_grass_area.area_to_sqft = req.body.grass_to_sqft;
+				obj_grass_area.price = req.body.grass_price;
+				arr_grass_pricing.push(obj_grass_area);
+			}
 		}
 		
 		
@@ -604,19 +612,23 @@ web.post_service = (req, res) => {
 			}
 			for(var i = 0; i < req.body.addon_name.length; i++) {
 				var obj_addon = {};
-				obj_addon._id = new mongo.ObjectID();
-				obj_addon.name = req.body.addon_name[i];
-				obj_addon.price = req.body.addon_price[i];
-				arr_addon_pricing.push(obj_addon);
+				if(req.body.addon_name[i] != null && req.body.addon_name[i] != undefined && req.body.addon_name[i] != "") {
+					obj_addon._id = new mongo.ObjectID();
+					obj_addon.name = req.body.addon_name[i];
+					obj_addon.price = req.body.addon_price[i];
+					arr_addon_pricing.push(obj_addon);
+				}
 			}
 			
 		} else {
 			//string
 			var obj_addon = {};
+			if(req.body.addon_name != null && req.body.addon_name != undefined && req.body.addon_name != "") {
 			obj_addon._id = new mongo.ObjectID();
 			obj_addon.name = req.body.addon_name;
 			obj_addon.price = req.body.addon_price;
 			arr_addon_pricing.push(obj_addon);
+			}
 		}
 				
 		
@@ -684,27 +696,36 @@ web.post_service = (req, res) => {
 		}
 		
 		var availability = req.body.service_availability;
+		servicedata.available_monday = 0;
+		servicedata.available_tuesday = 0;
+		servicedata.available_wednesday = 0;
+		servicedata.available_thursday = 0;
+		servicedata.available_friday = 0;
+		servicedata.available_saturday = 0;
+		servicedata.available_sunday = 0;		
 		if(typeof availability == "object") {
 			//array
 			for(var i = 0; i < availability.length; i++) {
-				servicedata.available_monday = (availability[i] == "available_monday") ? 1: 0;
-				servicedata.available_tuesday = (availability[i] == "available_tuesday") ? 1: 0;
-				servicedata.available_wednesday = (availability[i] == "available_wednesday") ? 1: 0;
-				servicedata.available_thursday = (availability[i] == "available_thursday") ? 1: 0;
-				servicedata.available_friday = (availability[i] == "available_friday") ? 1: 0;
-				servicedata.available_saturday = (availability[i] == "available_saturday") ? 1: 0;
-				servicedata.available_sunday = (availability[i] == "available_sunday") ? 1: 0;
+				if(availability[i] == "available_monday")  { servicedata.available_monday = 1;}
+				if(availability[i] == "available_tuesday")  { servicedata.available_tuesday = 1;}
+				if(availability[i] == "available_wednesday")  { servicedata.available_wednesday = 1;}
+				if(availability[i] == "available_thursday")  { servicedata.available_thursday = 1;}
+				if(availability[i] == "available_friday")  { servicedata.available_friday = 1;}
+				if(availability[i] == "available_saturday")  { servicedata.available_saturday = 1;}
+				if(availability[i] == "available_sunday")  { servicedata.available_sunday = 1;}
 			}
 		} else {
-			servicedata.available_monday = (availability == "available_monday") ? 1: 0;
-			servicedata.available_tuesday = (availability == "available_tuesday") ? 1: 0;
-			servicedata.available_wednesday = (availability == "available_wednesday") ? 1: 0;
-			servicedata.available_thursday = (availability == "available_thursday") ? 1: 0;
-			servicedata.available_friday = (availability == "available_friday") ? 1: 0;
-			servicedata.available_saturday = (availability == "available_saturday") ? 1: 0;
-			servicedata.available_sunday = (availability == "available_sunday") ? 1: 0;
+			switch(availability) {
+				case "available_monday" : servicedata.available_monday = 1; break;
+				case "available_tuesday" : servicedata.available_tuesday = 1; break;
+				case "available_wednesday" : servicedata.available_wednesday = 1; break;
+				case "available_thursday" : servicedata.available_thursday = 1; break;
+				case "available_friday" : servicedata.available_friday = 1; break;
+				case "available_saturday" : servicedata.available_saturday = 1; break;
+				case "available_sunday" : servicedata.available_sunday = 1; break;				
+			}
 		}
-		
+				
 		//reschedule policy
 		servicedata.cancel_rsh_policy = "";
 		if(req.files.cancel_rsh_policy != '' && req.files.cancel_rsh_policy != undefined) {

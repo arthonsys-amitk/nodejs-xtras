@@ -102,7 +102,13 @@ exportFuns.get_user_list = () => {
 	let db = new Mongo;
 	return db.connect(config.mongoURI)
 	.then(function(){
-		return db.find('users', {});
+		return db.find('users', { 
+		$and : [ { $or : [{is_active: 1}, {is_active: "1"}] },
+				{ $or : [{is_deleted: 0}, {is_active: "0"}] },
+				{ $or : [{user_role: 2}, {user_role: "2"}] },
+			]
+		
+		});
 	})
 	.then(function(resservices){
 		db.close();
