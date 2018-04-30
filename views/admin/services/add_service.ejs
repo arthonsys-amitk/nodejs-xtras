@@ -586,14 +586,17 @@
 						  <div class="col-sm-3" style="padding-left: 0px;">
 								<label for="area_from_sqft" class="col-sm-4 control-label" style="padding: 0px;" >From(sqft)</label>
 								<input type="text" class="form-control" name="area_from_sqft" value="" />
+								<span id="errAreaFrom" style="display: none; color: red;">This field is required</span>
 						  </div>
 						  <div class="col-sm-3" style="padding-left: 0px;">
 								<label for="area_to_sqft" class="col-sm-4 control-label" style="padding: 0px;" >To(sqft)</label>
 								<input type="text" class="form-control" name="area_to_sqft" value="" />
+								<span id="errAreaTo" style="display: none; color: red;">This field is required</span>
 						  </div>
 						  <div class="col-sm-3" style="padding-left: 0px;">
 								<label for="area_price" class="col-sm-4 control-label" style="padding: 0px;" >Price</label>
 								<input type="text" class="form-control" name="area_price" value="" />
+								<span id="errAreaPrc" style="display: none; color: red;">This field is required</span>
 						  </div>
 						  <div class="col-sm-3" style="padding-left: 0px;">
 								<br/>
@@ -612,14 +615,17 @@
 						  <div class="col-sm-3" style="padding-left: 0px;">
 								<label for="grass_from_sqft" class="col-sm-4 control-label" style="padding: 0px;" >From(sqft)</label>
 								<input type="text" class="form-control" name="grass_from_sqft" value="" />
+								<span id="errGrassFrom" style="display: none; color: red;">This field is required</span>
 						  </div>
 						  <div class="col-sm-3" style="padding-left: 0px;">
 								<label for="grass_to_sqft" class="col-sm-4 control-label" style="padding: 0px;" >To(sqft)</label>
 								<input type="text" class="form-control" name="grass_to_sqft" value="" />
+								<span id="errGrassTo" style="display: none; color: red;">This field is required</span>
 						  </div>
 						  <div class="col-sm-3" style="padding-left: 0px;">
 								<label for="grass_price" class="col-sm-4 control-label" style="padding: 0px;" >Price</label>
 								<input type="text" class="form-control" name="grass_price" value="" />
+								<span id="errGrassPrc" style="display: none; color: red;">This field is required</span>
 						  </div>
 						  <div class="col-sm-3" style="padding-left: 0px;">
 								<br/>
@@ -631,7 +637,7 @@
                   </div>
 				  
 				  <div class="form-group">
-                    <label for="service_options" class="col-sm-4 control-label">Service Options</label>
+                    <label for="service_options" class="col-sm-4 control-label">Additional Services</label>
 
                     <div class="col-sm-6" id="option_pricing_box">
                       <div id="option_row_1">
@@ -715,7 +721,7 @@
 				  
 				  <div class="form-group">
                     <div class="col-sm-offset-3 col-sm-6">
-                      <button type="submit" id="submit" class="btn btn-success">Submit</button>
+                      <button type="submit" id="submit" class="btn btn-success" onclick="javascript: return checkServiceOptions();">Submit</button>
                       <button type="button" id="btncancel" class="btn btn-danger" onclick="javascript: window.location='/admin/list_services/';">Cancel</button>
                     </div>
                   </div>
@@ -823,6 +829,27 @@
    function removeOption(rownum) {
 		jQuery("#option_row_" + rownum).remove();
 		return false;
+   }
+   
+   function checkServiceOptions(){   
+		var selValue = jQuery("#service_category_id").val();
+		var selText = jQuery("#service_category_id option:selected").html();
+		if(selValue && (selText == "Lawn Mowing Service" || selText == "Snow Cleaning Service")) {
+			var area_from_sqft = jQuery("input[name='area_from_sqft']").val();
+			var grass_from_sqft = jQuery("input[name='grass_from_sqft']").val();
+			if(!(area_from_sqft && area_from_sqft)) {			
+				jQuery("#errAreaFrom").show(); jQuery("#errAreaTo").show();	jQuery("#errAreaPrc").show();
+				jQuery("#errGrassFrom").show(); jQuery("#errGrassTo").show();	jQuery("#errGrassPrc").show();
+				var ret = jQuery("#frm_postservice").valid();
+				console.log("ret=" + ret);
+				return false;
+			} else {
+				jQuery("#errAreaFrom").hide(); jQuery("#errAreaTo").hide();	jQuery("#errAreaPrc").hide();
+				jQuery("#errGrassFrom").hide(); jQuery("#errGrassTo").hide();	jQuery("#errGrassPrc").hide();
+				return true;
+			}
+		}
+		return true;
    }
   </script>
   <%-include('../footer') %> 

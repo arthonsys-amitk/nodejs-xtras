@@ -571,6 +571,126 @@ $('form[id="frm_postservice"]').validate({
   }
 });
 // End
+
+
+// validation of Add Service
+$('form[id="frm_updateservice"]').validate({
+  rules: {
+	service_category_id : {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+	},
+	service_name  : {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		minlength: 3,
+        maxlength: 50
+	},
+	service_radius  : {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		digits: true
+	},
+	service_availability :  {
+		required: true
+	},
+	cancel_hours  : {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		digits: true
+	},
+	cancel_fee  : {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		digits: true
+	},
+	reschedule_hours  : {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		digits: true
+	},
+	reschedule_fee :  {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		digits: true
+	},
+	address  : {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		minlength: 3,
+        maxlength: 50
+	},
+	city :  {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		minlength: 3,
+        maxlength: 30
+	},
+	province  : {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		minlength: 3,
+        maxlength: 30
+	},
+	zipcode :  {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		minlength: 3,
+        maxlength: 30
+	},	
+  },
+  messages: {
+   
+  },
+  submitHandler: function(form) {
+    form.submit();
+  }
+});
+//End
 });
 
 
