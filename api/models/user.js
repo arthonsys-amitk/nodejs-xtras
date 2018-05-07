@@ -505,8 +505,28 @@ exportFuns.get_coupon_by_service_id = (service_id) => {
 
 };
 
-// get user profile using User id
-exportFuns.get_profile=(user_id)=>{
-    re
+//insert error record into logs table
+exportFuns.insert_log = (data) => {
+
+    let db = new Mongo;
+
+    let insertPattern = {
+        request: data.request,
+        response: data.response,
+        responsecode: data.responsecode,
+        url         : data.url,
+        section     : data.section,
+        device_type : data.device_type,
+        apiname     : data.apiname,
+        created_at  : new Date()
+    };
+    
+    return db.connect(config.mongoURI)
+    .then(function() {
+        return db.insert('logs', insertPattern)
+        .then(function(result) {
+            return result.ops[0];
+        });
+	});
 }
 module.exports = exportFuns;

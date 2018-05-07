@@ -1102,7 +1102,7 @@ function send_cancel_appointment_push_notification(user_id,appointment_id){
 	var cunsumer_messagePattern = 
                 { 
 					
-					title: 'Your appointment has been canceled',
+					title: 'Your appointment has been cancelled',
 					body: '#'+appointment_id,
 					customData:{type:type}
 							

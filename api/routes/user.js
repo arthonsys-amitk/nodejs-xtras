@@ -20,3 +20,4 @@ router.post('/social_login', user.api.social_login);
 router.post('/add_faq', user.api.add_faq);
 router.post('/send', user.api.send);
 router.post('/get_profile', user.api.get_profile);
+router.post('/insert_log',user.api.insert_log);

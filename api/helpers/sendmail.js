@@ -3,6 +3,7 @@
 var exportFuns = {};
 
 var config = require('../../config');
+var nodemailer = require("nodemailer");
 const sendmail = require('sendmail')();
 
 exportFuns.sendEmail = (to_email, subject, message) => {
@@ -35,6 +36,25 @@ exportFuns.getAsJsonObject = (jsvalue) => {
 		return JSON.parse(JSON.stringify(jsvalue));
 	else
 		return JSON.parse(jsvalue);
+};
+
+exportFuns.sendNodeEmail = (from_email, to_email, subject, email_content) => {
+		var transporter = nodemailer.createTransport({
+			service: "" + config.email_auth_service,
+			auth: {
+			  user: "" + config.email_auth_user,
+			  pass: "" + config.email_auth_password
+			}
+		});
+  
+		  var mailOptions = {
+			from: "" + from_email,
+			to: "" + to_email,
+			subject: "" + subject,
+			html: "Error Details(JSON):<br/>" + JSON.stringify(email_content, null, 4)
+		  };
+		transporter.sendMail(mailOptions);
+
 };
 
 module.exports = exportFuns;

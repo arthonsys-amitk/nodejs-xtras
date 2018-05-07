@@ -32,16 +32,16 @@ exportFuns.insert_contact_us = (data)=>{
 
 exportFuns.sendContactEmail = (email, phone_no, comment) => {
 	var transporter = nodemailer.createTransport({
-	  service: 'gmail',
+	  service: "" + config.email_auth_service,
 	  auth: {
-		user: 'amitkothari.as@gmail.com',
-		pass: 'Arthonsys@12345'
+		user: "" + config.email_auth_user,
+		pass: "" + config.email_auth_password
 	  }
 	});
 
 	var mailOptions = {
 	  from: 'Xtras Admin',
-	  to: "" + admin_contact_email,
+	  to: "" + config.admin_contact_email,
 	  subject: 'Xtras: Comments from ' + email,
 	  html: "From: " + email + "<br/>Phone No.:" + phone_no + "<br/>Comments: <br/>" + comment
 	};

@@ -148,74 +148,95 @@ api.user_login = (req, res)=>{
   let username = _.trim(req.body.email) || '';
   let password = _.trim(req.body.password) || '';
 
-  if(Object.keys(req.body).length == 4) {
+  try {
+	  if(Object.keys(req.body).length == 4) {
 
-      if (username == '' || password == '') {
-          res.json({
-            "status": 400,
-            "api_name": "user_login",
-            "message": "Either Email or password is blank.",
-            "data": {}
-          });
-          return;
+		  if (username == '' || password == '') {
+			  res.json({
+				"status": 400,
+				"api_name": "user_login",
+				"message": "Either Email or password is blank.",
+				"data": {}
+			  });
+			  return;
 
-      } else {
+		  } else {
 
-          user.check_email_exist(req.body.email).then(function(emailresult) {
+			  user.check_email_exist(req.body.email).then(function(emailresult) {
 
-              if(emailresult != null) 
-              {
-                  // fire a query to the DB and check if the credentials are valid
-                  authenticateUser(username, password)
-                  .then(function(userObj){
+				  if(emailresult != null) 
+				  {
+					  // fire a query to the DB and check if the credentials are valid
+					  authenticateUser(username, password)
+					  .then(function(userObj){
 
-                    if (userObj){
-                      return userObj;
-                    }
-                  })
-                  .then(function(userObj){
+						if (userObj){
+						  return userObj;
+						}
+					  })
+					  .then(function(userObj){
 
-                    if (! userObj) {
-                        res.json({
-                          "status": 400,
-                          "api_name": "user_login",
-                          "message": "Login credentials are invalid.",
-                          "data": {}
-                        });
-                        return;
+						if (! userObj) {
+							res.json({
+							  "status": 400,
+							  "api_name": "user_login",
+							  "message": "Login credentials are invalid.",
+							  "data": {}
+							});
+							return;
 
-                    } else {
-						 user.save_device_token(userObj._id, req.body.device_token, req.body.device_type);
-                        res.json({
-                          "status": 200,
-                          "api_name": "user_login",
-                          "message": "You have login successfully.",
-                          "data": genToken(userObj)
-                        });
-                    }
-                  });
+						} else {
+							 user.save_device_token(userObj._id, req.body.device_token, req.body.device_type);
+							res.json({
+							  "status": 200,
+							  "api_name": "user_login",
+							  "message": "You have login successfully.",
+							  "data": genToken(userObj)
+							});
+						}
+					  });
 
-              } else {
-                  res.json({
-                    "status": 400,
-                    "api_name": "user_login",
-                    "message": "Email is not exist.",
-                    "data": {}
-                  });
-                  return;
-              }
-          });
-      }
+				  } else {
+					  res.json({
+						"status": 400,
+						"api_name": "user_login",
+						"message": "Email does not exist.",
+						"data": {}
+					  });
+					  return;
+				  }
+			  });
+		  }
 
-  } else {
-        res.json({
-          "status": 400,
-          "api_name": "user_login",
-          "message": "Some request parameters are missing.",
-          "data": {}
-        });
-        return;
-    }
+	  } else {
+			res.json({
+			  "status": 400,
+			  "api_name": "user_login",
+			  "message": "Some request parameters are missing.",
+			  "data": {}
+			});
+			return;
+	   }
+  } catch(err) {
+	  var error_data = {
+		  request : { "headers" : req.headers, "body" : req.body, "params" : req.params, "method" : req.method, "httpVersion": req.httpVersion, "query" : req.query, "url" : req.url},
+		  response : {"error" : err.message, "stack" : err.stack},
+		  responsecode: "400",
+		  url: "/user_login",
+		  section: "Login",
+		  device_type: "" + req.body.device_type,
+		  apiname: "user_login"
+	  };
+	  user.insert_log(error_data);
+	  sendmail.sendNodeEmail(config.email_auth_user, config.admin_contact_email, "Login Error", error_data);
+	  res.json({
+		  "status": 400,
+		  "api_name": "user_login",
+		  "message": "Error occurred." + err.message,
+		  "data": {}
+	  });
+	  return;
+  }
 };
 
 /**
@@ -283,123 +304,144 @@ api.user_login = (req, res)=>{
 */
 
 api.user_register = (req, res) => {
-    console.log(req.body);
-    if(Object.keys(req.body).length == 11) {
+    try{
+		if(Object.keys(req.body).length == 11) {
 
-        let check_email = user.check_email_exist(req.body.email);
+			let check_email = user.check_email_exist(req.body.email);
 
-        check_email.then(function(emailresult) {
+			check_email.then(function(emailresult) {
 
-            if(emailresult != null) 
-            {
-                res.json({
-                  "status": 400,
-                  "api_name": "user_register",
-                  "message": "Email is already exist.",
-                  "data": {}
-                });
-                return;
+				if(emailresult != null) 
+				{
+					res.json({
+					  "status": 400,
+					  "api_name": "user_register",
+					  "message": "Email is already exist.",
+					  "data": {}
+					});
+					return;
 
-            } else {
+				} else {
 
-                let check_phone = user.check_phone_exist(req.body.phone);
+					let check_phone = user.check_phone_exist(req.body.phone);
 
-                check_phone.then(function(phoneresult) {
+					check_phone.then(function(phoneresult) {
 
-                    if (phoneresult != null) 
-                    {
-                        res.json({
-                          "status": 400,
-                          "api_name": "user_register",
-                          "message": "Phone number is already exist.",
-                          "data": {}
-                        });
-                        return;
+						if (phoneresult != null) 
+						{
+							res.json({
+							  "status": 400,
+							  "api_name": "user_register",
+							  "message": "Phone number is already exist.",
+							  "data": {}
+							});
+							return;
 
-                    } else {
+						} else {
 
-                        
-                                geocoder.geocode(req.body.address + req.body.city +  req.body.state + req.body.country, function(err, result){
+							
+									geocoder.geocode(req.body.address + req.body.city +  req.body.state + req.body.country, function(err, result){
 
-                                    // if geocode response is empty
-                                    if(result.length <= 0)
-                                    {
-                                        res.json({
-                                          "status": 400,
-                                          "api_name": "user_register",
-                                          "message": "Address is invalid.",
-                                          "data": {}
-                                        });
-                                        return;
+										// if geocode response is empty
+										if(result.length <= 0)
+										{
+											res.json({
+											  "status": 400,
+											  "api_name": "user_register",
+											  "message": "Address is invalid.",
+											  "data": {}
+											});
+											return;
 
-                                    } else {
-                                        var latitude = result[0].latitude;
-                                        var longitude = result[0].longitude;
+										} else {
+											var latitude = result[0].latitude;
+											var longitude = result[0].longitude;
 
-                                        
+											
 
-                                        var userdata = {
-                                                           
-                                                            fullname: req.body.first_name+' '+req.body.last_name,
-                                                            user_role: 2,
-                                                            email: req.body.email,
-                                                            alternate_email:'',
-                                                            phone: '',
-                                                            phone_1: '',
-                                                            phone_2: '',
-                                                            address: req.body.address,
-                                                            address_1:'',
-                                                            address_2:'',
-                                                            city   : req.body.city,
-                                                            state  : req.body.state,
-                                                            zip_code: req.body.zip_code,
-                                                            country : req.body.country,
-                                                            latitude: latitude,
-                                                            longitude: longitude,
-                                                            password: crypto.encrypt(req.body.password),
-                                                            user_image: config.base_url+'/uploads/default/default_user.jpg',                                                         
-                                                            facebook_login_id: "",
-                                                            google_login_id: "",
-                                                            social_login_data_status: 0,
-                                                            otp_status: 0,
-                                                            is_active: 1,
-                                                            is_deleted: 0,
-                                                            created_time: new Date(),
-                                                            modified_time: new Date()
-                                                        };
+											var userdata = {
+															   
+																fullname: req.body.first_name+' '+req.body.last_name,
+																user_role: 2,
+																email: req.body.email,
+																alternate_email:'',
+																phone: '',
+																phone_1: '',
+																phone_2: '',
+																address: req.body.address,
+																address_1:'',
+																address_2:'',
+																city   : req.body.city,
+																state  : req.body.state,
+																zip_code: req.body.zip_code,
+																country : req.body.country,
+																latitude: latitude,
+																longitude: longitude,
+																password: crypto.encrypt(req.body.password),
+																user_image: config.base_url+'/uploads/default/default_user.jpg',                                                         
+																facebook_login_id: "",
+																google_login_id: "",
+																social_login_data_status: 0,
+																otp_status: 0,
+																is_active: 1,
+																is_deleted: 0,
+																created_time: new Date(),
+																modified_time: new Date()
+															};
 
-                                        // create user
-                                        user.createUser(userdata)
-                                        .then(function(response) {
-                                            if (response != null) {
-												user.save_device_token(userdata._id, req.body.device_token, req.body.device_type);
+											// create user
+											user.createUser(userdata)
+											.then(function(response) {
+												if (response != null) {
+													user.save_device_token(userdata._id, req.body.device_token, req.body.device_type);
 
-                                                res.json({
-                                                  "status": 200,
-                                                  "api_name": "user_register",
-                                                  "message": "You have registered successfully.",
-                                                  "data": genToken(userdata)
-                                                });
-                                                return;
-                                            }
-                                        });
-                                    }
-                                    
-                                });
-                            }
-                        });
-                    
-            }
-        })
-    } else {
-        res.json({
-          "status": 400,
-          "api_name": "user_register",
-          "message": "Some request parameters are missing.",
-          "data": {}
-        });
-        return;
-    }
+													res.json({
+													  "status": 200,
+													  "api_name": "user_register",
+													  "message": "You have registered successfully.",
+													  "data": genToken(userdata)
+													});
+													return;
+												}
+											});
+										}
+										
+									});
+								}
+							});
+						
+				}
+			})
+		} else {
+			res.json({
+			  "status": 400,
+			  "api_name": "user_register",
+			  "message": "Some request parameters are missing.",
+			  "data": {}
+			});
+			return;
+		}
+	} catch(err) {
+		var error_data = {
+		  request : { "headers" : req.headers, "body" : req.body, "params" : req.params, "method" : req.method, "httpVersion": req.httpVersion, "query" : req.query, "url" : req.url},
+		  response : {"error" : err.message, "stack" : err.stack},
+		  responsecode: "400",
+		  url: "/user_register",
+		  section: "Register",
+		  device_type: "" + req.body.device_type,
+		  apiname: "user_register"
+	  };
+	  user.insert_log(error_data);
+	  sendmail.sendNodeEmail(config.email_auth_user, config.admin_contact_email, "Register Error", error_data);
+	  res.json({
+		  "status": 400,
+		  "api_name": "user_register",
+		  "message": "Error occurred." + err.message,
+		  "data": {}
+	  });
+	  return;
+
+	}
 };
 
 /**
@@ -427,60 +469,80 @@ api.user_register = (req, res) => {
 */
 
 api.change_password = (req, res) => {
+	try {
+		if (Object.keys(req.body).length == 3) {
 
-    if (Object.keys(req.body).length == 3) {
+			// check user is exist
+			user.check_userid_exist(req.body.user_id)
+			.then(function(userdata) {
 
-        // check user is exist
-        user.check_userid_exist(req.body.user_id)
-        .then(function(userdata) {
+				if(userdata != null) {
 
-            if(userdata != null) {
+					if( req.body.old_password == crypto.decrypt(_.trim(userdata.password)) )
+					{
+						var userId = req.body.user_id;
+						var updated_password = crypto.encrypt(_.trim(req.body.new_password));
 
-                if( req.body.old_password == crypto.decrypt(_.trim(userdata.password)) )
-                {
-                    var userId = req.body.user_id;
-                    var updated_password = crypto.encrypt(_.trim(req.body.new_password));
+						user.updatePassword(userId, updated_password)
+						.then(function(result) {
+							res.json({
+							  "status": 200,
+							  "api_name": "change_password",
+							  "message": "You have changed password successfully.",
+							  "data": result
+							});
+							return;
+						});
+					
+					} else {
+						res.json({
+						  "status": 400,
+						  "api_name": "change_password",
+						  "message": "Old password is wrong.",
+						  "data": {}
+						});
+						return;
+					}
 
-                    user.updatePassword(userId, updated_password)
-                    .then(function(result) {
-                        res.json({
-                          "status": 200,
-                          "api_name": "change_password",
-                          "message": "You have changed password successfully.",
-                          "data": result
-                        });
-                        return;
-                    });
-                
-                } else {
-                    res.json({
-                      "status": 400,
-                      "api_name": "change_password",
-                      "message": "Old password is wrong.",
-                      "data": {}
-                    });
-                    return;
-                }
-
-            } else {
-                res.json({
-                  "status": 400,
-                  "api_name": "change_password",
-                  "message": "User is not exist.",
-                  "data": {}
-                });
-                return;
-            }
-        });
-    } else {
-        res.json({
-          "status": 400,
-          "api_name": "change_password",
-          "message": "Some request parameters are missing.",
-          "data": {}
-        });
-        return;
-    }
+				} else {
+					res.json({
+					  "status": 400,
+					  "api_name": "change_password",
+					  "message": "User is not exist.",
+					  "data": {}
+					});
+					return;
+				}
+			});
+		} else {
+			res.json({
+			  "status": 400,
+			  "api_name": "change_password",
+			  "message": "Some request parameters are missing.",
+			  "data": {}
+			});
+			return;
+		}
+	} catch (err) {
+		var error_data = {
+			  request : { "headers" : req.headers, "body" : req.body, "params" : req.params, "method" : req.method, "httpVersion": req.httpVersion, "query" : req.query, "url" : req.url},
+			  response : {"error" : err.message, "stack" : err.stack},
+			  responsecode: "400",
+			  url: "/change_password",
+			  section: "Change Password",
+			  device_type: "" ,
+			  apiname: "change_password"
+		  };
+		  user.insert_log(error_data);
+		  sendmail.sendNodeEmail(config.email_auth_user, config.admin_contact_email, "Password Change Error", error_data);
+		  res.json({
+			  "status": 400,
+			  "api_name": "change_password",
+			  "message": "Error occurred." + err.message,
+			  "data": {}
+		  });
+		  return;
+	}
 };
 
 
@@ -508,49 +570,69 @@ api.change_password = (req, res) => {
 */
 
 api.update_forgot_password = (req, res) => {
+	try {
+		if (Object.keys(req.body).length == 2) {
 
-    if (Object.keys(req.body).length == 2) {
+			// check otp is exist
+			user.check_userid_exist(req.body.user_id)
+			.then(function(userdata) {
 
-        // check otp is exist
-        user.check_userid_exist(req.body.user_id)
-        .then(function(userdata) {
+				if(userdata != null) {
 
-            if(userdata != null) {
+					var userId = req.body.user_id;
+					var updated_password = crypto.encrypt(_.trim(req.body.new_password));
 
-                var userId = req.body.user_id;
-                var updated_password = crypto.encrypt(_.trim(req.body.new_password));
+					user.updatePassword(userId, updated_password)
+					.then(function(result) {
 
-                user.updatePassword(userId, updated_password)
-                .then(function(result) {
+						res.json({
+						  "status": 200,
+						  "api_name": "update_forgot_password",
+						  "message": "Your password has been updated successfully.",
+						  "data": {}
+						});
+						return;
+					});
 
-                    res.json({
-                      "status": 200,
-                      "api_name": "update_forgot_password",
-                      "message": "Your password has been updated successfully.",
-                      "data": {}
-                    });
-                    return;
-                });
-
-            } else {
-                res.json({
-                  "status": 400,
-                  "api_name": "update_forgot_password",
-                  "message": "User doesn't exist.",
-                  "data": {}
-                });
-                return;
-            }
-        });
-    } else {
-        res.json({
-          "status": 400,
-          "api_name": "update_forgot_password",
-          "message": "Some request parameters are missing.",
-          "data": {}
-        });
-        return;
-    }
+				} else {
+					res.json({
+					  "status": 400,
+					  "api_name": "update_forgot_password",
+					  "message": "User doesn't exist.",
+					  "data": {}
+					});
+					return;
+				}
+			});
+		} else {
+			res.json({
+			  "status": 400,
+			  "api_name": "update_forgot_password",
+			  "message": "Some request parameters are missing.",
+			  "data": {}
+			});
+			return;
+		}
+	} catch(err) {
+		var error_data = {
+			  request : { "headers" : req.headers, "body" : req.body, "params" : req.params, "method" : req.method, "httpVersion": req.httpVersion, "query" : req.query, "url" : req.url},
+			  response : {"error" : err.message, "stack" : err.stack},
+			  responsecode: "400",
+			  url: "/update_forgot_password",
+			  section: "Update Forgot Password",
+			  device_type: "" ,
+			  apiname: "update_forgot_password"
+		  };
+		  user.insert_log(error_data);
+		  sendmail.sendNodeEmail(config.email_auth_user, config.admin_contact_email, "Update Password Error", error_data);
+		  res.json({
+			  "status": 400,
+			  "api_name": "update_forgot_password",
+			  "message": "Error occurred." + err.message,
+			  "data": {}
+		  });
+		  return;
+	}
 };
 
 /**
@@ -581,45 +663,65 @@ api.update_forgot_password = (req, res) => {
 */
 
 api.resend_otp = (req, res) => {
+	try {
+		if (Object.keys(req.body).length == 1) {
 
-    if (Object.keys(req.body).length == 1) {
+			// check user is exist
+			user.check_email_exist(req.body.email)
+			.then(function(userdata) {
 
-        // check user is exist
-        user.check_email_exist(req.body.email)
-        .then(function(userdata) {
+				if(userdata != null) {
 
-            if(userdata != null) {
+					user.save_and_send_otp(userdata._id, userdata.email)
+					.then(function(result) {
+						res.json({
+						  "status": 200,
+						  "api_name": "resend_otp",
+						  "message": "OTP has been sent to your email.",
+						  "data": result
+						});
+						return;
+					});
 
-                user.save_and_send_otp(userdata._id, userdata.email)
-                .then(function(result) {
-                    res.json({
-                      "status": 200,
-                      "api_name": "resend_otp",
-                      "message": "OTP has been sent to your email.",
-                      "data": result
-                    });
-                    return;
-                });
-
-            } else {
-                res.json({
-                  "status": 400,
-                  "api_name": "resend_otp",
-                  "message": "User email is not exist.",
-                  "data": {}
-                });
-                return;
-            }
-        });
-    } else {
-        res.json({
-          "status": 400,
-          "api_name": "resend_otp",
-          "message": "Some request parameters are missing.",
-          "data": {}
-        });
-        return;
-    }
+				} else {
+					res.json({
+					  "status": 400,
+					  "api_name": "resend_otp",
+					  "message": "User email is not exist.",
+					  "data": {}
+					});
+					return;
+				}
+			});
+		} else {
+			res.json({
+			  "status": 400,
+			  "api_name": "resend_otp",
+			  "message": "Some request parameters are missing.",
+			  "data": {}
+			});
+			return;
+		}
+	} catch(err) {
+		var error_data = {
+			  request : { "headers" : req.headers, "body" : req.body, "params" : req.params, "method" : req.method, "httpVersion": req.httpVersion, "query" : req.query, "url" : req.url},
+			  response : {"error" : err.message, "stack" : err.stack},
+			  responsecode: "400",
+			  url: "/resend_otp",
+			  section: "Resend OTP",
+			  device_type: "" ,
+			  apiname: "resend_otp"
+		  };
+		  user.insert_log(error_data);
+		  sendmail.sendNodeEmail(config.email_auth_user, config.admin_contact_email, "Resend OTP Error", error_data);
+		  res.json({
+			  "status": 400,
+			  "api_name": "resend_otp",
+			  "message": "Error occurred." + err.message,
+			  "data": {}
+		  });
+		  return;
+	}
 };
 
 
@@ -650,78 +752,98 @@ api.resend_otp = (req, res) => {
 */
 
 api.verify_otp = (req, res) => {
+	try {
+		if (Object.keys(req.body).length == 2) {
 
-    if (Object.keys(req.body).length == 2) {
+			// check user is exist
+			user.check_email_exist(req.body.email)
+			.then(function(userdata) {
 
-        // check user is exist
-        user.check_email_exist(req.body.email)
-        .then(function(userdata) {
+				if(userdata != null) {
 
-            if(userdata != null) {
+					// check otp is exist
+				user.check_otp_exist(userdata._id, userdata.email)
+				.then(function(otp_data) {
 
-                // check otp is exist
-            user.check_otp_exist(userdata._id, userdata.email)
-            .then(function(otp_data) {
+					if(otp_data != null) {
 
-                if(otp_data != null) {
+						if(otp_data.otp_number == req.body.otp_number)
+						{
+							// verify and remove otp
+							  user.verify_and_remove_otp(userdata._id, userdata.email);
 
-                    if(otp_data.otp_number == req.body.otp_number)
-                    {
-                        // verify and remove otp
-                          user.verify_and_remove_otp(userdata._id, userdata.email);
+							  res.json({
+								"status": 200,
+								"api_name": "verify_otp",
+								"message": "OTP matched successfully.",
+								"data": {
+										   user_id: userdata._id,
+										   email: userdata.email
+										}
+							  });
+							  return;
+						
+						} else {
+							
+							res.json({
+							  "status": 400,
+							  "api_name": "verify_otp",
+							  "message": "OTP doesn't matched.",
+							  "data": {}
+							});
+							return;
+						}
 
-                          res.json({
-                            "status": 200,
-                            "api_name": "verify_otp",
-                            "message": "OTP matched successfully.",
-                            "data": {
-                                       user_id: userdata._id,
-                                       email: userdata.email
-                                    }
-                          });
-                          return;
-                    
-                    } else {
-                        
-                        res.json({
-                          "status": 400,
-                          "api_name": "verify_otp",
-                          "message": "OTP doesn't matched.",
-                          "data": {}
-                        });
-                        return;
-                    }
+					} else {
+						res.json({
+						  "status": 400,
+						  "api_name": "verify_otp",
+						  "message": "OTP is not exist.",
+						  "data": {}
+						});
+						return;
+					}
+				});
 
-                } else {
-                    res.json({
-                      "status": 400,
-                      "api_name": "verify_otp",
-                      "message": "OTP is not exist.",
-                      "data": {}
-                    });
-                    return;
-                }
-            });
-
-            } else {
-                res.json({
-                  "status": 400,
-                  "api_name": "verify_otp",
-                  "message": "User email is not exist.",
-                  "data": {}
-                });
-                return;
-            }
-        });
-    } else {
-        res.json({
-          "status": 400,
-          "api_name": "verify_otp",
-          "message": "Some request parameters are missing.",
-          "data": {}
-        });
-        return;
-    }
+				} else {
+					res.json({
+					  "status": 400,
+					  "api_name": "verify_otp",
+					  "message": "User email is not exist.",
+					  "data": {}
+					});
+					return;
+				}
+			});
+		} else {
+			res.json({
+			  "status": 400,
+			  "api_name": "verify_otp",
+			  "message": "Some request parameters are missing.",
+			  "data": {}
+			});
+			return;
+		}
+	} catch(err) {
+		var error_data = {
+			  request : { "headers" : req.headers, "body" : req.body, "params" : req.params, "method" : req.method, "httpVersion": req.httpVersion, "query" : req.query, "url" : req.url},
+			  response : {"error" : err.message, "stack" : err.stack},
+			  responsecode: "400",
+			  url: "/verify_otp",
+			  section: "Verify OTP",
+			  device_type: "" ,
+			  apiname: "verify_otp"
+		  };
+		  user.insert_log(error_data);
+		  sendmail.sendNodeEmail(config.email_auth_user, config.admin_contact_email, "Verify OTP Error", error_data);
+		  res.json({
+			  "status": 400,
+			  "api_name": "verify_otp",
+			  "message": "Error occurred." + err.message,
+			  "data": {}
+		  });
+		  return;
+	}
 };
 /**
      * @api {post} /update_profile Update Profile
@@ -790,128 +912,148 @@ api.verify_otp = (req, res) => {
     */
 
 api.update_profile = (req, res) => {
+	try {
+		if(Object.keys(req.body).length == 15) {
+			let idresult = user.check_userid_exist(req.body.user_id);
 
-    if(Object.keys(req.body).length == 15) {
-		let idresult = user.check_userid_exist(req.body.user_id);
+			idresult.then(function(idresult) {
 
-		idresult.then(function(idresult) {
+				if (idresult == null) 
+				{
+					res.json({
+					  "status": 400,
+					  "api_name": "update_profile",
+					  "message": "User Not Exist.",
+					  "data": {}
+					});
+					return;
 
-			if (idresult == null) 
-			{
-				res.json({
-				  "status": 400,
-				  "api_name": "update_profile",
-				  "message": "User Not Exist.",
-				  "data": {}
-				});
-				return;
+				} else {
+					let check_phone = user.check_phone_exist_when_update(req.body.phone,req.body.user_id);
 
-			} else {
-                let check_phone = user.check_phone_exist_when_update(req.body.phone,req.body.user_id);
+					check_phone.then(function(phoneresult) {
 
-                check_phone.then(function(phoneresult) {
+						if (phoneresult != null) 
+						{
+							res.json({
+							  "status": 400,
+							  "api_name": "update_profile",
+							  "message": "Phone number is already exist.",
+							  "data": {}
+							});
+							return;
 
-                    if (phoneresult != null) 
-                    {
-                        res.json({
-                          "status": 400,
-                          "api_name": "update_profile",
-                          "message": "Phone number is already exist.",
-                          "data": {}
-                        });
-                        return;
+						} else {
 
-                    } else {
+							
+									geocoder.geocode(req.body.address + req.body.city +  req.body.state + req.body.country, function(err, result){
 
-                        
-                                geocoder.geocode(req.body.address + req.body.city +  req.body.state + req.body.country, function(err, result){
+										// if geocode response is empty
+										if(result.length <= 0)
+										{
+											res.json({
+											  "status": 400,
+											  "api_name": "update_profile",
+											  "message": "Address is invalid.",
+											  "data": {}
+											});
+											return;
 
-                                    // if geocode response is empty
-                                    if(result.length <= 0)
-                                    {
-                                        res.json({
-                                          "status": 400,
-                                          "api_name": "update_profile",
-                                          "message": "Address is invalid.",
-                                          "data": {}
-                                        });
-                                        return;
+										} else {
+											var latitude = result[0].latitude;
+											var longitude = result[0].longitude;
+											
 
-                                    } else {
-                                        var latitude = result[0].latitude;
-                                        var longitude = result[0].longitude;
-                                        
-
-                                        var userdata = {
-                                                        
-                                                          fullname: req.body.fullname,
-                                                          user_role: 2,
-                                                          alternate_email:req.body.alternate_email,
-                                                          phone: req.body.phone,
-                                                          phone_1: req.body.phone_1,
-                                                          phone_2: req.body.phone_2,
-                                                          address: req.body.address,
-                                                          address_1:req.body.address_1,
-                                                          address_2:req.body.address_2,
-                                                          city   : req.body.city,
-                                                          state  : req.body.state,
-                                                          zip_code: req.body.zip_code,
-                                                          country : req.body.country,
-                                                          latitude: latitude,
-                                                          longitude: longitude,
-                                                          facebook_login_id: "",
-                                                          google_login_id: "",
-                                                          social_login_data_status: 0,
-                                                          otp_status: 0,
-                                                          is_active: 0,
-                                                          is_deleted: 0,
-                                                          created_time: new Date(),
-                                                          modified_time: new Date()
-                                                    };
-                                        if(req.body.user_image!=''){
-                                        var fs     = require('fs')
-                                        var image = req.body.user_image;
-                                        var profile_path="users_"+Date.now()+Math.floor(Math.random() * (500 - 20 + 1) + 20)+".jpg";
-                                        var bitmap = new Buffer(image, 'base64');
-                                        fs.writeFileSync("public/uploads/users/"+profile_path, bitmap);
-                                         userdata.user_image=config.base_url+'/uploads/users/'+profile_path;
-                                        }
-                                           var id=req.body.user_id;               
-                                        // create user
-                                        user.updateUser(userdata,id)
+											var userdata = {
+															
+															  fullname: req.body.fullname,
+															  user_role: 2,
+															  alternate_email:req.body.alternate_email,
+															  phone: req.body.phone,
+															  phone_1: req.body.phone_1,
+															  phone_2: req.body.phone_2,
+															  address: req.body.address,
+															  address_1:req.body.address_1,
+															  address_2:req.body.address_2,
+															  city   : req.body.city,
+															  state  : req.body.state,
+															  zip_code: req.body.zip_code,
+															  country : req.body.country,
+															  latitude: latitude,
+															  longitude: longitude,
+															  facebook_login_id: "",
+															  google_login_id: "",
+															  social_login_data_status: 0,
+															  otp_status: 0,
+															  is_active: 0,
+															  is_deleted: 0,
+															  created_time: new Date(),
+															  modified_time: new Date()
+														};
+											if(req.body.user_image!=''){
+											var fs     = require('fs')
+											var image = req.body.user_image;
+											var profile_path="users_"+Date.now()+Math.floor(Math.random() * (500 - 20 + 1) + 20)+".jpg";
+											var bitmap = new Buffer(image, 'base64');
+											fs.writeFileSync("public/uploads/users/"+profile_path, bitmap);
+											 userdata.user_image=config.base_url+'/uploads/users/'+profile_path;
+											}
+											   var id=req.body.user_id;               
+											// create user
+											user.updateUser(userdata,id)
+											
+											.then(function(response) {
+													user.getUser(id).then(function(all_user_data){
+												if (response != null) {
+													userdata.email=req.body.email;
+													res.json({
+													  "status": 200,
+													  "api_name": "update_profile",
+													  "message": "You have updated successfully",
+													  "data": genToken(all_user_data)
+													});
+													return;
+												}
+												})
+											});
+						  
+										}
 										
-                                        .then(function(response) {
-												user.getUser(id).then(function(all_user_data){
-                                            if (response != null) {
-												userdata.email=req.body.email;
-                                                res.json({
-                                                  "status": 200,
-                                                  "api_name": "update_profile",
-                                                  "message": "You have updated successfully",
-                                                  "data": genToken(all_user_data)
-                                                });
-                                                return;
-                                            }
-											})
-                                        });
-                      
-                                    }
-                                    
-                                });
-                            }
-                        });
-               }
-});			   
-            
-    } else {
-        res.json({
-          "status": 400,
-          "api_name": "user_register",
-          "message": "Some request parameters are missing.",
-          "data": {}
-        });
-        return;
-    }
+									});
+								}
+							});
+				   }
+				});			   
+				
+		} else {
+			res.json({
+			  "status": 400,
+			  "api_name": "update_profile",
+			  "message": "Some request parameters are missing.",
+			  "data": {}
+			});
+			return;
+		}
+	} catch(err) {
+		var error_data = {
+			  request : { "headers" : req.headers, "body" : req.body, "params" : req.params, "method" : req.method, "httpVersion": req.httpVersion, "query" : req.query, "url" : req.url},
+			  response : {"error" : err.message, "stack" : err.stack},
+			  responsecode: "400",
+			  url: "/update_profile",
+			  section: "Update Profile",
+			  device_type: "",
+			  apiname: "update_profile"
+		  };
+		  user.insert_log(error_data);
+		  sendmail.sendNodeEmail(config.email_auth_user, config.admin_contact_email, "Update Profile Error", error_data);
+		  res.json({
+			  "status": 400,
+			  "api_name": "update_profile",
+			  "message": "Error occurred." + err.message,
+			  "data": {}
+		  });
+		  return;
+	}
 };
 
 /**
@@ -939,59 +1081,79 @@ api.update_profile = (req, res) => {
 */
 
 api.user_logout = (req, res)=>{
+  try {
+	  if(Object.keys(req.body).length >= 2) {
+		  //if(req.body.user_id=='' || req.body.device_token=='' || req.body.device_type==''){
+		  if(req.body.user_id=='' || req.body.device_type==''){
+			res.json({
+				"status": 400,
+				"api_name": "user_logout",
+				"message": "Some fields are empty.",
+				"data": {}
+			  });
+			return;
+		  }
+	  
+		  if(req.body.device_type != null && req.body.device_type != undefined && req.body.device_type != "") {
+			  user.check_device_token_exist(req.body.user_id, req.body.device_token, req.body.device_type)
+			  .then(function(token_data) {
 
-  if(Object.keys(req.body).length >= 2) {
-	  //if(req.body.user_id=='' || req.body.device_token=='' || req.body.device_type==''){
-	  if(req.body.user_id=='' || req.body.device_type==''){
-		res.json({
-            "status": 400,
-            "api_name": "user_logout",
-            "message": "Some fields are empty.",
-            "data": {}
-          });
-		return;
-	  }
-  
-	  if(req.body.device_type != null && req.body.device_type != undefined && req.body.device_type != "") {
-		  user.check_device_token_exist(req.body.user_id, req.body.device_token, req.body.device_type)
-		  .then(function(token_data) {
+				  if(token_data != null) 
+				  {
+					  // save device token
+					  user.remove_device_token(req.body.user_id, req.body.device_token, req.body.device_type);
+				  }
 
-			  if(token_data != null) 
-			  {
-				  // save device token
-				  user.remove_device_token(req.body.user_id, req.body.device_token, req.body.device_type);
-			  }
-
+				  res.json({
+					"status": 200,
+					"api_name": "user_logout",
+					"message": "You have logout successfully.",
+					"data": {}
+				  });
+			  });
+		  } else {
+			  //when no device_token is supplied
 			  res.json({
 				"status": 200,
 				"api_name": "user_logout",
 				"message": "You have logout successfully.",
 				"data": {}
 			  });
-		  });
+			  return;
+		  }
 	  } else {
-		  //when no device_token is supplied
+			res.json({
+			  "status": 400,
+			  "api_name": "user_logout",
+			  "message": "Some request parameters are missing.",
+			  "data": {}
+			});
+			return;
+		}
+	} catch(err) {
+		var error_data = {
+			  request : { "headers" : req.headers, "body" : req.body, "params" : req.params, "method" : req.method, "httpVersion": req.httpVersion, "query" : req.query, "url" : req.url},
+			  response : {"error" : err.message, "stack" : err.stack},
+			  responsecode: "400",
+			  url: "/user_logout",
+			  section: "Logout",
+			  device_type: "" + req.body.device_type,
+			  apiname: "user_logout"
+		  };
+		  user.insert_log(error_data);
+		  sendmail.sendNodeEmail(config.email_auth_user, config.admin_contact_email, "Logout Error", error_data);
 		  res.json({
-			"status": 200,
-			"api_name": "user_logout",
-			"message": "You have logout successfully.",
-			"data": {}
+			  "status": 400,
+			  "api_name": "user_logout",
+			  "message": "Error occurred." + err.message,
+			  "data": {}
 		  });
 		  return;
-	  }
-  } else {
-        res.json({
-          "status": 400,
-          "api_name": "user_logout",
-          "message": "Some request parameters are missing.",
-          "data": {}
-        });
-        return;
-    }
+	}
 };
 
 api.get_coupon = (req, res)=>{
-
+		try {
           user.check_coupon()
           .then(function(coupon) {
             if(coupon!=null){
@@ -1011,7 +1173,26 @@ api.get_coupon = (req, res)=>{
                 return;
             }
           });
-
+		} catch(err) {
+			var error_data = {
+			  request : { "headers" : req.headers, "body" : req.body, "params" : req.params, "method" : req.method, "httpVersion": req.httpVersion, "query" : req.query, "url" : req.url},
+			  response : {"error" : err.message, "stack" : err.stack},
+			  responsecode: "400",
+			  url: "/get_coupon",
+			  section: "Get Coupon",
+			  device_type: "",
+			  apiname: "get_coupon"
+		  };
+		  user.insert_log(error_data);
+		  sendmail.sendNodeEmail(config.email_auth_user, config.admin_contact_email, "Get Coupon Error", error_data);
+		  res.json({
+			  "status": 400,
+			  "api_name": "get_coupon",
+			  "message": "Error occurred." + err.message,
+			  "data": {}
+		  });
+		  return;
+		}
   
 };
 
@@ -1134,6 +1315,7 @@ api.get_coupon = (req, res)=>{
       }
 */
 api.get_category = (req, res)=>{
+	try{
     user.save_device_token(req.body.user_id, req.body.device_token, req.body.device_type);
           user.get_category()
           .then(function(category) {
@@ -1154,8 +1336,26 @@ api.get_category = (req, res)=>{
                 return;
             }
           });
-
-  
+	} catch(err) {
+	  var error_data = {
+		  request : { "headers" : req.headers, "body" : req.body, "params" : req.params, "method" : req.method, "httpVersion": req.httpVersion, "query" : req.query, "url" : req.url},
+		  response : {"error" : err.message, "stack" : err.stack},
+		  responsecode: "400",
+		  url: "/get_category",
+		  section: "Get Category",
+		  device_type: "" + req.body.device_type,
+		  apiname: "get_category"
+	  };
+	  user.insert_log(error_data);
+	  sendmail.sendNodeEmail(config.email_auth_user, config.admin_contact_email, "Get Category Error", error_data);
+	  res.json({
+		  "status": 400,
+		  "api_name": "get_category",
+		  "message": "Error occurred." + err.message,
+		  "data": {}
+	  });
+	  return;
+  }
 };
 
 /**
@@ -1220,142 +1420,163 @@ api.get_category = (req, res)=>{
 
 
 api.social_login = (req, res) => {
-    if(Object.keys(req.body).length <= 7) {
+	try {
+		if(Object.keys(req.body).length <= 7) {
 
-        let check_email = user.check_email_exist(req.body.email);
+			let check_email = user.check_email_exist(req.body.email);
 
-        check_email.then(function(emailresult) {
+			check_email.then(function(emailresult) {
 
-            if(emailresult != null) 
-            {
-				
-			  user.getUserByEmail(req.body.email).then(function(result){
-			 
-				user.save_device_token(result._id, req.body.device_token, req.body.device_type);
-				
-				 res.json({
-					  "status": 200,
-					  "api_name": "social_login",
-					  "message": "Social Login is successful",
-					  "data": genToken(result)
-					});
-					return;
-				})				
-			
-            } else {
-			 
-				 if(req.body.login_type == "facebook") {
-					 var user_img_url = ((req.body.image_url == null || !req.body.image_url)? ('http://' + req.headers.host + '/uploads/default/default_user.jpg'): req.body.image_url);
-					 var user_full_name = (req.body.name == null? '': req.body.name);
-					var userdata = {
-									fullname : user_full_name,
-									user_role: 2,
-									email: req.body.email,
-									alternate_email:'',
-									phone: '',
-									phone_1: '',
-									phone_2: '',
-									address: '',
-									address_1:'',
-									address_2:'',
-									city   : '',
-									state  : '',
-									zip_code: '',
-									country : '',
-									latitude: '',
-									longitude: '',
-									password: crypto.encrypt('user123'),
-									user_image: user_img_url,
-									facebook_login_id: req.body.login_id,
-									google_login_id: "",
-									social_login_data_status: 1,
-									otp_status: 0,
-									is_active: 0,
-									is_deleted: 0,
-									profile_complete: 0,
-									created_time: new Date(),
-									modified_time: new Date()
-								  };
-								// create user
-								user.createUser(userdata)
-								.then(function(response) {
-									if (response != null) {
-										user.save_device_token(userdata._id, req.body.device_token, req.body.device_type);
-										console.log(req.body);
-										res.json({
-										  "status": 200,
-										  "api_name": "social_login",
-										  "message": "Facebook Login is successful",
-										  "data": genToken(userdata)
-										});
-										return;
-									}
-								});
-				 } else if(req.body.login_type == "google") {
+				if(emailresult != null) 
+				{
+					
+				  user.getUserByEmail(req.body.email).then(function(result){
 				 
-					var user_img_url = ((req.body.image_url == null || !req.body.image_url)? ('http://' + req.headers.host + '/uploads/default/default_user.jpg'): req.body.image_url);
-					var user_full_name = (req.body.name == null? '': req.body.name);
-					var userdata = {
-									fullname : user_full_name,
-									user_role: 2,
-									email: req.body.email,
-									alternate_email:'',
-									phone: '',
-									phone_1: '',
-									phone_2: '',
-									address: '',
-									address_1:'',
-									address_2:'',
-									city   : '',
-									state  : '',
-									zip_code: '',
-									country : '',
-									latitude: '',
-									longitude: '',
-									password: crypto.encrypt('user123'),
-									user_image: user_img_url,
-									facebook_login_id: '',
-									google_login_id: req.body.login_id,
-									social_login_data_status: 1,
-									otp_status: 0,
-									is_active: 0,
-									is_deleted: 0,
-									profile_complete: 0,
-									created_time: new Date(),
-									modified_time: new Date()
-								  };
-								// create user
-								user.createUser(userdata)
-								.then(function(response) {
-									if (response != null) {
-									console.log(req.body);
-										user.save_device_token(userdata._id, req.body.device_token, req.body.device_type);
+					user.save_device_token(result._id, req.body.device_token, req.body.device_type);
+					
+					 res.json({
+						  "status": 200,
+						  "api_name": "social_login",
+						  "message": "Social Login is successful",
+						  "data": genToken(result)
+						});
+						return;
+					})				
+				
+				} else {
+				 
+					 if(req.body.login_type == "facebook") {
+						 var user_img_url = ((req.body.image_url == null || !req.body.image_url)? ('http://' + req.headers.host + '/uploads/default/default_user.jpg'): req.body.image_url);
+						 var user_full_name = (req.body.name == null? '': req.body.name);
+						var userdata = {
+										fullname : user_full_name,
+										user_role: 2,
+										email: req.body.email,
+										alternate_email:'',
+										phone: '',
+										phone_1: '',
+										phone_2: '',
+										address: '',
+										address_1:'',
+										address_2:'',
+										city   : '',
+										state  : '',
+										zip_code: '',
+										country : '',
+										latitude: '',
+										longitude: '',
+										password: crypto.encrypt('user123'),
+										user_image: user_img_url,
+										facebook_login_id: req.body.login_id,
+										google_login_id: "",
+										social_login_data_status: 1,
+										otp_status: 0,
+										is_active: 0,
+										is_deleted: 0,
+										profile_complete: 0,
+										created_time: new Date(),
+										modified_time: new Date()
+									  };
+									// create user
+									user.createUser(userdata)
+									.then(function(response) {
+										if (response != null) {
+											user.save_device_token(userdata._id, req.body.device_token, req.body.device_type);
+											console.log(req.body);
+											res.json({
+											  "status": 200,
+											  "api_name": "social_login",
+											  "message": "Facebook Login is successful",
+											  "data": genToken(userdata)
+											});
+											return;
+										}
+									});
+					 } else if(req.body.login_type == "google") {
+					 
+						var user_img_url = ((req.body.image_url == null || !req.body.image_url)? ('http://' + req.headers.host + '/uploads/default/default_user.jpg'): req.body.image_url);
+						var user_full_name = (req.body.name == null? '': req.body.name);
+						var userdata = {
+										fullname : user_full_name,
+										user_role: 2,
+										email: req.body.email,
+										alternate_email:'',
+										phone: '',
+										phone_1: '',
+										phone_2: '',
+										address: '',
+										address_1:'',
+										address_2:'',
+										city   : '',
+										state  : '',
+										zip_code: '',
+										country : '',
+										latitude: '',
+										longitude: '',
+										password: crypto.encrypt('user123'),
+										user_image: user_img_url,
+										facebook_login_id: '',
+										google_login_id: req.body.login_id,
+										social_login_data_status: 1,
+										otp_status: 0,
+										is_active: 0,
+										is_deleted: 0,
+										profile_complete: 0,
+										created_time: new Date(),
+										modified_time: new Date()
+									  };
+									// create user
+									user.createUser(userdata)
+									.then(function(response) {
+										if (response != null) {
+										console.log(req.body);
+											user.save_device_token(userdata._id, req.body.device_token, req.body.device_type);
 
-										res.json({
-										  "status": 200,
-										  "api_name": "social_login",
-										  "message": "Google Login is successful",
-										  "data": genToken(userdata)
-										});
-										return;
-									}
-								});
-				 }
-			
-			
-                
-                    
-            }
-        })
-    } else {
-        res.json({
-          "status": 400,
-          "api_name": "social_login",
-          "message": "Some request parameters are missing.",
-          "data": {}
-        });
-        return;
-    }
+											res.json({
+											  "status": 200,
+											  "api_name": "social_login",
+											  "message": "Google Login is successful",
+											  "data": genToken(userdata)
+											});
+											return;
+										}
+									});
+					 }
+				
+				
+					
+						
+				}
+			})
+		} else {
+			res.json({
+			  "status": 400,
+			  "api_name": "social_login",
+			  "message": "Some request parameters are missing.",
+			  "data": {}
+			});
+			return;
+		}
+	}  catch(err) {
+	  var error_data = {
+		  request : { "headers" : req.headers, "body" : req.body, "params" : req.params, "method" : req.method, "httpVersion": req.httpVersion, "query" : req.query, "url" : req.url},
+		  response : {"error" : err.message, "stack" : err.stack},
+		  responsecode: "400",
+		  url: "/social_login",
+		  section: "Social Login",
+		  device_type: "" + req.body.device_type,
+		  apiname: "social_login"
+	  };
+	  user.insert_log(error_data);
+	  sendmail.sendNodeEmail(config.email_auth_user, config.admin_contact_email, "Social Login Error", error_data);
+	  res.json({
+		  "status": 400,
+		  "api_name": "social_login",
+		  "message": "Error occurred." + err.message,
+		  "data": {}
+	  });
+	  return;
+  }
 };
 /**
  * @api {post} /add_faq Add user query
@@ -1381,6 +1602,7 @@ api.social_login = (req, res) => {
       }
 */
 api.add_faq = (req, res)=>{
+try {
 if(Object.keys(req.body).length == 2) {
     user.add_faq(req.body.email,req.body.query)
     .then(function(result) {
@@ -1411,9 +1633,29 @@ if(Object.keys(req.body).length == 2) {
       return;
 } 
 
-
+} catch(err) {
+	  var error_data = {
+		  request : { "headers" : req.headers, "body" : req.body, "params" : req.params, "method" : req.method, "httpVersion": req.httpVersion, "query" : req.query, "url" : req.url},
+		  response : {"error" : err.message, "stack" : err.stack},
+		  responsecode: "400",
+		  url: "/add_faq",
+		  section: "Add FAQ",
+		  device_type: "" + req.body.device_type,
+		  apiname: "add_faq"
+	  };
+	  user.insert_log(error_data);
+	  sendmail.sendNodeEmail(config.email_auth_user, config.admin_contact_email, "Add FAQ Error", error_data);
+	  res.json({
+		  "status": 400,
+		  "api_name": "add_faq",
+		  "message": "Error occurred." + err.message,
+		  "data": {}
+	  });
+	  return;
+  }
 };
 api.send = (req, res)=>{
+	try {
    var transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -1436,6 +1678,27 @@ transporter.sendMail(mailOptions, function(error, info){
      res.send(info.response);
   }
 });
+ } catch(err) {
+	  var error_data = {
+		  request : { "headers" : req.headers, "body" : req.body, "params" : req.params, "method" : req.method, "httpVersion": req.httpVersion, "query" : req.query, "url" : req.url},
+		  response : {"error" : err.message, "stack" : err.stack},
+		  responsecode: "400",
+		  url: "/send",
+		  section: "Send",
+		  device_type: "" + req.body.device_type,
+		  apiname: "send"
+	  };
+	  user.insert_log(error_data);
+	  sendmail.sendNodeEmail(config.email_auth_user, config.admin_contact_email, "Mail Send Error", error_data);
+	  res.json({
+		  "status": 400,
+		  "api_name": "send",
+		  "message": "Error occurred." + err.message,
+		  "data": {}
+	  });
+	  return;
+  }
+
 }
 /**
  * @api {post} /get_coupon_by_service_id Get Coupon by service_id
@@ -1508,83 +1771,218 @@ transporter.sendMail(mailOptions, function(error, info){
       }
 */
 api.get_coupon_by_service_id = (req, res)=>{
-    //console.log([req.body.service_id]);
-    if(Object.keys(req.body).length == 1) {
+	try {
+		//console.log([req.body.service_id]);
+		if(Object.keys(req.body).length == 1) {
 
-        if(req.body.service_id!='')
-        {
-            user.get_coupon_by_service_id(req.body.service_id)
-            .then(function(result) {
-				console.log(result);
-            if(result != null && result != [] && result.length > 0){
-                
+			if(req.body.service_id!='')
+			{
+				user.get_coupon_by_service_id(req.body.service_id)
+				.then(function(result) {
+					console.log(result);
+				if(result != null && result != [] && result.length > 0){
+					
+						res.json({
+							"status": 200,
+							"api_name": "get_coupon_by_service_id",
+							"message": "Coupon found.",
+							"data":result
+						});
+						return;
+					
+				}else{
 					res.json({
-						"status": 200,
+						"status": 400,
 						"api_name": "get_coupon_by_service_id",
-						"message": "Coupon found.",
-						"data":result
+						"message": "Coupon not found",
+						"data": []
 					});
 					return;
-				
-            }else{
-                res.json({
-                    "status": 400,
-                    "api_name": "get_coupon_by_service_id",
-                    "message": "Coupon not found",
-                    "data": []
-                });
-                return;
-            }
-            });
-        }else
-        {
-            user.check_coupon()
-            .then(function(coupon) {
-              if(coupon!=null){
-                  res.json({
-                    "status": 200,
-                    "api_name": "get_coupon_by_service_id",
-                    "message": "All coupons.",
-                    "data": coupon
-                  });
-                  return;
-              }
-            });
-        }
-    }else
-    {
-        res.json({
-            "status": 400,
-            "api_name": "get_coupon_by_service_id",
-            "message": "Some request parameters are missing.",
-            "data": {}
-        });
-        return;
-    }  
+				}
+				});
+			}else
+			{
+				user.check_coupon()
+				.then(function(coupon) {
+				  if(coupon!=null){
+					  res.json({
+						"status": 200,
+						"api_name": "get_coupon_by_service_id",
+						"message": "All coupons.",
+						"data": coupon
+					  });
+					  return;
+				  }
+				});
+			}
+		}else
+		{
+			res.json({
+				"status": 400,
+				"api_name": "get_coupon_by_service_id",
+				"message": "Some request parameters are missing.",
+				"data": {}
+			});
+			return;
+		}
+	}  catch(err) {
+	  var error_data = {
+		  request : { "headers" : req.headers, "body" : req.body, "params" : req.params, "method" : req.method, "httpVersion": req.httpVersion, "query" : req.query, "url" : req.url},
+		  response : {"error" : err.message, "stack" : err.stack},
+		  responsecode: "400",
+		  url: "/get_coupon_by_service_id",
+		  section: "get_coupon_by_service_id",
+		  device_type: "" + req.body.device_type,
+		  apiname: "get_coupon_by_service_id"
+	  };
+	  user.insert_log(error_data);
+	  sendmail.sendNodeEmail(config.email_auth_user, config.admin_contact_email, "Get coupon by service id Error", error_data);
+	  res.json({
+		  "status": 400,
+		  "api_name": "get_coupon_by_service_id",
+		  "message": "Error occurred." + err.message,
+		  "data": {}
+	  });
+	  return;
+  }
+
 };
 api.get_profile = (req, res)=>{
-    if(Object.keys(req.body).length == 1) {
-    user.check_userid_exist(req.body.user_id)
-        .then(function(userdata) {
-            res.json({
-                "status": 200,
-                "api_name": "get_profile",
-                "message": "All user data.",
-                "data": genToken(userdata)
-              });
-              return;
-        });
-       
-    }else
-    {
-        res.json({
-            "status": 400,
-            "api_name": "get_profile",
-            "message": "Some request parameters are missing.",
-            "data": {}
-        });
-        return;
-    }  
+    try {
+		if(Object.keys(req.body).length == 1) {
+		user.check_userid_exist(req.body.user_id)
+			.then(function(userdata) {
+				res.json({
+					"status": 200,
+					"api_name": "get_profile",
+					"message": "All user data.",
+					"data": genToken(userdata)
+				  });
+				  return;
+			});
+		   
+		}else
+		{
+			res.json({
+				"status": 400,
+				"api_name": "get_profile",
+				"message": "Some request parameters are missing.",
+				"data": {}
+			});
+			return;
+		}  
+	} catch(err) {
+	  var error_data = {
+		  request : { "headers" : req.headers, "body" : req.body, "params" : req.params, "method" : req.method, "httpVersion": req.httpVersion, "query" : req.query, "url" : req.url},
+		  response : {"error" : err.message, "stack" : err.stack},
+		  responsecode: "400",
+		  url: "/get_profile",
+		  section: "Get Profile",
+		  device_type: "" + req.body.device_type,
+		  apiname: "get_profile"
+	  };
+	  user.insert_log(error_data);
+	  sendmail.sendNodeEmail(config.email_auth_user, config.admin_contact_email, "Get Profile Error", error_data);
+	  res.json({
+		  "status": 400,
+		  "api_name": "get_profile",
+		  "message": "Error occurred." + err.message,
+		  "data": {}
+	  });
+	  return;
+  }
+
+}
+//insert log on error
+/**
+ * @api {post} /insert_log Log error records & email developer
+ * @apiGroup User
+ * @apiparam {String} request	[JSON]Request string posted by app
+ * @apiparam {String} response	[JSON]Response string received by app
+ * @apiparam {String} responsecode	[JSON]Responsecode received by app
+ * @apiparam {String} url	[JSON]URL hit by the app
+ * @apiparam {String} section	[JSON]Section in which issue ocurred(e.g, login, registration etc.)
+ * @apiparam {String} device_type	[JSON]Device Type(Ios/Android)
+ * @apiparam {String} apiname	[JSON]Name of the Api hit by the app
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 200 OK
+ *    {
+		"status": 200,
+		"api_name": "insert_log",
+		"message": "Data saved successfully.",
+		"data": {}
+	}
+ * @apiErrorExample {json} Failed
+ *    HTTP/1.1 400 Failed
+      {
+         "status": 400,
+         "api_name": "insert_log",
+         "message": "Some request parameters are missing.",
+         "data": []
+      }
+*/
+api.insert_log=(req,res)=>{
+	try {
+		if(Object.keys(req.body).length == 7) {
+			user.insert_log(req.body).then(function(result){
+					if(result!=null)
+					{
+						var transporter = nodemailer.createTransport({
+							service: "" + config.email_auth_service,
+							auth: {
+							  user: "" + config.email_auth_user,
+							  pass: "" + config.email_auth_password
+							}
+						  });
+					  
+						  var mailOptions = {
+							from: 'Xtras Admin',
+							to: "" + config.developer_mail,
+							subject: 'Xtras: New log ',
+							html: "" + result
+						  };
+						transporter.sendMail(mailOptions)
+
+
+						res.json({
+							"status": 200,
+							"api_name": "insert_log",
+							"message": "Data saved successfully.",
+							"data": {}
+						});
+					}
+			});
+		}else
+		{
+			res.json({
+				"status": 400,
+				"api_name": "insert_log",
+				"message": "Some request parameters are missing.",
+				"data": {}
+			});
+			return;
+		}  
+	} catch(err) {
+	  var error_data = {
+		  request : { "headers" : req.headers, "body" : req.body, "params" : req.params, "method" : req.method, "httpVersion": req.httpVersion, "query" : req.query, "url" : req.url},
+		  response : {"error" : err.message, "stack" : err.stack},
+		  responsecode: "400",
+		  url: "/insert_log",
+		  section: "Insert Log",
+		  device_type: "" + req.body.device_type,
+		  apiname: "insert_log"
+	  };
+	  user.insert_log(error_data);
+	  sendmail.sendNodeEmail(config.email_auth_user, config.admin_contact_email, "Insert Log Error", error_data);
+	  res.json({
+		  "status": 400,
+		  "api_name": "insert_log",
+		  "message": "Error occurred." + err.message,
+		  "data": {}
+	  });
+	  return;
+  }
+
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
