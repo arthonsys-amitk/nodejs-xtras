@@ -47,7 +47,7 @@
 					<td>&nbsp;</td>
 				  <% } %>
                   <td><%=(services_list[i].is_active? "Yes" : "No")%></td>
-                  <td> <a class="btn btn-xs btn-info" href="/admin/services/edit/<%=services_list[i]._id%>" style="margin-right: 10px;">Edit / View</a><a class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want to delete ?');" href="/admin/services/delete/<%=services_list[i]._id%>">Delete</a></td>
+                  <td> <a class="btn btn-xs btn-primary" href="/admin/services/view/<%=services_list[i]._id%>" style="margin-right: 10px;">View</a><a class="btn btn-xs btn-info" href="/admin/services/edit/<%=services_list[i]._id%>" style="margin-right: 10px;">Edit</a><a class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want to delete ?');" href="/admin/services/delete/<%=services_list[i]._id%>">Delete</a></td>
                 </tr>
                 <% count++; } %>
                 </tbody>

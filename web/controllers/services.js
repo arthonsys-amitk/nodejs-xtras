@@ -88,6 +88,44 @@ web.edit = (req, res) => {
 	});
 };
 
+// View Service
+web.view = (req, res) => {
+	req.session.hostname = req.headers.host;
+	var hostname = req.session.hostname;
+	if(typeof req.session.user_data == "undefined" || req.session.user_data === true)
+	{
+	    if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true)
+	    {
+	        res.locals.flashmessages = req.session.alert_data;
+	        req.session.alert_data = null;
+	    }
+		res.redirect('/admin');
+	} else {
+		if(typeof req.session.alert_data != "undefined" || req.session.alert_data === true) {
+            res.locals.flashmessages = req.session.alert_data;
+            req.session.alert_data = null;
+        }
+	}
+	services.get_service_details(req.params.service_id)
+	.then(function(res_service){
+		if(res_service == null || res_service == undefined || res_service == "") {
+			req.session.flash_msg = {"msg": "Service details could not be fetched", "type": "danger"};
+			req.session.alert_data = { alert_type: "danger", alert_msg: req.session.flash_msg.msg };
+			res.redirect('/admin/list_services');
+		} else {
+			if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
+				var qrycount = 0;
+				var resqueries = null;
+			} else {
+				var qrycount = req.session.resqueries.length;
+				var resqueries = req.session.resqueries;
+			}
+			res.render('admin/services/view_services',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "service" : res_service, "hostname" : hostname});
+		}
+	});
+};
+
+
 //transaction list
 web.transaction_list = (req, res) => {
 	req.session.hostname = req.headers.host;
@@ -151,6 +189,18 @@ web.view_transaction = (req, res) => {
         }
 		services.get_transaction_details(payment_id)
 		.then(function(res_transaction){
+		   var tran_appmt_id = 0;
+			if(res_transaction != null && res_transaction != undefined && res_transaction != [] && res_transaction.length > 0) {
+				tran_appmt_id = res_transaction[0].appointment_id;
+			}
+			services.get_appointment_details(tran_appmt_id)
+			.then(function(res_appmt){
+				if(res_appmt == null || res_appmt == undefined || res_appmt.provider_firstname == null || res_appmt.provider_firstname == undefined || res_appmt.provider_lastname == null || res_appmt.provider_lastname == undefined) {
+					req.session.alert_data = { alert_type: "danger", alert_msg: "Appointment Details could not be fetched" };
+					res.redirect('/admin/transaction_list');
+				}
+				var provider_name = res_appmt.provider_firstname + " " + res_appmt.provider_lastname;
+				
 			if(typeof req.session.resqueries == "undefined" || (req.session.resqueries == null)) {
 				var qrycount = 0;
 				var resqueries = null;
@@ -161,12 +211,14 @@ web.view_transaction = (req, res) => {
 			if(res_transaction != null && res_transaction != undefined && res_transaction != [] && res_transaction.length > 0) {
 				var rec_transaction = res_transaction[0];
 				var rec_user = res_transaction[1];
-rec_transaction.created_at = dateFormat(new Date(rec_transaction.created_at), "dd-mm-yyyy hh:MM:ss TT");
-				res.render('admin/services/transaction_details',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "transaction" : rec_transaction, "user" : rec_user, "hostname" : hostname});
+				rec_transaction.created_at = dateFormat(new Date(rec_transaction.created_at), "dd-mm-yyyy hh:MM:ss TT");
+					var appointment_date = dateFormat(new Date(res_appmt.created_at), "dd-mm-yyyy hh:MM TT");
+					res.render('admin/services/transaction_details',{"user_data":req.session.user_data, "num_queries" : qrycount, "resqueries" : resqueries, "member_since" : req.session.member_since, "transaction" : rec_transaction, "user" : rec_user, "hostname" : hostname, "provider_name" : provider_name, "appointment_date": appointment_date});
 			} else {
 				req.session.alert_data = { alert_type: "danger", alert_msg: "Details could not be fetched" };
 				res.redirect('/admin/transaction_list');
 			}
+         });
 		});
 	}
 };

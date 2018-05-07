@@ -78,10 +78,10 @@ exportFuns.delete = (faq_id)=>{
 //send reply to query
 exportFuns.send_reply = (sender_email, reply, faq_id)=>{
 	var transporter = nodemailer.createTransport({
-	  service: 'gmail',
+	  service: "" + config.email_auth_service,
 	  auth: {
-		user: 'amitkothari.as@gmail.com',
-		pass: 'Arthonsys@12345'
+		user: "" + config.email_auth_user,
+		pass: "" + config.email_auth_password
 	  }
 	});
 

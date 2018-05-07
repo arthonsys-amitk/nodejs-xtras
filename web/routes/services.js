@@ -6,6 +6,7 @@ var express = require('express'),
 
 router.get('/list_services', services.web.list_services);
 router.get('/services/edit/:service_id', services.web.edit);
+router.get('/services/view/:service_id', services.web.view);
 router.get('/transaction_list', services.web.transaction_list);
 router.get('/view_transaction/:payment_id', services.web.view_transaction);
 router.post('/filter_payment',services.web.filter_payment);

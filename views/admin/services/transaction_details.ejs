@@ -46,34 +46,48 @@
               <div class="active tab-pane" id="summary">
                 <form class="form-horizontal" >
                   <div class="form-group">
-                    <label class="col-sm-2 control-label">Name</label>
+                    <label class="col-sm-4 control-label">Name</label>
 
-                    <div class="col-sm-10">
+                    <div class="col-sm-8">
                       <label class=" text-muted top-spaced"><%=user.fullname%></label>
                     </div>
                   </div>
                   
 				  <div class="form-group">
-                    <label class="col-sm-2 control-label">Amount</label>
+                    <label class="col-sm-4 control-label">Amount</label>
 
-                    <div class="col-sm-10">
+                    <div class="col-sm-8">
                       <label class=" text-muted top-spaced"><%=transaction.currency%> <%=parseFloat(transaction.amount/100).toFixed(2)%></label>
                     </div>
                   </div>
 				  
 				  <div class="form-group">
-                    <label class="col-sm-2 control-label">Date</label>
+                    <label class="col-sm-4 control-label">Date</label>
 
-                    <div class="col-sm-10">
+                    <div class="col-sm-8">
                       <label class=" text-muted top-spaced"><%=transaction.created_at%></label>
                     </div>
                   </div>
 				  
 				  <div class="form-group">
-                    <label class="col-sm-2 control-label">Appointment ID</label>
+                    <label class="col-sm-4 control-label">Appointment ID</label>
 
-                    <div class="col-sm-10">
+                    <div class="col-sm-8">
                       <label class=" text-muted top-spaced"><%=transaction.appointment_id%></label>
+                    </div>
+                  </div>
+				  <div class="form-group">
+                    <label class="col-sm-4 control-label">Appointment Date</label>
+
+                    <div class="col-sm-8">
+                      <label class=" text-muted top-spaced"><%=appointment_date%></label>
+                    </div>
+                  </div>
+				  <div class="form-group">
+                    <label class="col-sm-4 control-label">Service Provider</label>
+
+                    <div class="col-sm-8">
+                      <label class=" text-muted top-spaced"><%=provider_name%></label>
                     </div>
                   </div>
 				  <%
@@ -89,9 +103,9 @@
 							var transaction_status_html = "<span style='background: #ff0000; padding: 4px;'>" + transaction_status + "</span>";
 				  %>
 				  <div class="form-group">
-                    <label class="col-sm-2 control-label">Status</label>
+                    <label class="col-sm-4 control-label">Status</label>
 
-                    <div class="col-sm-10">
+                    <div class="col-sm-8">
                       <label class=" text-muted top-spaced"><%- transaction_status_html%></label>
                     </div>
                   </div>
@@ -109,101 +123,101 @@
 						</div>
 					<% } else if(transaction.payment_details.id == undefined || transaction.payment_details.id == null) { %>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Status Code</label>
+							<label class="col-sm-4 control-label">Status Code</label>
 
-							<div class="col-sm-10">
+							<div class="col-sm-8">
 							  <label class=" text-muted top-spaced"><%=transaction.payment_details.statusCode%></label>
 							</div>
 					    </div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Code</label>
+							<label class="col-sm-4 control-label">Code</label>
 
-							<div class="col-sm-10">
+							<div class="col-sm-8">
 							  <label class=" text-muted top-spaced"><%=transaction.payment_details.code%></label>
 							</div>
 					    </div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Message</label>
+							<label class="col-sm-4 control-label">Message</label>
 
-							<div class="col-sm-10">
+							<div class="col-sm-8">
 							  <label class=" text-muted top-spaced"><%=transaction.payment_details.message%></label>
 							</div>
 					    </div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Request ID</label>
+							<label class="col-sm-4 control-label">Request ID</label>
 
-							<div class="col-sm-10">
+							<div class="col-sm-8">
 							  <label class=" text-muted top-spaced"><%=transaction.payment_details.requestId%></label>
 							</div>
 					    </div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Token</label>
+							<label class="col-sm-4 control-label">Token</label>
 
-							<div class="col-sm-10">
+							<div class="col-sm-8">
 							  <label class=" text-muted top-spaced"><%=transaction.token%></label>
 							</div>
 					    </div>
 					<% } else if(transaction.payment_details.id) { %>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Status</label>
+							<label class="col-sm-4 control-label">Status</label>
 
-							<div class="col-sm-10">
+							<div class="col-sm-8">
 							  <label class=" text-muted top-spaced"><%=transaction.payment_details.status%></label>
 							</div>
 					    </div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Transaction ID</label>
+							<label class="col-sm-4 control-label">Transaction ID</label>
 
-							<div class="col-sm-10">
+							<div class="col-sm-8">
 							  <label class=" text-muted top-spaced"><%=transaction.payment_details.id%></label>
 							</div>
 					    </div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Object</label>
+							<label class="col-sm-4 control-label">Object</label>
 
-							<div class="col-sm-10">
+							<div class="col-sm-8">
 							  <label class=" text-muted top-spaced"><%=transaction.payment_details.object%></label>
 							</div>
 					    </div>						
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Balance Transaction</label>
+							<label class="col-sm-4 control-label">Balance Transaction</label>
 
-							<div class="col-sm-10">
+							<div class="col-sm-8">
 							  <label class=" text-muted top-spaced"><%=transaction.payment_details.balance_transaction%></label>
 							</div>
 					    </div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Captured</label>
+							<label class="col-sm-4 control-label">Captured</label>
 
-							<div class="col-sm-10">
+							<div class="col-sm-8">
 							  <label class=" text-muted top-spaced"><%=transaction.payment_details.captured%></label>
 							</div>
 					    </div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">description</label>
+							<label class="col-sm-4 control-label">description</label>
 
-							<div class="col-sm-10">
+							<div class="col-sm-8">
 							  <label class=" text-muted top-spaced"><%=transaction.payment_details.description%></label>
 							</div>
 					    </div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">LiveMode</label>
+							<label class="col-sm-4 control-label">LiveMode</label>
 
-							<div class="col-sm-10">
+							<div class="col-sm-8">
 							  <label class=" text-muted top-spaced"><%=transaction.payment_details.livemode%></label>
 							</div>
 					    </div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Paid</label>
+							<label class="col-sm-4 control-label">Paid</label>
 
-							<div class="col-sm-10">
+							<div class="col-sm-8">
 							  <label class=" text-muted top-spaced"><%=transaction.payment_details.paid %></label>
 							</div>
 					    </div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Token</label>
+							<label class="col-sm-4 control-label">Token</label>
 
-							<div class="col-sm-10">
+							<div class="col-sm-8">
 							  <label class=" text-muted top-spaced"><%=transaction.token%></label>
 							</div>
 					    </div>					

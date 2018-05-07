@@ -304,4 +304,20 @@ exportFuns.filter_payment = (data) => {
 	});
 };
 
+//get appointment details
+exportFuns.get_appointment_details = (appointment_id)=>{
+  let db = new Mongo;
+  let searchPattern = {
+	_id: db.makeID("" + appointment_id)
+  };
+  return db.connect(config.mongoURI)
+  .then(function(){
+  return db.findOne('appointments', searchPattern);
+  })
+  .then(function(result){
+    db.close();
+    return result;
+  });
+};
+
 module.exports = exportFuns;
