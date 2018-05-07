@@ -48,6 +48,8 @@
                     <label for="coupon_code" class="col-sm-4 control-label">Service Category</label>
 
                     <div class="col-sm-6">
+						<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-cube"></i></span>
                       <select id="service_category_id" name="service_category_id" class="form-control">
 						<option value="">--Select Category--</option>
 					  <%
@@ -60,13 +62,17 @@
 						}
 					  %>
 					  </select>
+						</div>
                     </div>
                   </div>
                   <div class="form-group">                    
 						<label class="col-sm-4 control-label">Service Name</label>
 
 						<div class="col-sm-6">
-						  <input type="text" value="" name="service_name" class="form-control" id="service_name" placeholder="Enter Service Name">
+							<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-gg"></i></span>
+							<input type="text" value="" name="service_name" class="form-control" id="service_name" placeholder="Enter Service Name">
+							</div>
 						</div>
                   </div>
                   
@@ -81,10 +87,13 @@
 									business = "selected"
 								}
 							%>
+							<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-cog"></i></span>
 						  <select id="service_type" name="service_type" class="form-control">
 								<option value="individual" >Individual</option>
 								<option value="business" >Business</option>
 						  </select>
+							</div>
 						</div>
                   </div>
 				  
@@ -92,7 +101,10 @@
 						<label class="col-sm-4 control-label">Additional Details</label>
 
 						<div class="col-sm-6">
+							<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-list"></i></span>
 						  <textarea name="additional_details" class="form-control" id="additional_details" placeholder="Enter Additional Details"></textarea>
+							</div>
 						</div>
                   </div>
 				  
@@ -106,10 +118,13 @@
 				  <div class="form-group">                    
 						  <label class="col-sm-4 control-label">Radius Units</label>
 						  <div class="col-sm-6">
+							<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-dot-circle-o"></i></span>
 						  <select id="service_radius_units" name="service_radius_units" class="form-control">
 							<option value="Km" >Km</option>
 							<option value="Miles" >Miles</option>
 						  </select>
+							</div>
 						  </div>
                   </div>
 				  
@@ -181,6 +196,9 @@
 					<label for="service_availability" class="col-sm-4 control-label">Service Availability</label>
 
 					<div class="col-sm-6">
+						<div class="input-group" >
+						<div class="input-group-addon">
+								  <i class="fa fa-calendar"></i> </div>
 					  <select class="form-control" id="service_availability" name="service_availability" multiple>
 							<option value="">--Select --</option>
 							<option value="available_monday" >Monday</option>
@@ -191,6 +209,7 @@
 							<option value="available_saturday" >Saturday</option>
 							<option value="available_sunday" >Sunday</option>							
 					  </select>
+						</div>
 					</div>
 				  </div>
 				  
@@ -209,7 +228,11 @@
                     <label for="cancel_hours" class="col-sm-4 control-label">Prior Cancellation Hours</label>
 
                     <div class="col-sm-6">
+						<div class="input-group" >
+						<div class="input-group-addon">
+								  <i class="fa fa-calendar-times-o"></i></div>
                       <input type="number" value="" name="cancel_hours" class="form-control" id="cancel_hours" placeholder="Prior Cancellation Hours" />
+						</div>
                     </div>
                   </div>
 				  
@@ -217,7 +240,11 @@
                     <label for="cancel_fee" class="col-sm-4 control-label">Cancellation Fee</label>
 
                     <div class="col-sm-6">
+						<div class="input-group" >
+						<div class="input-group-addon">
+								  <i class="fa fa-dollar"></i></div>
                       <input type="number" value="" name="cancel_fee" class="form-control" id="cancel_fee" placeholder="Cancellation Fee" />
+						</div>
                     </div>
                   </div>
 				  
@@ -225,7 +252,11 @@
                     <label for="reschedule_hours" class="col-sm-4 control-label">Prior Reschedule Hours</label>
 
                     <div class="col-sm-6">
+						<div class="input-group" >
+						<div class="input-group-addon">
+								  <i class="fa fa-calendar-minus-o"></i></div>
                       <input type="number" value="" name="reschedule_hours" class="form-control" id="reschedule_hours" placeholder="Prior Reschedule Hours" />
+						</div>
                     </div>
                   </div>
 				  
@@ -233,7 +264,11 @@
                     <label for="reschedule_fee" class="col-sm-4 control-label">Reschedule Fee</label>
 
                     <div class="col-sm-6">
+						<div class="input-group" >
+						<div class="input-group-addon">
+								  <i class="fa fa-dollar"></i></div>
                       <input type="number" value="" name="reschedule_fee" class="form-control" id="reschedule_fee" placeholder="Reschedule Fee" />
+						</div>
                     </div>
                   </div>
 				  
@@ -241,7 +276,11 @@
                     <label for="cancel_rsh_policy" class="col-sm-4 control-label">Cancellation/ Reschedule Policy</label>
 
                     <div class="col-sm-6 " >
+						<div class="input-group" >
+						<div class="input-group-addon">
+								  <i class="fa fa-file-image-o"></i></div>
                       <input type="file" value="" name="cancel_rsh_policy" class="form-control" id="cancel_rsh_policy" style="padding-left: 0px; padding-top: 0px;"/>					  
+						</div>
                     </div>
                   </div>
 				  
@@ -249,7 +288,11 @@
                     <label for="legal_policy" class="col-sm-4 control-label">Legal Policy</label>
 
                     <div class="col-sm-6 " >
+						<div class="input-group" >
+						<div class="input-group-addon">
+								  <i class="fa fa-file-image-o"></i></div>
                       <input type="file" value="" name="legal_policy" class="form-control" id="legal_policy" style="padding-left: 0px; padding-top: 0px;"/>
+						</div>
                     </div>
                   </div>
 				  
@@ -257,7 +300,11 @@
                     <label for="address" class="col-sm-4 control-label">Address</label>
 
                     <div class="col-sm-6 " >
+						<div class="input-group" >
+						<div class="input-group-addon">
+								  <i class="fa fa-map"></i></div>
                       <input type="text" value="" name="address" class="form-control" id="address" />
+						</div>
                     </div>
                   </div>
 				  
@@ -265,7 +312,11 @@
                     <label for="city" class="col-sm-4 control-label">City</label>
 
                     <div class="col-sm-6 " >
+						<div class="input-group" >
+						<div class="input-group-addon">
+								  <i class="fa fa-map-marker"></i></div>
                       <input type="text" value="" name="city" class="form-control" id="city" />
+						</div>
                     </div>
                   </div>
 				  
@@ -273,7 +324,11 @@
                     <label for="province" class="col-sm-4 control-label">Province/State</label>
 
                     <div class="col-sm-6 " >
+						<div class="input-group" >
+						<div class="input-group-addon">
+								  <i class="fa fa-map-pin"></i></div>
                       <input type="text" value="" name="province" class="form-control" id="province" />
+						</div>
                     </div>
                   </div>
 				  
@@ -281,7 +336,11 @@
                     <label for="zipcode" class="col-sm-4 control-label">Zipcode</label>
 
                     <div class="col-sm-6 " >
+						<div class="input-group" >
+						<div class="input-group-addon">
+								  <i class="fa fa-bookmark"></i></div>
                       <input type="text" value="" name="zipcode" class="form-control" id="zipcode" />
+						</div>
                     </div>
                   </div>
 				  
@@ -290,6 +349,9 @@
                     <label for="province" class="col-sm-4 control-label">Country</label>
 
                     <div class="col-sm-6 " >
+						<div class="input-group" >
+						<div class="input-group-addon">
+								  <i class="fa fa-globe"></i></div>
                       <select id="country" name="country" class="form-control">
 							<option value="Afghanistan">Afghanistan</option>
 							<option value="Albania">Albania</option>
@@ -531,6 +593,7 @@
 							<option value="Zambia">Zambia</option>
 							<option value="Zimbabwe">Zimbabwe</option>
 						</select>
+							</div>
                     </div>
                   </div>
 				  
@@ -538,6 +601,9 @@
 						<label for="rating" class="col-sm-4 control-label">Rating</label>
 
 						<div class="col-sm-6">
+							<div class="input-group" >
+							<div class="input-group-addon">
+								  <i class="fa fa-star"></i></div>
 						  <select id="rating" name="rating" class="form-control">
 							<option value="1">1</option>
 							<option value="2">2</option>
@@ -545,6 +611,7 @@
 							<option value="4">4</option>
 							<option value="5">5</option>
 						  </select>
+							</div>
 						</div>
                   </div>
 				  
@@ -552,10 +619,14 @@
 						<label for="currency" class="col-sm-4 control-label">Currency</label>
 
 						<div class="col-sm-6">
+							<div class="input-group" >
+							<div class="input-group-addon">
+								  <i class="fa fa-money"></i></div>
 						  <select id="currency" name="currency" class="form-control">
 							<option value="$" >USD</option>
 							<option value="C$" >CAD</option>
 						  </select>
+							</div>
 						</div>
                   </div>
 				  
@@ -563,6 +634,9 @@
                     <label for="coupon_code" class="col-sm-4 control-label">Service Provider</label>
 
                     <div class="col-sm-6">
+						<div class="input-group" >
+						<div class="input-group-addon">
+								  <i class="fa fa-user-secret"></i></div>
                       <select id="user_id" name="user_id" class="form-control">
 						<option value="">--Select User--</option>
 					  <%
@@ -575,6 +649,7 @@
 						}
 					  %>
 					  </select>
+						</div>
                     </div>
                   </div>
 				  
@@ -703,6 +778,9 @@
                     <label for="parent_category_id" class="col-sm-4 control-label">Parent Category</label>
 
                     <div class="col-sm-6">
+						<div class="input-group" >
+						<div class="input-group-addon">
+								  <i class="fa fa-cube"></i></div>
                       <select id="parent_category_id" name="parent_category_id" class="form-control">
 						<option value="">--Select Category--</option>
 					  <%
@@ -715,6 +793,7 @@
 						}
 					  %>
 					  </select>
+						</div>
 					  <input type="hidden" name="parent_category_name" id="parent_category_name" />
                     </div>
                   </div>

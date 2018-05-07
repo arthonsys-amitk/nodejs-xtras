@@ -691,6 +691,122 @@ $('form[id="frm_updateservice"]').validate({
   }
 });
 //End
+// validation of Notification settings form
+$('form[id="frmnotification"]').validate({
+  rules: {
+	ios_keyid : {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		minlength: 3,
+        maxlength: 50
+	},
+	ios_teamid  : {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		minlength: 3,
+        maxlength: 50
+	},
+	ios_app_bundleid  : {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		minlength: 3,
+        maxlength: 50
+	},
+	android_fcm_key  : {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		minlength: 3,
+	},	
+  },
+  messages: {
+   
+  },
+  submitHandler: function(form) {
+    form.submit();
+  }
+});
+// End
+// validation of Notification settings form
+$('form[id="frmemailsetting"]').validate({
+  rules: {
+	admin_email : {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		minlength: 3,
+        maxlength: 50,
+		email:true
+	},
+	developer_email  : {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		minlength: 3,
+        maxlength: 50,
+		email:true
+	},
+	email_authentication_service  : {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		minlength: 3,
+        maxlength: 50
+	},
+	email_authentication_user  : {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		minlength: 3,
+		maxlength: 50,
+		email:true
+	},	
+	email_authentication_password  : {
+		required: {
+      depends:function(){
+          $(this).val($.trim($(this).val()));
+          return true;
+      }
+    },
+		minlength: 3,
+		maxlength: 20
+	},
+  },
+  messages: {
+   
+  },
+  submitHandler: function(form) {
+    form.submit();
+  }
+});
+// End
 });
 
 
