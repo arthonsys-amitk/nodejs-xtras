@@ -1925,32 +1925,53 @@ api.insert_log=(req,res)=>{
 	try {
 		if(Object.keys(req.body).length == 7) {
 			user.insert_log(req.body).then(function(result){
-					if(result!=null)
-					{
-						var transporter = nodemailer.createTransport({
-							service: "" + config.email_auth_service,
-							auth: {
-							  user: "" + config.email_auth_user,
-							  pass: "" + config.email_auth_password
+					user.get_settings()
+					.then(function(settings){
+						var email_auth_service = config.email_auth_service;
+						var email_auth_user = config.email_auth_user;
+						var email_auth_password = config.email_auth_password;
+						var developer_mail = config.developer_mail;
+						if(settings != null && settings != undefined && settings.length > 0) {
+							for(var i = 0; i < settings.length; i++) {
+								if(settings[i].key == "email_authentication_service") {
+									email_auth_service = settings[i].value;
+								} else if(settings[i].key == "email_authentication_user") {
+									email_auth_user = settings[i].value;
+								} else if(settings[i].key == "email_authentication_password") {
+									email_auth_password = settings[i].value;
+								} else if(settings[i].key == "developer_email") {
+									developer_mail = settings[i].value;
+								}
 							}
-						  });
-					  
-						  var mailOptions = {
-							from: 'Xtras Admin',
-							to: "" + config.developer_mail,
-							subject: 'Xtras: New log ',
-							html: "" + result
-						  };
-						transporter.sendMail(mailOptions)
+						}
+						if(result!=null)
+						{
+							var transporter = nodemailer.createTransport({
+								service: "" + email_auth_service,
+								auth: {
+								  user: "" + email_auth_user,
+								  pass: "" + email_auth_password
+								}
+							  });
+						  
+							  var mailOptions = {
+								from: 'Xtras Admin',
+								to: "" + developer_mail,
+								subject: 'Xtras: New log ',
+								html: "" + JSON.stringify(result, null, 4)
+							  };
+							transporter.sendMail(mailOptions)
 
 
-						res.json({
-							"status": 200,
-							"api_name": "insert_log",
-							"message": "Data saved successfully.",
-							"data": {}
-						});
-					}
+							res.json({
+								"status": 200,
+								"api_name": "insert_log",
+								"message": "Data saved successfully.",
+								"data": {}
+							});
+						}
+					});
+					
 			});
 		}else
 		{

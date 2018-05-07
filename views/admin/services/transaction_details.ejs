@@ -44,53 +44,38 @@
             </ul>
             <div class="tab-content">
               <div class="active tab-pane" id="summary">
-                <form class="form-horizontal" >
-                  <div class="form-group">
-                    <label class="col-sm-4 control-label">Name</label>
-
-                    <div class="col-sm-8">
-                      <label class=" text-muted top-spaced"><%=user.fullname%></label>
-                    </div>
-                  </div>
-                  
-				  <div class="form-group">
-                    <label class="col-sm-4 control-label">Amount</label>
-
-                    <div class="col-sm-8">
-                      <label class=" text-muted top-spaced"><%=transaction.currency%> <%=parseFloat(transaction.amount/100).toFixed(2)%></label>
-                    </div>
-                  </div>
-				  
-				  <div class="form-group">
-                    <label class="col-sm-4 control-label">Date</label>
-
-                    <div class="col-sm-8">
-                      <label class=" text-muted top-spaced"><%=transaction.created_at%></label>
-                    </div>
-                  </div>
-				  
-				  <div class="form-group">
-                    <label class="col-sm-4 control-label">Appointment ID</label>
-
-                    <div class="col-sm-8">
-                      <label class=" text-muted top-spaced"><%=transaction.appointment_id%></label>
-                    </div>
-                  </div>
-				  <div class="form-group">
-                    <label class="col-sm-4 control-label">Appointment Date</label>
-
-                    <div class="col-sm-8">
-                      <label class=" text-muted top-spaced"><%=appointment_date%></label>
-                    </div>
-                  </div>
-				  <div class="form-group">
-                    <label class="col-sm-4 control-label">Service Provider</label>
-
-                    <div class="col-sm-8">
-                      <label class=" text-muted top-spaced"><%=provider_name%></label>
-                    </div>
-                  </div>
-				  <%
+				<ul class="list-group list-group-unbordered">
+					<li class="list-group-item">
+						<b >Name</b>
+						<a class="pull-right"><%=user.fullname%></a>
+					</li>
+					
+					<li class="list-group-item">
+						<b >Amount</b>
+						<a class="pull-right"><%=transaction.currency%> <%=parseFloat(transaction.amount/100).toFixed(2)%></a>
+					</li>
+					
+					<li class="list-group-item">
+						<b >Date</b>
+						<a class="pull-right"><%=transaction.created_at%></a>
+					</li>
+					
+					<li class="list-group-item">
+						<b >Appointment ID</b>
+						<a class="pull-right"><%=transaction.appointment_id%></a>
+					</li>
+					
+					
+					<li class="list-group-item">
+						<b >Appointment Date</b>
+						<a class="pull-right"><%=appointment_date%></a>
+					</li>
+					
+					<li class="list-group-item">
+						<b >Service Provider</b>
+						<a class="pull-right"><%=provider_name%></a>
+					</li>
+					<%
 						var transaction_status = "Failed";
 						if(transaction.payment_details != null && transaction.payment_details != undefined && transaction.payment_details.status != undefined && transaction.payment_details.status != null) {
 							transaction_status = transaction.payment_details.status;
@@ -101,129 +86,82 @@
 							var transaction_status_html = "<span style='background: #00ff00; padding: 4px;'>" + transaction_status + "</span>";
 						else
 							var transaction_status_html = "<span style='background: #ff0000; padding: 4px;'>" + transaction_status + "</span>";
-				  %>
-				  <div class="form-group">
-                    <label class="col-sm-4 control-label">Status</label>
-
-                    <div class="col-sm-8">
-                      <label class=" text-muted top-spaced"><%- transaction_status_html%></label>
-                    </div>
-                  </div>
-				  
-                </form>
+				    %>
+					
+					<li class="list-group-item">
+						<b >Status</b>
+						<a class="pull-right"><%- transaction_status_html%></a>
+					</li>
+				</ul>
               </div>
               
 			  
 			  <div class="tab-pane" id="trandetail">
-                <form class="form-horizontal" >
-                  <div class="form-group">
+				<ul class="list-group list-group-unbordered">
 					<% if(transaction.payment_details == null || transaction.payment_details == undefined) { %>
-						<div class="col-sm-12">
-						  <label class=" text-muted top-spaced">Transaction Details not available</label>
-						</div>
+						<li class="list-group-item">
+							<b>Transaction Details not available</b>
+						</li>
 					<% } else if(transaction.payment_details.id == undefined || transaction.payment_details.id == null) { %>
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Status Code</label>
-
-							<div class="col-sm-8">
-							  <label class=" text-muted top-spaced"><%=transaction.payment_details.statusCode%></label>
-							</div>
-					    </div>
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Code</label>
-
-							<div class="col-sm-8">
-							  <label class=" text-muted top-spaced"><%=transaction.payment_details.code%></label>
-							</div>
-					    </div>
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Message</label>
-
-							<div class="col-sm-8">
-							  <label class=" text-muted top-spaced"><%=transaction.payment_details.message%></label>
-							</div>
-					    </div>
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Request ID</label>
-
-							<div class="col-sm-8">
-							  <label class=" text-muted top-spaced"><%=transaction.payment_details.requestId%></label>
-							</div>
-					    </div>
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Token</label>
-
-							<div class="col-sm-8">
-							  <label class=" text-muted top-spaced"><%=transaction.token%></label>
-							</div>
-					    </div>
+						<li class="list-group-item">
+							<b>Status Code</b>
+							<a class="pull-right"><%=transaction.payment_details.statusCode%></a>
+						</li>
+						<li class="list-group-item">
+							<b>Code</b>
+							<a class="pull-right"><%=transaction.payment_details.code%></a>
+						</li>
+						<li class="list-group-item">
+							<b>Message</b>
+							<a class="pull-right"><%=transaction.payment_details.message%></a>
+						</li>
+						<li class="list-group-item">
+							<b>Request ID</b>
+							<a class="pull-right"><%=transaction.payment_details.requestId%></a>
+						</li>
+						<li class="list-group-item">
+							<b>Token</b>
+							<a class="pull-right"><%=transaction.token%></a>
+						</li>
 					<% } else if(transaction.payment_details.id) { %>
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Status</label>
-
-							<div class="col-sm-8">
-							  <label class=" text-muted top-spaced"><%=transaction.payment_details.status%></label>
-							</div>
-					    </div>
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Transaction ID</label>
-
-							<div class="col-sm-8">
-							  <label class=" text-muted top-spaced"><%=transaction.payment_details.id%></label>
-							</div>
-					    </div>
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Object</label>
-
-							<div class="col-sm-8">
-							  <label class=" text-muted top-spaced"><%=transaction.payment_details.object%></label>
-							</div>
-					    </div>						
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Balance Transaction</label>
-
-							<div class="col-sm-8">
-							  <label class=" text-muted top-spaced"><%=transaction.payment_details.balance_transaction%></label>
-							</div>
-					    </div>
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Captured</label>
-
-							<div class="col-sm-8">
-							  <label class=" text-muted top-spaced"><%=transaction.payment_details.captured%></label>
-							</div>
-					    </div>
-						<div class="form-group">
-							<label class="col-sm-4 control-label">description</label>
-
-							<div class="col-sm-8">
-							  <label class=" text-muted top-spaced"><%=transaction.payment_details.description%></label>
-							</div>
-					    </div>
-						<div class="form-group">
-							<label class="col-sm-4 control-label">LiveMode</label>
-
-							<div class="col-sm-8">
-							  <label class=" text-muted top-spaced"><%=transaction.payment_details.livemode%></label>
-							</div>
-					    </div>
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Paid</label>
-
-							<div class="col-sm-8">
-							  <label class=" text-muted top-spaced"><%=transaction.payment_details.paid %></label>
-							</div>
-					    </div>
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Token</label>
-
-							<div class="col-sm-8">
-							  <label class=" text-muted top-spaced"><%=transaction.token%></label>
-							</div>
-					    </div>					
-					<% } %>                    
-                  </div>
-				</form>
+						<li class="list-group-item">
+							<b>Status</b>
+							<a class="pull-right"><%=transaction.payment_details.status%></a>
+						</li>
+						<li class="list-group-item">
+							<b>Transaction ID</b>
+							<a class="pull-right"><%=transaction.payment_details.id%></a>
+						</li>
+						<li class="list-group-item">
+							<b>Object</b>
+							<a class="pull-right"><%=transaction.payment_details.object%></a>
+						</li>
+						<li class="list-group-item">
+							<b>Balance Transaction</b>
+							<a class="pull-right"><%=transaction.payment_details.balance_transaction%></a>
+						</li>
+						<li class="list-group-item">
+							<b>Captured</b>
+							<a class="pull-right"><%=transaction.payment_details.captured%></a>
+						</li>
+						<li class="list-group-item">
+							<b>Description</b>
+							<a class="pull-right"><%=transaction.payment_details.description%></a>
+						</li>
+						<li class="list-group-item">
+							<b>LiveMode</b>
+							<a class="pull-right"><%=transaction.payment_details.livemode%></a>
+						</li>
+						<li class="list-group-item">
+							<b>Paid</b>
+							<a class="pull-right"><%=transaction.payment_details.paid %></a>
+						</li>
+						<li class="list-group-item">
+							<b>Token</b>
+							<a class="pull-right"><%=transaction.token%></a>
+						</li>
+					<% } %>
+				</ul>
 			 </div>
 			  
             </div>

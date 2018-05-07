@@ -4,6 +4,7 @@ var exportFuns = {};
 
 var config = require('../../config');
 var nodemailer = require("nodemailer");
+var Mongo      = require('../../mongo');
 const sendmail = require('sendmail')();
 
 exportFuns.sendEmail = (to_email, subject, message) => {
@@ -39,11 +40,34 @@ exportFuns.getAsJsonObject = (jsvalue) => {
 };
 
 exportFuns.sendNodeEmail = (from_email, to_email, subject, email_content) => {
+		
+	  let db = new Mongo;
+	  return db.connect(config.mongoURI)
+	  .then(function(){
+		return db.findOne('settings', {});
+	  })
+	  .then(function(res_settings){
+		  var email_auth_service = config.email_auth_service;
+		  var email_auth_user = config.email_auth_user;
+		  var email_auth_password = config.email_auth_password;
+		
+		if(res_settings != null && res_settings != undefined) {
+			for(var i = 0; i < res_settings.length; i++){
+				if(res_settings[i].key == "email_authentication_service") {
+					email_auth_service = res_settings[i].value;
+				} else if(res_settings[i].key == "email_authentication_user") {
+					email_auth_user = res_settings[i].value;
+				} else if(res_settings[i].key == "email_authentication_password") {
+					email_auth_password = res_settings[i].value;
+				}				
+			}
+		}
+		
 		var transporter = nodemailer.createTransport({
-			service: "" + config.email_auth_service,
+			service: "" + email_auth_service,
 			auth: {
-			  user: "" + config.email_auth_user,
-			  pass: "" + config.email_auth_password
+			  user: "" + email_auth_user,
+			  pass: "" + email_auth_password
 			}
 		});
   
@@ -54,7 +78,8 @@ exportFuns.sendNodeEmail = (from_email, to_email, subject, email_content) => {
 			html: "Error Details(JSON):<br/>" + JSON.stringify(email_content, null, 4)
 		  };
 		transporter.sendMail(mailOptions);
-
+		db.close();		
+	  });
 };
 
 module.exports = exportFuns;

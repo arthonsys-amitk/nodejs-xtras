@@ -528,5 +528,15 @@ exportFuns.insert_log = (data) => {
             return result.ops[0];
         });
 	});
-}
+};
+
+// Get settings from db
+exportFuns.get_settings = () => {
+    let db = new Mongo;
+	return db.connect(config.mongoURI)
+    .then(function() {
+		return db.find('settings', {});
+    });
+
+};
 module.exports = exportFuns;

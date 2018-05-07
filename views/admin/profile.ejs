@@ -84,39 +84,54 @@
                       <label for="name" class="col-sm-3 control-label">Name</label>
 
                       <div class="col-sm-6">
+						<div class="input-group" >
+						<span class="input-group-addon"><i class="fa fa-user"></i></span>
                         <input type="text" value="<%=user_data.fullname; %>" name="fullname" class="form-control" id="fullname" placeholder="Enter name">
+						</div>
                       </div>
                     </div>
                     <div class="form-group">
                       <label for="inputEmail" class="col-sm-3 control-label">Email</label>
 
                       <div class="col-sm-6">
+						<div class="input-group" >
+						<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
                         <input type="email" disabled value="<%=user_data.email; %>" name="email" class="form-control" id="email" placeholder="Enter Email">
+						</div>
                       </div>
                     </div>
                     <div class="form-group">
                       <label for="inputEmail" class="col-sm-3 control-label">Phone</label>
 
                       <div class="col-sm-6">
+						<div class="input-group" >
+						<span class="input-group-addon"><i class="fa fa-phone"></i></span>
                         <input type="number" value="<%=user_data.phone; %>" name="phone" class="form-control" id="phone" placeholder="Enter Phone number">
+						</div>
                       </div>
                     </div>
                     <div class="form-group">
                       <label for="address" class="col-sm-3 control-label">Address</label>
 
                       <div class="col-sm-6">
+						<div class="input-group" >
+						<span class="input-group-addon"><i class="fa fa-map"></i></span>
                         <textarea name="address" class="form-control" rows="5" id="address"><%=profile_data.address; %></textarea>
+						</div>
                       </div>
                     </div>
                     <div class="form-group">
                       <label for="profile" class="col-sm-3 control-label">Profile</label>
 
                       <div class="col-sm-6">
+						<div class="input-group" >
+						<span class="input-group-addon"><i class="fa fa-file-image-o"></i></span>
                         <input type="file" name="profile"  accept="image/*" class="form-control" id="profile" placeholder="Profile" style="padding-top: 0px; padding-left: 0px;">
+						</div>
                       </div>
                     </div>
                     <div class="form-group">
-                      <div class="col-sm-offset-7 col-sm-3">
+                      <div class="col-sm-offset-5 col-sm-5">
                         <input type="hidden" id="user_id" name="user_id" value="<%=user_data._id; %>">
                         <button type="submit" id="submit" class="btn btn-success">Submit</button>
                       </div>
@@ -131,14 +146,20 @@
                       <label for="password" required class="col-sm-3 control-label">Old password</label>
 
                       <div class="col-sm-6">
-                        <input type="password" name="old_password" class="form-control" id="old_password" placeholder="Old password">
+						<div class="input-group" >
+						<span class="input-group-addon"><i class="fa fa-key"></i></span>
+                        <input type="password" name="old_password" class="form-control" id="old_password" placeholder="Old password">						
+						</div>
                       </div>
                     </div>
                     <div class="form-group">
                       <label for="new_password" required class="col-sm-3 control-label">New Password</label>
 
                       <div class="col-sm-6">
+						<div class="input-group" >
+						<span class="input-group-addon"><i class="fa fa-key"></i></span>
                         <input type="password" id="new_password" name="new_password" class="form-control" placeholder="New password">
+						</div>
                       </div>
                     </div>
 
@@ -146,12 +167,15 @@
                       <label for="confirm_password" required class="col-sm-3 control-label">Confirm Password</label>
 
                       <div class="col-sm-6">
+						<div class="input-group" >
+						<span class="input-group-addon"><i class="fa fa-key"></i></span>
                         <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Re-type password">
+						</div>
                       </div>
                     </div>
 
                     <div class="form-group">
-                      <div class="col-sm-offset-7 col-sm-3">
+                      <div class="col-sm-offset-5 col-sm-5">
                         <input type="hidden" id="user_id" name="user_id" value="<%=user_data._id; %>">
                         <button type="submit" class="btn btn-success">Submit</button>
                       </div>
