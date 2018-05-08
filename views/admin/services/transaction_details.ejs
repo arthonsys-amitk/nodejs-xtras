@@ -46,34 +46,34 @@
               <div class="active tab-pane" id="summary">
 				<ul class="list-group list-group-unbordered">
 					<li class="list-group-item">
-						<b >Name</b>
-						<a class="pull-right"><%=user.fullname%></a>
+						<b style="width: 30%;">Name</b>
+						<a class="pull-right" style="width: 70%;"><%=user.fullname%></a>
 					</li>
 					
 					<li class="list-group-item">
-						<b >Amount</b>
-						<a class="pull-right"><%=transaction.currency%> <%=parseFloat(transaction.amount/100).toFixed(2)%></a>
+						<b style="width: 30%;">Amount</b>
+						<a class="pull-right" style="width: 70%;"><%=transaction.currency%> <%=parseFloat(transaction.amount/100).toFixed(2)%></a>
 					</li>
 					
 					<li class="list-group-item">
-						<b >Date</b>
-						<a class="pull-right"><%=transaction.created_at%></a>
+						<b style="width: 30%;">Date</b>
+						<a class="pull-right" style="width: 70%;"><%=transaction.created_at%></a>
 					</li>
 					
 					<li class="list-group-item">
-						<b >Appointment ID</b>
-						<a class="pull-right"><%=transaction.appointment_id%></a>
+						<b style="width: 30%;">Appointment ID</b>
+						<a class="pull-right" style="width: 70%;"><%=transaction.appointment_id%></a>
 					</li>
 					
 					
 					<li class="list-group-item">
-						<b >Appointment Date</b>
-						<a class="pull-right"><%=appointment_date%></a>
+						<b style="width: 30%;">Appointment Date</b>
+						<a class="pull-right" style="width: 70%;"><%=appointment_date%></a>
 					</li>
 					
 					<li class="list-group-item">
-						<b >Service Provider</b>
-						<a class="pull-right"><%=provider_name%></a>
+						<b style="width: 30%;">Service Provider</b>
+						<a class="pull-right" style="width: 70%;"><%=provider_name%></a>
 					</li>
 					<%
 						var transaction_status = "Failed";
@@ -89,8 +89,8 @@
 				    %>
 					
 					<li class="list-group-item">
-						<b >Status</b>
-						<a class="pull-right"><%- transaction_status_html%></a>
+						<b style="width: 30%;">Status</b>
+						<a class="pull-right" style="width: 70%;"><%- transaction_status_html%></a>
 					</li>
 				</ul>
               </div>
@@ -100,65 +100,65 @@
 				<ul class="list-group list-group-unbordered">
 					<% if(transaction.payment_details == null || transaction.payment_details == undefined) { %>
 						<li class="list-group-item">
-							<b>Transaction Details not available</b>
+							<b style="width: 70%;">Transaction Details not available</b>
 						</li>
 					<% } else if(transaction.payment_details.id == undefined || transaction.payment_details.id == null) { %>
 						<li class="list-group-item">
-							<b>Status Code</b>
-							<a class="pull-right"><%=transaction.payment_details.statusCode%></a>
+							<b style="width: 30%;">Status Code</b>
+							<a class="pull-right" style="width: 70%;"><%=transaction.payment_details.statusCode%></a>
 						</li>
 						<li class="list-group-item">
-							<b>Code</b>
-							<a class="pull-right"><%=transaction.payment_details.code%></a>
+							<b style="width: 30%;">Code</b>
+							<a class="pull-right" style="width: 70%;"><%=transaction.payment_details.code%></a>
 						</li>
 						<li class="list-group-item">
-							<b>Message</b>
-							<a class="pull-right"><%=transaction.payment_details.message%></a>
+							<b style="width: 30%;">Message</b>
+							<a class="pull-right" style="width: 70%;"><%=transaction.payment_details.message%></a>
 						</li>
 						<li class="list-group-item">
-							<b>Request ID</b>
-							<a class="pull-right"><%=transaction.payment_details.requestId%></a>
+							<b style="width: 30%;">Request ID</b>
+							<a class="pull-right" style="width: 70%;"><%=transaction.payment_details.requestId%></a>
 						</li>
 						<li class="list-group-item">
-							<b>Token</b>
-							<a class="pull-right"><%=transaction.token%></a>
+							<b style="width: 30%;">Token</b>
+							<a class="pull-right" style="width: 70%;"><%=transaction.token%></a>
 						</li>
 					<% } else if(transaction.payment_details.id) { %>
 						<li class="list-group-item">
-							<b>Status</b>
-							<a class="pull-right"><%=transaction.payment_details.status%></a>
+							<b style="width: 30%;">Status</b>
+							<a class="pull-right" style="width: 70%;"><%=transaction.payment_details.status%></a>
 						</li>
 						<li class="list-group-item">
-							<b>Transaction ID</b>
-							<a class="pull-right"><%=transaction.payment_details.id%></a>
+							<b style="width: 30%;">Transaction ID</b>
+							<a class="pull-right" style="width: 70%;"><%=transaction.payment_details.id%></a>
 						</li>
 						<li class="list-group-item">
-							<b>Object</b>
-							<a class="pull-right"><%=transaction.payment_details.object%></a>
+							<b style="width: 30%;">Object</b>
+							<a class="pull-right" style="width: 70%;"><%=transaction.payment_details.object%></a>
 						</li>
 						<li class="list-group-item">
-							<b>Balance Transaction</b>
-							<a class="pull-right"><%=transaction.payment_details.balance_transaction%></a>
+							<b style="width: 30%;">Balance Transaction</b>
+							<a class="pull-right" style="width: 70%;"><%=transaction.payment_details.balance_transaction%></a>
 						</li>
 						<li class="list-group-item">
-							<b>Captured</b>
-							<a class="pull-right"><%=transaction.payment_details.captured%></a>
+							<b style="width: 30%;">Captured</b>
+							<a class="pull-right" style="width: 70%;"><%=transaction.payment_details.captured%></a>
 						</li>
 						<li class="list-group-item">
-							<b>Description</b>
-							<a class="pull-right"><%=transaction.payment_details.description%></a>
+							<b style="width: 30%;">Description</b>
+							<a class="pull-right" style="width: 70%;"><%=transaction.payment_details.description%></a>
 						</li>
 						<li class="list-group-item">
-							<b>LiveMode</b>
-							<a class="pull-right"><%=transaction.payment_details.livemode%></a>
+							<b style="width: 30%;">LiveMode</b>
+							<a class="pull-right" style="width: 70%;"><%=transaction.payment_details.livemode%></a>
 						</li>
 						<li class="list-group-item">
-							<b>Paid</b>
-							<a class="pull-right"><%=transaction.payment_details.paid %></a>
+							<b style="width: 30%;">Paid</b>
+							<a class="pull-right" style="width: 70%;"><%=transaction.payment_details.paid %></a>
 						</li>
 						<li class="list-group-item">
-							<b>Token</b>
-							<a class="pull-right"><%=transaction.token%></a>
+							<b style="width: 30%;">Token</b>
+							<a class="pull-right" style="width: 70%;"><%=transaction.token%></a>
 						</li>
 					<% } %>
 				</ul>
