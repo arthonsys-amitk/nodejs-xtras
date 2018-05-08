@@ -69,7 +69,66 @@
                     </div>
                   </div>
                 </form>
-                <table id="example2" class="table table-bordered table-hover">
+                 
+                <table id="rentTableWithData" class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>User ID</th>
+                      <th>Amount</th>
+                      <th>Appointment ID</th>
+                      <th>Status</th>
+                      <th>Date</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                      <% var count=1; for(var i = 0; i < transactions.length; i++){%>	<%
+                        var transaction_status = "Failed";
+                        if(transactions[i].payment_details != null && transactions[i].payment_details != undefined && transactions[i].payment_details.status != undefined && transactions[i].payment_details.status != null) {
+                          transaction_status = transactions[i].payment_details.status;
+                        }
+                        var total=0;
+                        var username = "";
+                        if(transactions[i].user_id != null && transactions[i].user_id != undefined) {
+                          if(users != null && users != undefined && users.length > 0) {
+                            var idx = arr_user_ids.indexOf(""+ transactions[i].user_id);
+                            if(idx != -1) {
+                              username = users[idx].fullname;
+                            }
+                          }
+                        }
+                        transaction_status = transaction_status.charAt(0).toUpperCase() + transaction_status.slice(1);
+                        if(transaction_status == "Succeeded")
+                          var transaction_status_html = "<span style='background: #00ff00; padding: 4px;'>" + transaction_status + "</span>";
+                        else
+                          var transaction_status_html = "<span style='background: #ff0000; padding: 4px;'>" + transaction_status + "</span>";
+                      %>
+                  <tr>
+                  <td><%=count%></td>
+                  <td><%=username%></td>
+                  <td><%=transactions[i].currency%> <%=parseFloat(transactions[i].amount / 100).toFixed(2)%></td>
+                  <td><%=transactions[i].appointment_id%></td>
+                  <td><%-transaction_status_html%></td>
+                  <td><%=transactions[i].created_at%></td>
+                  <td><a class="btn btn-xs btn-info" href="/admin/view_transaction/<%=transactions[i]._id%>" style="margin-right: 10px;">View Details</a></td>
+                
+                  </tr>
+                  <% count++; total=parseFloat(transactions[i].amount / 100).toFixed(2) + parseFloat(total);} %>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>#</th>
+                      <th>User ID</th>
+                      <th>Amount</th>
+                      <th>Appointment ID</th>
+                      <th>Status</th>
+                      <th>Date</th>
+                      <th>Action</th>
+                    </tr>
+                  </tfoot>
+                </table>
+            <!--    <table id="rentTableWithData" class="table table-bordered table-hover">
                 <thead>
                 <tr>
                   <th>#</th>
@@ -124,7 +183,7 @@
                   <th></th>
                 </tr>
                 </tfoot>
-              </table>
+              </table>  -->
               
             </div>
           

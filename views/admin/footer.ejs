@@ -23,8 +23,10 @@
 <!-- Bootstrap 3.3.7 -->
 <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <!-- DataTables -->
-<script src="/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<!--<script src="/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script> -->
+<script type="text/javascript" src="https://cdn.datatables.net/r/bs/jszip-2.5.0,pdfmake-0.1.18,dt-1.10.9,b-1.0.3,b-html5-1.0.3,b-print-1.0.3/datatables.min.js"></script>
+
 <!-- Sparkline -->
 <script src="/bower_components/jquery-sparkline/dist/jquery.sparkline.min.js"></script>
 <!-- jvectormap -->
@@ -76,6 +78,36 @@
 <script src="/bower_components/fastclick/lib/fastclick.js"></script>
 
 <script type="text/javascript">
+   var example1 =  $("#rentTableWithData").DataTable({
+        responsive: true,
+        buttons: ['excelHtml5',
+        {
+            extend: 'pdf',
+            text: 'PDF',
+            exportOptions: {
+                modifier: {
+                    page: 'current'
+                }
+            }
+        },
+            {
+                extend: 'print',
+                autoPrint: true,
+                customize: function (win) {
+                    $(win.document.body)
+                        .css('font-size', '10pt');
+                    $(win.document.body).find('table')
+                        .addClass('compact')
+                        .css('font-size', 'inherit');
+                    var medias = win.document.querySelectorAll('[media="screen"]');
+                    for (var i = 0; i < medias.length; i++) { medias.item(i).media = "all" };
+                }
+            }
+        ]
+  });
+
+  example1.buttons().container().appendTo($('.col-sm-6:eq(0)', example1.table().container()));
+   
    $('#example2').DataTable();
    $('#transaction').DataTable();
   function myFunctionName() {
@@ -116,15 +148,18 @@
 	});
   //Expiry date
   $('#expiry_date').datepicker({
-      format: 'yyyy-mm-dd'
+      format: 'yyyy-mm-dd',
+	  autoclose: true
 	 });
   //From date
   $('#from_date').datepicker({
-    format: 'yyyy-mm-dd'
+    format: 'yyyy-mm-dd',
+	autoclose: true
   });
   //To date
   $('#to_date').datepicker({
-    format: 'yyyy-mm-dd'
+    format: 'yyyy-mm-dd',
+	autoclose: true
   });
 //Add coupon
 $('#service_ids').select2();  
